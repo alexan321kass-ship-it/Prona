@@ -1,0 +1,23 @@
+@import "./variables.css";
+
+.nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    background: var(--color-card);
+    box-shadow: var(--shadow-sm);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-logo {
+    height: 45px;
+    transition: var(--transition-main);
+}
+
+.nav-logo:hover {
+    transform: scale(1.1);
+}

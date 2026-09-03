@@ -1,0 +1,538 @@
+/**
+ * Estilos del Módulo de Reportes
+ * VisualMetrics, SalesHistory, TopPerformers, ReporteBasico, RegistroCliente
+ */
+@import "../../compartido/styles/variables.css";
+
+/* ============================================
+   REPORTE BÁSICO - PÁGINA
+   ============================================ */
+.reporte-contenedor {
+    max-width: 1200px;
+    padding: 2rem;
+}
+
+.reporte-encabezado {
+    margin-bottom: 2rem;
+}
+
+.reporte-titulo {
+    font-size: 1.8rem;
+    color: #2C3E50;
+    font-weight: 700;
+    margin: 0;
+}
+
+.reporte-subtitulo {
+    color: #7F8C8D;
+}
+
+.reporte-pestanas {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: #EAECEE;
+    padding: 0.4rem;
+    border-radius: 12px;
+    width: fit-content;
+}
+
+.reporte-cargando {
+    height: 400px;
+}
+
+/* ============================================
+   VISUAL METRICS - GRIDS
+   ============================================ */
+.metricas-grid-kpi {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.metricas-grid-graficos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 2rem;
+}
+
+/* ============================================
+   SALES HISTORY - HISTORIAL
+   ============================================ */
+.historial-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.historial-busqueda {
+    flex: 1;
+    max-width: 400px;
+}
+
+.historial-boton-exportar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--color-border);
+    color: var(--color-text-main);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: var(--font-main);
+    transition: all 0.2s ease;
+}
+
+.historial-boton-exportar:hover {
+    background: #D7DDE3;
+}
+
+/* Celdas de tabla específicas */
+.celda-centrada {
+    text-align: center;
+}
+
+.celda-derecha {
+    text-align: right;
+}
+
+.celda-negrita {
+    font-weight: 500;
+}
+
+.celda-total {
+    text-align: right;
+    color: var(--color-success);
+    font-weight: 700;
+}
+
+.celda-vacia {
+    text-align: center;
+    padding: 3rem;
+    color: var(--color-text-light);
+}
+
+.historial-pie {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.historial-conteo {
+    font-size: 0.85rem;
+    color: #6C737A;
+}
+
+/* Paginación */
+.paginacion {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.paginacion__boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: white;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-main);
+}
+
+.paginacion__boton:hover:not(:disabled) {
+    background: var(--color-bg);
+    color: var(--color-text-main);
+}
+
+.paginacion__boton:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.paginacion__numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: white;
+    color: var(--color-text-main);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-main);
+}
+
+.paginacion__numero:hover {
+    background: var(--color-bg);
+}
+
+.paginacion__numero--activo {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    box-shadow: 0 3px 10px rgba(192, 57, 43, 0.3);
+}
+
+.paginacion__numero--activo:hover {
+    background: var(--color-primary-dark);
+}
+
+/* ============================================
+   TOP PERFORMERS
+   ============================================ */
+.rendimiento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+/* Podio */
+.podio-contenedor {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+}
+
+.podio-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100px;
+}
+
+.podio-item__rango {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.podio-item__barra {
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.podio-item__barra--principal {
+    color: white;
+}
+
+.podio-item__cantidad {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.podio-item__unidad {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.podio-item__nombre {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #2C3E50;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+/* Tabla de ranking */
+.celda-rango {
+    font-weight: 700;
+    color: #7F8C8D;
+}
+
+.celda-nombre {
+    font-weight: 500;
+}
+
+.celda-cantidad {
+    text-align: right;
+    font-weight: 600;
+}
+
+/* Ranking de productos */
+.ranking-columna {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.ranking-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.ranking-item-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.ranking-item-nombre {
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+.ranking-item-total {
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.ranking-barra-fondo {
+    width: 100%;
+    height: 8px;
+    background: var(--color-bg);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.ranking-barra-relleno {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    border-radius: 10px;
+}
+
+/* KPI Cards extras */
+.kpi-extras-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.kpi-extra {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    text-align: center;
+    border: 1px solid var(--color-bg);
+}
+
+.kpi-extra__icono {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.8rem;
+}
+
+.kpi-extra__icono--rojo {
+    background: #FEF5F4;
+    color: var(--color-primary);
+}
+
+.kpi-extra__icono--verde {
+    background: #F4FDF9;
+    color: var(--color-success);
+}
+
+.kpi-extra__etiqueta {
+    margin: 0;
+    color: #7F8C8D;
+    font-size: 0.8rem;
+}
+
+.kpi-extra__valor {
+    margin: 0.3rem 0;
+    color: #2C3E50;
+    font-size: 1.5rem;
+}
+
+.kpi-extra__valor--pequeno {
+    font-size: 1.1rem;
+}
+
+.kpi-extra__nota {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.kpi-extra__nota--rojo {
+    color: var(--color-primary);
+}
+
+.kpi-extra__nota--verde {
+    color: var(--color-success);
+}
+
+/* ============================================
+   REGISTRO CLIENTE
+   ============================================ */
+.registro-botones-nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.registro-filtro-max {
+    max-width: 200px;
+}
+
+/* Badge de compras */
+.compras-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(39, 174, 96, 0.1);
+    color: var(--color-success);
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* Resumen inferior */
+.registro-resumen {
+    padding: 1rem 2rem;
+    background: #F8F9FA;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.registro-resumen__texto {
+    color: #6C737A;
+}
+
+.registro-resumen__total {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+/* ============================================
+   COMPARTIDO DENTRO DE REPORTES
+   ============================================ */
+/* Info del pedido en modal */
+.info-pedido {
+    background: #F8F9FA;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.info-pedido__cabecera {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.info-pedido__detalle {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6C737A;
+}
+
+.info-pedido__titulo-productos {
+    margin: 1rem 0 0.5rem;
+    color: var(--color-text-main);
+}
+
+/* Total del pedido */
+.total-pedido {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    border-radius: 8px;
+    color: #FFFFFF;
+}
+
+.total-pedido__monto {
+    font-size: 1.2rem;
+}
+
+/* Aviso vacío */
+.aviso-vacio {
+    padding: 2rem;
+    text-align: center;
+    background: #FFF3CD;
+    border-radius: 8px;
+    color: #856404;
+}
+
+.aviso-vacio__texto {
+    margin: 0;
+}
+
+.aviso-vacio__subtexto {
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+}
+
+/* Código producto */
+.codigo-producto {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+}
+
+/* Resultados encontrados */
+.resultados-conteo {
+    padding: 1rem 2rem;
+    background: #F8F9FA;
+    border-top: 1px solid var(--color-border);
+    color: #6C737A;
+}
+
+.resultados-conteo--detallado {
+    font-size: 0.9rem;
+}
+
+/* Cambio de estado */
+.cambio-estado-preview {
+    padding: 1rem;
+    background: rgba(39, 174, 96, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.cambio-estado-flecha {
+    margin: 0 1rem;
+    font-size: 1.5rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .rendimiento-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metricas-grid-graficos {
+        grid-template-columns: 1fr;
+    }
+}

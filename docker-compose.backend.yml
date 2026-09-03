@@ -1,0 +1,30 @@
+services:
+  # Backend (NestJS)
+  backend:
+    build:
+      context: ./backend-nest-js
+      dockerfile: Dockerfile
+    container_name: pronavid-api
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=4000
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_SECURE=false
+      - SMTP_USER=nue6689@gmail.com
+      - SMTP_PASS=xedljnwbugbybbxf
+      - CLOUDINARY_URL=${CLOUDINARY_URL}
+    volumes:
+      - ./backend-nest-js/uploads:/app/uploads
+      - ./backend-nest-js/firebase-service-account.json:/app/firebase-service-account.json:ro
+    networks:
+      - pronavid-network
+
+networks:
+  pronavid-network:
+    name: pronavid-network
+    external: true

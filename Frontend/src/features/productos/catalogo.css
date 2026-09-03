@@ -1,0 +1,236 @@
+/**
+ * Estilos adicionales para Catálogo (complementan productos.css)
+ */
+
+/* Contenedor full-width del catálogo */
+.catalogo-contenido {
+    padding: 1.5rem 2.5rem;
+    min-height: 100vh;
+}
+
+/* Header icon container */
+.catalogo-icono-titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.catalogo-icono-badge {
+    background: var(--color-primary-glass);
+    padding: 0.6rem;
+    border-radius: 12px;
+    color: var(--color-primary);
+}
+
+.catalogo-icono-badge + h2 {
+    margin: 0;
+}
+
+/* Categorías como pills */
+.catalogo-filtro-categorias {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    padding: 0.5rem;
+    background: #F1F3F5;
+    border-radius: 18px;
+    width: fit-content;
+}
+
+/* Buscador con icono */
+.catalogo-buscador {
+    position: relative;
+    margin-bottom: 2.5rem;
+}
+
+.catalogo-buscador__campo {
+    position: relative;
+}
+
+.catalogo-buscador__icono {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    z-index: 2;
+}
+
+.catalogo-buscador__input {
+    padding-left: 52px;
+    height: 58px;
+    border-radius: 15px;
+    width: 100%;
+}
+
+/* Grid del catálogo */
+.catalogo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+/* Loading y empty states full-width */
+.catalogo-estado-full {
+    grid-column: 1 / -1;
+}
+
+.catalogo-cargando {
+    height: 300px;
+}
+
+.catalogo-vacio {
+    padding: 4rem;
+}
+
+.catalogo-vacio__icono {
+    opacity: 0.2;
+    margin-bottom: 1rem;
+}
+
+/* Card sin max-width */
+.catalogo-card-full {
+    border-radius: var(--radius-lg);
+    max-width: none;
+}
+
+/* Imagen del producto en catálogo */
+.catalogo-producto-imagen {
+    height: 180px;
+    background: #f8f9fa;
+    position: relative;
+}
+
+.catalogo-producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+
+.category-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-primary, #000);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    z-index: 10;
+    backdrop-filter: blur(4px);
+}
+
+/* Modal de 2 columnas */
+.catalogo-modal-grid {
+    border-radius: 28px;
+    width: 95%;
+    max-width: 1000px;
+    max-height: 90vh;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    overflow: hidden;
+    padding: 0;
+}
+
+/* Lado izquierdo: formulario */
+.catalogo-modal-formulario {
+    padding: 2.5rem;
+    background: white;
+    border-right: 1px solid var(--color-border, #E2E8F0);
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.catalogo-modal-cabecera {
+    margin-bottom: 2rem;
+}
+
+/* Lado derecho: preview */
+.catalogo-modal-preview {
+    background: #f1f3f5;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.catalogo-preview-etiqueta {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.catalogo-preview-card {
+    width: 280px;
+    background: white;
+    pointer-events: none;
+}
+
+.catalogo-preview-imagen {
+    height: 180px;
+    background: #f8f9fa;
+}
+
+.catalogo-preview-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Zona de upload */
+.catalogo-upload-zona {
+    border: 2px dashed var(--color-border, #E2E8F0);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    background: #f8f9fa;
+    transition: all 0.2s;
+    margin-top: 1rem;
+}
+
+.catalogo-upload-zona:hover {
+    border-color: var(--color-primary);
+}
+
+.catalogo-upload-icono {
+    margin: 0 auto 10px;
+    color: var(--color-primary);
+}
+
+.catalogo-upload-texto {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.catalogo-upload-oculto {
+    display: none;
+}
+
+.catalogo-eliminar-foto {
+    margin-top: 10px;
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/* Responsive del modal catálogo */
+@media (max-width: 900px) {
+    .catalogo-modal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .catalogo-modal-preview {
+        display: none;
+    }
+}

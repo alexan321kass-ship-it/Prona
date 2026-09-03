@@ -1,0 +1,86 @@
+/**
+ * Estilos de Componentes UI Comunes (Reportes)
+ * MetricCard, TabButton, Card
+ */
+
+/* ============================================
+   TARJETA DE MÉTRICA
+   ============================================ */
+.tarjeta-metrica {
+    background: var(--color-card);
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border-bottom: 4px solid var(--color-acento, var(--color-primary));
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.tarjeta-metrica__icono {
+    padding: 1rem;
+    border-radius: 15px;
+    background: var(--color-acento-fondo, var(--color-primary-glass));
+}
+
+.tarjeta-metrica__titulo {
+    margin: 0;
+    color: #7F8C8D;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.tarjeta-metrica__valor {
+    margin: 0.2rem 0;
+    color: #2C3E50;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.tarjeta-metrica__subtexto {
+    margin: 0;
+    color: #BDC3C7;
+    font-size: 0.75rem;
+}
+
+/* ============================================
+   BOTÓN DE PESTAÑA
+   ============================================ */
+.boton-pestana {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: #7F8C8D;
+    box-shadow: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-family: var(--font-main);
+}
+
+.boton-pestana.activo {
+    background: var(--color-card);
+    color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   TARJETA CONTENEDORA
+   ============================================ */
+.tarjeta-contenedora {
+    background: var(--color-card);
+    padding: 1.5rem;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.tarjeta-contenedora__titulo {
+    margin: 0 0 1.5rem;
+    color: #2C3E50;
+    font-size: 1.1rem;
+    font-weight: 700;
+}

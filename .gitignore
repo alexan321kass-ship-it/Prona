@@ -1,0 +1,58 @@
+# Dependencias
+node_modules/
+dist/
+build/
+target/
+uploads/
+
+# Variables de entorno - NUNCA subir al repositorio
+.env
+.env.env
+.env.development
+.env.local
+.env.production
+.env.*.local
+
+# IDEs y Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Prisma
+/prisma/migrations/
+
+# Archivos de credenciales sensibles - NUNCA subir
+firebase-service-account.json
+*service-account*.json
+*.pem
+*.key
+
+# Flutter / Dart
+pronavid_mobile/.dart_tool/
+pronavid_mobile/.flutter-plugins
+pronavid_mobile/.flutter-plugins-dependencies
+pronavid_mobile/build/
+pronavid_mobile/.packages
+pronavid_mobile/android/.gradle/
+pronavid_mobile/android/local.properties
+pronavid_mobile/android/key.properties
+pronavid_mobile/ios/Pods/
+pronavid_mobile/.flutter_sdk/
+
+# SDK / Tools de root
+.flutter_sdk/
+chromedriver/
+maven/
+openjdk/
+
+# Docker volumes
+mysql_data/

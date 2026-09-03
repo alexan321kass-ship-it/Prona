@@ -1,0 +1,286 @@
+/**
+ * Estilos Dashboard - Diseño Soft UI
+ * Panel administrativo y de asesor
+ */
+@import "../../compartido/styles/variables.css";
+
+/* ============================================
+   VARIABLES LOCALES (Mapeadas a Globales)
+   ============================================ */
+:root {
+    --dash-bg: var(--color-bg);
+    --dash-card: var(--color-card);
+    --dash-border: var(--color-border);
+    --dash-text: var(--color-text-main);
+    --dash-text-muted: var(--color-text-muted);
+    --dash-accent: var(--color-primary);
+    --dash-accent-light: var(--color-primary-light);
+    --dash-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   BODY OVERRIDE
+   ============================================ */
+body {
+    margin: 0;
+    font-family: var(--font-main);
+    background: var(--dash-bg);
+    min-height: 100vh;
+}
+
+/* ============================================
+   HEADER / BARRA SUPERIOR
+   ============================================ */
+.barra-superior {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #C0392B 0%, #E74C3C 100%);
+    box-shadow: 0 4px 20px rgba(192, 57, 43, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 55px;
+    filter: brightness(0) invert(1);
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.usuario-contenedor {
+    color: white;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.95rem;
+}
+
+.icono-usuario {
+    font-size: 1.75rem;
+    text-decoration: none;
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.icono-usuario:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+/* ============================================
+   TÍTULO PANEL
+   ============================================ */
+.titulo-panel {
+    text-align: center;
+    background: var(--dash-card);
+    padding: 2rem 1rem;
+    border-bottom: 1px solid var(--dash-border);
+}
+
+.titulo-panel h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dash-text);
+}
+
+.titulo-panel p {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    color: var(--dash-text-muted);
+}
+
+/* ============================================
+   PANEL PRINCIPAL / GRID TARJETAS
+   ============================================ */
+.dashboard-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+}
+
+/* ============================================
+   TARJETAS
+   ============================================ */
+.tarjeta {
+    background: var(--dash-card);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--dash-text);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--dash-border);
+    transition: var(--transition-main);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto decorativo */
+.tarjeta::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--dash-accent), var(--dash-accent-light));
+    transform: scaleX(0);
+    transition: transform 0.35s ease;
+}
+
+.tarjeta:hover::before {
+    transform: scaleX(1);
+}
+
+.tarjeta:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    border-color: rgba(192, 57, 43, 0.2);
+}
+
+/* Iconos */
+.icono {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Textos tarjeta */
+.tarjeta h3 {
+    margin: 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dash-text);
+}
+
+.tarjeta p {
+    font-size: 0.9rem;
+    color: var(--dash-text-muted);
+    margin: 0;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.barra-inferior {
+    background: var(--dash-card);
+    padding: 1rem 2rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+    border-top: 1px solid var(--dash-border);
+}
+
+.barra-inferior__copyright {
+    color: #A9AEB4;
+    font-size: 0.875rem;
+}
+
+.cerrar-sesion {
+    background: transparent;
+    border: 2px solid var(--dash-accent);
+    color: var(--dash-accent);
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.cerrar-sesion:hover {
+    background: var(--dash-accent);
+    color: white;
+}
+
+/* ============================================
+   MENSAJE BIENVENIDA
+   ============================================ */
+.bienvenida-usuario {
+    background: linear-gradient(135deg, rgba(192, 57, 43, 0.05) 0%, rgba(231, 76, 60, 0.05) 100%);
+    border: 1px solid rgba(192, 57, 43, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin: 2rem auto;
+    max-width: 600px;
+    text-align: center;
+}
+
+.bienvenida-usuario h3 {
+    margin: 0 0 0.5rem;
+    color: var(--dash-text);
+    font-size: 1.25rem;
+}
+
+.bienvenida-usuario p {
+    margin: 0;
+    color: var(--dash-text-muted);
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .barra-superior {
+        padding: 0.75rem 1rem;
+    }
+
+    .logo {
+        height: 45px;
+    }
+
+    .dashboard-panel {
+        grid-template-columns: 1fr;
+        margin: 2rem 1rem;
+        padding: 0;
+    }
+
+    .titulo-panel h2 {
+        font-size: 1.5rem;
+    }
+
+    .tarjeta {
+        padding: 1.5rem 1rem;
+    }
+
+    .barra-inferior {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .usuario-contenedor span {
+        display: none;
+    }
+}

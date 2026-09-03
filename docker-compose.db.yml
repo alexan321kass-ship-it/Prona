@@ -1,0 +1,24 @@
+services:
+  # Base de Datos (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: pronavid-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql_init:/docker-entrypoint-initdb.d
+    networks:
+      - pronavid-network
+
+networks:
+  pronavid-network:
+    name: pronavid-network
+    external: true
+
+volumes:
+  mysql_data:

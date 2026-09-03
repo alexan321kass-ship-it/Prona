@@ -1,0 +1,119 @@
+/* ============================================
+   RECUPERAR CONTRASEÑA - Estilos específicos
+   ============================================ */
+
+.recuperar-card {
+    max-width: 480px;
+}
+
+/* Barra de pasos */
+.pasos-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 2rem;
+}
+
+.paso-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.paso-dot span {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    background: #E9ECEF;
+    color: #A9AEB4;
+    transition: all 0.4s ease;
+}
+
+.paso-dot.activo span {
+    background: linear-gradient(135deg, #C0392B, #E74C3C);
+    color: white;
+    box-shadow: 0 4px 15px rgba(192, 57, 43, 0.4);
+}
+
+.paso-dot p {
+    font-size: 0.7rem;
+    color: #A9AEB4;
+    font-weight: 500;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+.paso-dot.activo p {
+    color: #C0392B;
+    font-weight: 700;
+}
+
+.paso-linea {
+    height: 2px;
+    flex: 1;
+    max-width: 60px;
+    background: #E9ECEF;
+    margin-top: 17px;
+    transition: background 0.4s ease;
+}
+
+.paso-linea.activa {
+    background: linear-gradient(to right, #C0392B, #E74C3C);
+}
+
+/* Input de código grande y centrado */
+.codigo-input {
+    text-align: center !important;
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 12px !important;
+    color: #3D4449 !important;
+}
+
+/* Botón tipo link */
+.btn-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+}
+
+/* Pantalla de éxito */
+.exito-container {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.exito-icono {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #27AE60, #2ECC71);
+    color: white;
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

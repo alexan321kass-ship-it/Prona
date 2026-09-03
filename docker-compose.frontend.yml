@@ -1,0 +1,17 @@
+services:
+  # Frontend (Vite + Nginx Proxy)
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: pronavid-web
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - pronavid-network
+
+networks:
+  pronavid-network:
+    name: pronavid-network
+    external: true

@@ -1,0 +1,280 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model auditoria {
+  id_auditoria   Int      @id @default(autoincrement())
+  fecha_evento   DateTime @default(now()) @db.DateTime(0)
+  accion         String   @db.VarChar(100)
+  tabla_afectada String?  @db.VarChar(50)
+  registro_id    Int?
+  detalles       String?  @db.Text
+  ip_direccion   String?  @db.VarChar(45)
+  id_usuario     Int?
+  usuario        usuario? @relation(fields: [id_usuario], references: [id_usuario])
+
+  @@index([id_usuario], map: "auditoria_id_usuario_fkey")
+}
+
+model permiso {
+  id_permiso  Int           @id @default(autoincrement())
+  nombre      String        @unique @db.VarChar(100)
+  descripcion String?       @db.Text
+  permiso_rol permiso_rol[]
+}
+
+model permiso_rol {
+  id_rol     Int
+  id_permiso Int
+  permiso    permiso @relation(fields: [id_permiso], references: [id_permiso], onDelete: Cascade)
+  rol        rol     @relation(fields: [id_rol], references: [id_rol], onDelete: Cascade)
+
+  @@id([id_rol, id_permiso])
+  @@index([id_permiso], map: "permiso_rol_id_permiso_fkey")
+}
+
+model rol {
+  id_rol      Int           @id @default(autoincrement())
+  nombre_rol  String        @unique(map: "nombre_rol") @db.VarChar(50)
+  permiso_rol permiso_rol[]
+  usuario     usuario[]
+}
+
+model categoria {
+  id_categoria        Int        @id @default(autoincrement())
+  nombre_categoria    String     @db.VarChar(100)
+  descripcion         String?    @db.Text
+  estado              Boolean?   @default(true)
+  fecha_creacion      DateTime?  @default(now()) @db.DateTime(0)
+  fecha_actualizacion DateTime?  @default(now()) @db.DateTime(0)
+  producto            producto[]
+}
+
+model cliente {
+  id_cliente        Int          @id @default(autoincrement())
+  nombre_cliente    String       @db.VarChar(100)
+  identificacion    String       @unique(map: "identificacion") @db.VarChar(30)
+  correo_cliente    String?      @db.VarChar(100)
+  telefono_cliente  String?      @db.VarChar(20)
+  direccion_cliente String?      @db.VarChar(255)
+  cotizacion        cotizacion[]
+  pedido            pedido[]
+  venta             venta[]
+}
+
+model cotizacion {
+  id_cotizacion      Int                  @id @default(autoincrement())
+  fecha_cotizacion   DateTime?            @default(now()) @db.DateTime(0)
+  fecha_vigencia     DateTime             @db.DateTime(0)
+  estado             cotizacion_estado?   @default(Pendiente)
+  id_usuario         Int
+  id_cliente         Int
+  usuario            usuario              @relation(fields: [id_usuario], references: [id_usuario], onUpdate: Restrict, map: "cotizacion_ibfk_1")
+  cliente            cliente              @relation(fields: [id_cliente], references: [id_cliente], onUpdate: Restrict, map: "cotizacion_ibfk_2")
+  detalle_cotizacion detalle_cotizacion[]
+
+  @@index([id_cliente], map: "id_cliente")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model detalle_cotizacion {
+  id_detalle_cotizacion Int        @id @default(autoincrement())
+  id_cotizacion         Int
+  id_producto           Int
+  cantidad              Int
+  precio_unitario       Decimal    @db.Decimal(10, 2)
+  cotizacion            cotizacion @relation(fields: [id_cotizacion], references: [id_cotizacion], onUpdate: Restrict, map: "detalle_cotizacion_ibfk_1")
+  producto              producto   @relation(fields: [id_producto], references: [id_producto], onUpdate: Restrict, map: "detalle_cotizacion_ibfk_2")
+
+  @@index([id_cotizacion], map: "id_cotizacion")
+  @@index([id_producto], map: "id_producto")
+}
+
+model detalle_devolucion {
+  id_detalle_devolucion Int                        @id @default(autoincrement())
+  id_devolucion         Int
+  id_producto           Int
+  cantidad              Int
+  precio_unitario       Decimal                    @db.Decimal(10, 2)
+  estado_producto       devolucion_estado_producto @default(Apto)
+  devolucion            devolucion                 @relation(fields: [id_devolucion], references: [id_devolucion], onUpdate: Restrict, map: "detalle_devolucion_ibfk_1")
+  producto              producto                   @relation(fields: [id_producto], references: [id_producto], onUpdate: Restrict, map: "detalle_devolucion_ibfk_2")
+
+  @@index([id_devolucion], map: "id_devolucion")
+  @@index([id_producto], map: "id_producto")
+}
+
+model detalle_venta {
+  id_detalle_venta Int      @id @default(autoincrement())
+  id_venta         Int
+  id_producto      Int
+  cantidad         Int
+  precio_unitario  Decimal  @db.Decimal(10, 2)
+  venta            venta    @relation(fields: [id_venta], references: [id_venta], onUpdate: Restrict, map: "detalle_venta_ibfk_1")
+  producto         producto @relation(fields: [id_producto], references: [id_producto], onUpdate: Restrict, map: "detalle_venta_ibfk_2")
+
+  @@index([id_producto], map: "id_producto")
+  @@index([id_venta], map: "id_venta")
+}
+
+model devolucion {
+  id_devolucion      Int                  @id @default(autoincrement())
+  fecha_devolucion   DateTime?            @default(now()) @db.DateTime(0)
+  motivo             String               @db.Text
+  id_venta           Int
+  id_usuario         Int
+  detalle_devolucion detalle_devolucion[]
+  venta              venta                @relation(fields: [id_venta], references: [id_venta], onUpdate: Restrict, map: "devolucion_ibfk_1")
+  usuario            usuario              @relation(fields: [id_usuario], references: [id_usuario], onUpdate: Restrict)
+
+  @@index([id_venta], map: "id_venta")
+  @@index([id_usuario], map: "id_usuario_devolucion")
+}
+
+model notificacion {
+  id_notificacion    Int       @id @default(autoincrement())
+  fecha_notificacion DateTime? @default(now()) @db.DateTime(0)
+  mensaje            String    @db.Text
+  id_pedido          Int
+  pedido             pedido    @relation(fields: [id_pedido], references: [id_pedido], onUpdate: Restrict, map: "notificacion_ibfk_1")
+
+  @@index([id_pedido], map: "id_pedido")
+}
+
+model pedido {
+  id_pedido     Int                   @id @default(autoincrement())
+  fecha_pedido  DateTime?             @default(now()) @db.DateTime(0)
+  estado_pedido pedido_estado_pedido? @default(Pendiente)
+  id_cliente    Int
+  id_usuario    Int
+  notificacion  notificacion[]
+  cliente       cliente               @relation(fields: [id_cliente], references: [id_cliente], onUpdate: Restrict, map: "pedido_ibfk_1")
+  usuario       usuario               @relation(fields: [id_usuario], references: [id_usuario], onUpdate: Restrict, map: "pedido_ibfk_2")
+  venta         venta[]
+
+  @@index([id_cliente], map: "id_cliente")
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model producto {
+  id_producto           Int                     @id @default(autoincrement())
+  codigo_interno        String?                 @unique(map: "codigo_interno") @db.VarChar(50)
+  nombre_producto       String                  @db.VarChar(100)
+  descripcion           String?                 @db.Text
+  precio                Decimal                 @db.Decimal(10, 2)
+  stock                 Int?                    @default(0)
+  imagen_url            String?                 @db.VarChar(255)
+  imagen_public_id      String?                 @db.VarChar(255)
+  estado                Boolean                 @default(true)
+  id_categoria          Int
+  detalle_cotizacion    detalle_cotizacion[]
+  detalle_devolucion    detalle_devolucion[]
+  detalle_venta         detalle_venta[]
+  movimiento_inventario movimiento_inventario[]
+  categoria             categoria               @relation(fields: [id_categoria], references: [id_categoria], onUpdate: Restrict, map: "producto_ibfk_1")
+
+  @@index([id_categoria], map: "id_categoria")
+}
+
+model movimiento_inventario {
+  id_movimiento   Int                        @id @default(autoincrement())
+  fecha           DateTime?                  @default(now()) @db.DateTime(0)
+  tipo_movimiento movimiento_inventario_tipo
+  cantidad        Int
+  motivo          String?                    @db.Text
+  id_producto     Int
+  id_usuario      Int
+  producto        producto                   @relation(fields: [id_producto], references: [id_producto], onUpdate: Restrict)
+  usuario         usuario                    @relation(fields: [id_usuario], references: [id_usuario], onUpdate: Restrict)
+
+  @@index([id_producto])
+  @@index([id_usuario])
+}
+
+model usuario {
+  id_usuario                 Int                     @id @default(autoincrement())
+  primer_nombre              String                  @db.VarChar(50)
+  primer_apellido            String                  @db.VarChar(50)
+  tipo_documento             usuario_tipo_documento
+  numero_documento           String                  @unique(map: "numero_documento") @db.VarChar(30)
+  correo                     String                  @unique(map: "correo") @db.VarChar(100)
+  contrasena                 String                  @db.VarChar(255)
+  estado                     Boolean?                @default(true)
+  requiere_cambio_contrasena Boolean                 @default(true)
+  id_rol                     Int
+  auditoria                  auditoria[]
+  cotizacion                 cotizacion[]
+  devolucion                 devolucion[]
+  movimiento_inventario      movimiento_inventario[]
+  pedido                     pedido[]
+  rol                        rol                     @relation(fields: [id_rol], references: [id_rol], onUpdate: Restrict, map: "usuario_ibfk_1")
+  venta                      venta[]
+
+  @@index([id_rol], map: "id_rol")
+}
+
+model venta {
+  id_venta      Int                 @id @default(autoincrement())
+  fecha_venta   DateTime?           @default(now()) @db.DateTime(0)
+  estado_venta  venta_estado_venta? @default(Pendiente)
+  subtotal      Decimal             @db.Decimal(10, 2)
+  descuento     Decimal?            @default(0.00) @db.Decimal(10, 2)
+  impuestos     Decimal?            @default(0.00) @db.Decimal(10, 2)
+  total         Decimal?            @db.Decimal(10, 2)
+  id_pedido     Int?
+  id_cliente    Int?
+  id_usuario    Int
+  detalle_venta detalle_venta[]
+  devolucion    devolucion[]
+  pedido        pedido?             @relation(fields: [id_pedido], references: [id_pedido], onDelete: Restrict, onUpdate: Restrict, map: "venta_ibfk_1")
+  usuario       usuario             @relation(fields: [id_usuario], references: [id_usuario], onUpdate: Restrict, map: "venta_ibfk_2")
+  cliente       cliente?            @relation(fields: [id_cliente], references: [id_cliente], onUpdate: Restrict)
+
+  @@index([id_pedido], map: "id_pedido")
+  @@index([id_usuario], map: "id_usuario")
+  @@index([id_cliente], map: "id_cliente_venta")
+}
+
+enum cotizacion_estado {
+  Pendiente
+  Aprobada
+  Rechazada
+}
+
+enum pedido_estado_pedido {
+  Pendiente
+  Recibido
+  Preparacion @map("Preparación")
+  Despachado
+  Entregado
+  Cancelado
+}
+
+enum venta_estado_venta {
+  Pendiente
+  Pagada
+  Cancelada
+}
+
+enum usuario_tipo_documento {
+  CC @map("Cédula de ciudadanía")
+  TI @map("Tarjeta de identidad")
+  CE @map("Cédula de extranjería")
+}
+
+enum devolucion_estado_producto {
+  Apto
+  Descarte
+}
+
+enum movimiento_inventario_tipo {
+  Ingreso
+  Salida
+  Ajuste
+}

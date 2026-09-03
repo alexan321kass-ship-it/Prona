@@ -1,0 +1,403 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary: #C0392B; /* Rojo Pronavid Oficial */
+    --primary-dark: #A93226;
+    --primary-glass: rgba(192, 57, 43, 0.1);
+    --secondary: #E67E22; /* Naranja complementario */
+    --bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --text-main: #2C3E50;
+    --text-light: #7F8C8D;
+    --text-muted: #95A5A6;
+    --danger: #E74C3C;
+    --success: #27AE60;
+    --info: #3498DB;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --shadow-premium: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+body {
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-main);
+}
+
+/* --- Layout Principal --- */
+.seguimiento-page {
+    min-height: 100vh;
+    background: var(--bg-gradient);
+}
+
+.seg-header {
+    padding: 1.5rem 3rem;
+    background: var(--primary); /* Distintivo Rojo Pronavid restablecido */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(192, 57, 43, 0.3);
+}
+
+.seg-logo {
+    height: 45px;
+    object-fit: contain;
+    filter: brightness(0) invert(1); /* Convierte el logo a blanco puro para resaltar sobre el fondo rojo */
+}
+
+/* --- Cards Premium --- */
+.seg-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-premium);
+    overflow: hidden;
+}
+
+.seg-card-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Grid de Productos --- */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.product-item-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0,0,0,0.03) !important;
+}
+
+.product-item-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.product-card-image {
+    position: relative;
+    border-bottom: 1px solid #F1F3F5;
+    background: #f8f9fa;
+}
+
+.product-card-body {
+    padding: 1.5rem;
+}
+
+.product-name {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.price-value {
+    color: var(--primary) !important;
+    font-weight: 800;
+}
+
+/* --- Modal Premium (2 Columnas) --- */
+.premium-modal {
+    background: white;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+}
+
+.modal-icon-badge {
+    background: var(--primary-glass) !important;
+    color: var(--primary) !important;
+}
+
+.btn-premium-action {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 10px 20px rgba(192, 57, 43, 0.2);
+}
+
+.btn-premium-action:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px rgba(192, 57, 43, 0.3);
+}
+
+.btn-cancel-premium {
+    background: #F1F3F5;
+    color: var(--text-light);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* --- Estructura Forma Premium Modal --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-header-premium {
+    margin-bottom: 2rem;
+}
+
+.modal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.modal-icon-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-title-group h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-main);
+}
+
+.premium-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group.full {
+    grid-column: 1 / -1;
+}
+
+.input-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.premium-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.15);
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.25);
+}
+
+/* --- Inputs --- */
+.premium-form input, 
+.premium-form select, 
+.premium-form textarea {
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #E2E8F0 !important;
+    background: #F8FAFC !important;
+    color: var(--text-main);
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.premium-form textarea {
+    resize: vertical;
+}
+
+.premium-form input:focus,
+.premium-form select:focus,
+.premium-form textarea:focus {
+    outline: none;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px var(--primary-glass) !important;
+}
+
+/* --- Tags y Estados --- */
+.tab-pill.active {
+    background: var(--primary) !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(192, 57, 43, 0.2) !important;
+}
+
+.stock-badge.in-stock {
+    background: #E8F5E9;
+    color: #27AE60;
+}
+
+.stock-badge.low-stock {
+    background: #FDEDEC;
+    color: var(--primary);
+}
+
+/* --- Botones Especiales --- */
+.btn-premium {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(192, 57, 43, 0.2);
+}
+
+.btn-premium:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(192, 57, 43, 0.3);
+}
+
+.btn-volver {
+    position: absolute;
+    top: 25px;
+    left: 20px;
+    background: transparent;
+    color: var(--text-main);
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-volver:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--primary);
+}
+
+.tab-pill {
+    background: transparent;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-btn {
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+}
+
+.action-btn.edit:hover {
+    background: #EBF5FB;
+    color: var(--info);
+}
+
+.action-btn.delete:hover {
+    background: #FDEDEC;
+    color: var(--danger);
+}
+
+.product-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    padding-top: 1rem;
+    justify-content: flex-end;
+}
+
+/* --- Utilidades --- */
+.seg-input {
+    border: 1px solid #E2E8F0;
+    background: white;
+    transition: all 0.3s;
+}
+
+.seg-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 5px var(--primary-glass);
+}
+
+/* --- Animaciones --- */
+.loader {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsivo para el Modal */
+@media (max-width: 900px) {
+    .premium-modal {
+        grid-template-columns: 1fr !important;
+    }
+    .modal-content > div:last-child {
+        display: none !important; /* Escondemos preview en móviles */
+    }
+}

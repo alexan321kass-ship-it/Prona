@@ -1,0 +1,134 @@
+/**
+ * Estilos del módulo de Perfil de Usuario
+ */
+
+/* Header del perfil */
+.perfil-cabecera {
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.perfil-avatar {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+}
+
+.perfil-nombre {
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
+}
+
+.perfil-rol-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* Card con max-width centrada */
+.perfil-card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Contenido del perfil */
+.perfil-contenido {
+    padding: 1.5rem 2rem;
+}
+
+/* Título de sección */
+.perfil-seccion-titulo {
+    margin: 0 0 1rem;
+    color: var(--color-text-main);
+    font-size: 1.1rem;
+}
+
+/* Grid de datos */
+.perfil-datos-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+/* Item dato */
+.perfil-dato-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: #F8F9FA;
+    border-radius: 8px;
+}
+
+.perfil-dato-item__etiqueta {
+    color: #6C737A;
+}
+
+.perfil-dato-item__valor {
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+.perfil-dato-item__valor--acento {
+    color: var(--color-primary);
+}
+
+/* Sección de botones */
+.perfil-botones {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.perfil-boton-flex {
+    flex: 1;
+}
+
+/* Botón cerrar sesión */
+.perfil-boton-cerrar {
+    background: rgba(231, 76, 60, 0.1);
+    color: #E74C3C;
+    border: 1px solid #E74C3C;
+}
+
+/* Toggle de cambio de contraseña */
+.perfil-toggle-password {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #F8F9FA;
+    border-radius: 8px;
+}
+
+.perfil-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.perfil-toggle-texto {
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+/* Sección de contraseñas */
+.perfil-password-section {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+/* Actions con margen */
+.perfil-acciones {
+    margin-top: 1.5rem;
+}
