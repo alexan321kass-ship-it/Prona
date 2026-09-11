@@ -368,7 +368,7 @@ export default function Pedidos() {
         </div>
 
         <div>
-            <div className="pedidos-seccion-cliente" style={{ background: 'rgba(255, 255, 255, 0.7)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '20px', padding: '2rem', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+            <div className="pedidos-seccion-cliente" style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '20px', padding: '2rem', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', position: 'relative', zIndex: 100 }}>
                 <SelectorCliente 
                     clientes={clientes}
                     clienteSeleccionado={clienteSeleccionado}
