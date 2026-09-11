@@ -76,8 +76,11 @@ export default function DashboardAdmin() {
                     reportesService.getMetricasGrales()
                 ]);
 
-                setMasVendido(Array.isArray(dataMas?.totales) ? dataMas.totales : (Array.isArray(dataMas) ? dataMas : []));
-                setClientes(Array.isArray(dataClientes?.clientes) ? dataClientes.clientes : (Array.isArray(dataClientes) ? dataClientes : []));
+                const masArr = Array.isArray(dataMas?.totales) ? dataMas.totales : (Array.isArray(dataMas) ? dataMas : []);
+                const cliArr = Array.isArray(dataClientes) ? dataClientes : (Array.isArray(dataClientes?.clientes) ? dataClientes.clientes : (Array.isArray(dataClientes?.clientes?.clientes) ? dataClientes.clientes.clientes : []));
+                
+                setMasVendido(masArr);
+                setClientes(cliArr);
                 setResumen(dataResumen || { totalVentas: 0, totalProductos: 0, totalIngresos: 0 });
                 setVentasMensuales(Array.isArray(dataMensual) ? dataMensual : []);
                 setMetricasGrales(dataGrales || { total_clientes: 0, productos_activos: 0, ingresos_historicos: 0, pedidos_pendientes: 0 });

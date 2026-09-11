@@ -118,7 +118,7 @@ export class ReportesService {
       JOIN producto_top pt ON t.id_cliente = pt.id_cliente AND pt.rn = 1
       ORDER BY t.cantidad_total DESC
     `;
-    return { clientes: this.serializeBigInt(result) };
+    return this.serializeBigInt(result);
   }
 
   // Obtener resumen global de ingresos y unidades vendidas
