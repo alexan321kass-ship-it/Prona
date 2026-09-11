@@ -27,6 +27,11 @@ export default function VisualMetrics({ resumen = {}, metricasGrales = {}, venta
 
   const fmt = formatearMoneda || ((val) => `$${Number(val || 0).toLocaleString('es-CO')}`);
 
+  const valIngresos = resumen?.totalIngresos ?? resumen?.totalingresos ?? 0;
+  const valVentas = resumen?.totalVentas ?? resumen?.totalventas ?? 0;
+  const valClientes = metricasGrales?.total_clientes ?? metricasGrales?.totalclientes ?? 0;
+  const valProductos = resumen?.totalProductos ?? resumen?.totalproductos ?? 0;
+
   return (
     <div className="fade-in">
       {/* KPI CARDS */}
@@ -35,7 +40,7 @@ export default function VisualMetrics({ resumen = {}, metricasGrales = {}, venta
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
             <div>
               <p style={{ margin: 0, color: '#64748B', fontWeight: 600, fontSize: '0.9rem' }}>Ingresos Totales</p>
-              <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '1.8rem' }}>{fmt(resumen?.totalIngresos)}</h3>
+              <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '1.8rem' }}>{fmt(valIngresos)}</h3>
             </div>
             <div style={{ background: '#ECFDF5', padding: '0.8rem', borderRadius: '14px', color: '#10B981' }}>
               <DollarSign size={24} />
@@ -51,7 +56,7 @@ export default function VisualMetrics({ resumen = {}, metricasGrales = {}, venta
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
             <div>
               <p style={{ margin: 0, color: '#64748B', fontWeight: 600, fontSize: '0.9rem' }}>Pedidos Realizados</p>
-              <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '1.8rem' }}>{resumen?.totalVentas || 0}</h3>
+              <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '1.8rem' }}>{valVentas}</h3>
             </div>
             <div style={{ background: '#EFF6FF', padding: '0.8rem', borderRadius: '14px', color: '#3B82F6' }}>
               <TrendingUp size={24} />
@@ -67,7 +72,7 @@ export default function VisualMetrics({ resumen = {}, metricasGrales = {}, venta
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
             <div>
               <p style={{ margin: 0, color: '#64748B', fontWeight: 600, fontSize: '0.9rem' }}>Clientes Totales</p>
-              <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '1.8rem' }}>{metricasGrales?.total_clientes || 0}</h3>
+              <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '1.8rem' }}>{valClientes}</h3>
             </div>
             <div style={{ background: '#F5F3FF', padding: '0.8rem', borderRadius: '14px', color: '#8B5CF6' }}>
               <Users size={24} />
@@ -83,7 +88,7 @@ export default function VisualMetrics({ resumen = {}, metricasGrales = {}, venta
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
             <div>
               <p style={{ margin: 0, color: '#64748B', fontWeight: 600, fontSize: '0.9rem' }}>Productos Vendidos</p>
-              <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '1.8rem' }}>{resumen?.totalProductos || 0}</h3>
+              <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '1.8rem' }}>{valProductos}</h3>
             </div>
             <div style={{ background: '#FFFBEB', padding: '0.8rem', borderRadius: '14px', color: '#F59E0B' }}>
               <Package size={24} />

@@ -125,17 +125,20 @@ export class ReportesService {
   async getResumen() {
     const result: any[] = await this.prisma.$queryRaw`
       SELECT 
-          COUNT(DISTINCT v.id_venta) AS totalVentas,
-          COALESCE(SUM(dv.cantidad), 0) AS totalProductos,
-          COALESCE(SUM(dv.cantidad * p.precio), 0) AS totalIngresos
+          COUNT(DISTINCT v.id_venta) AS "totalVentas",
+          COALESCE(SUM(dv.cantidad), 0) AS "totalProductos",
+          COALESCE(SUM(dv.cantidad * p.precio), 0) AS "totalIngresos"
       FROM venta v
       JOIN detalle_venta dv ON v.id_venta = dv.id_venta
       JOIN producto p ON dv.id_producto = p.id_producto
     `;
     const serialized = this.serializeBigInt(result);
-    return (
-      serialized[0] || { totalVentas: 0, totalProductos: 0, totalIngresos: 0 }
-    );
+    const r = serialized[0] || {};
+    return {
+      totalVentas: Number(r.totalVentas ?? r.totalventas ?? 0),
+      totalProductos: Number(r.totalProductos ?? r.totalproductos ?? 0),
+      totalIngresos: Number(r.totalIngresos ?? r.totalingresos ?? 0),
+    };
   }
 
   // Reporte de rendimiento de ventas segmentado por mes (PostgreSQL)
