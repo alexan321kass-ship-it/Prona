@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, ChevronLeft } from "lucide-react";
+import { ShoppingCart, ChevronLeft, UserCheck, PackageCheck, CheckCircle2 } from "lucide-react";
 import "../../compartido/styles/seguimiento-compartido.css";
 import "./pedidos.css";
 
@@ -351,7 +351,7 @@ export default function Pedidos() {
       <div className={`pedidos-contenido ${mostrarCarrito ? "pedidos-contenido--con-carrito" : ""}`}>
         
         {/* PREMIUM HEADER */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ background: 'var(--color-primary-glass)', padding: '0.8rem', borderRadius: '14px', color: 'var(--color-primary)' }}>
                     <ShoppingCart size={28} />
@@ -361,8 +361,47 @@ export default function Pedidos() {
                         Punto de Venta
                     </h2>
                     <p style={{ margin: 0, color: '#6b7280', fontSize: '0.95rem', fontWeight: 500 }}>
-                        Gestiona y procesa nuevos pedidos
+                        Gestiona y procesa nuevos pedidos paso a paso
                     </p>
+                </div>
+            </div>
+        </div>
+
+        {/* WIZARD DE 3 PASOS */}
+        <div className="pedidos-wizard-bar">
+            <div className={`pedidos-wizard-step ${clienteSeleccionado ? 'completed' : 'active'}`}>
+                <div className="pedidos-wizard-step__num">
+                    {clienteSeleccionado ? <CheckCircle2 size={18} /> : "1"}
+                </div>
+                <div className="pedidos-wizard-step__text">
+                    <span className="pedidos-wizard-step__label">Paso 1</span>
+                    <span className="pedidos-wizard-step__title">
+                        {clienteSeleccionado ? clienteSeleccionado.nombre_cliente : "Seleccionar Cliente"}
+                    </span>
+                </div>
+            </div>
+
+            <div className="pedidos-wizard-divider"></div>
+
+            <div className={`pedidos-wizard-step ${!clienteSeleccionado ? 'disabled' : carrito.length > 0 ? 'completed' : 'active'}`}>
+                <div className="pedidos-wizard-step__num">
+                    {carrito.length > 0 ? <CheckCircle2 size={18} /> : "2"}
+                </div>
+                <div className="pedidos-wizard-step__text">
+                    <span className="pedidos-wizard-step__label">Paso 2</span>
+                    <span className="pedidos-wizard-step__title">
+                        {carrito.length > 0 ? `${carrito.length} productos en carrito` : "Elegir Productos"}
+                    </span>
+                </div>
+            </div>
+
+            <div className="pedidos-wizard-divider"></div>
+
+            <div className={`pedidos-wizard-step ${!clienteSeleccionado || carrito.length === 0 ? 'disabled' : 'active'}`}>
+                <div className="pedidos-wizard-step__num">3</div>
+                <div className="pedidos-wizard-step__text">
+                    <span className="pedidos-wizard-step__label">Paso 3</span>
+                    <span className="pedidos-wizard-step__title">Confirmar Pedido</span>
                 </div>
             </div>
         </div>

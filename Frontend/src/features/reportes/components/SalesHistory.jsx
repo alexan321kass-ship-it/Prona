@@ -243,6 +243,23 @@ export default function SalesHistory({ historial, formatearMoneda }) {
 
   return (
     <Card title="Historial Completo de Ventas" className="fade-in">
+      {/* Botones de Filtro Rápido por Período */}
+      <div className="reportes-periodo-pills">
+        <span style={{ fontSize: "0.8rem", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em", marginRight: "0.4rem" }}>
+          Filtro Rápido:
+        </span>
+        {PERIODOS.map(p => (
+          <button
+            key={p.value}
+            type="button"
+            className={`reportes-periodo-pill ${periodoSeleccionado === p.value ? 'active' : ''}`}
+            onClick={() => setPeriodoSeleccionado(prev => prev === p.value ? null : p.value)}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
+
       <div className="historial-cabecera">
         <div className="historial-busqueda">
           <EntradaAutocompletado

@@ -26,12 +26,12 @@ export default function TarjetaProducto({ producto, agregarAlCarrito, formatearP
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="premium-glass-card tarjeta-producto"
         >
-            {/* Stock Badge */}
+            {/* Stock Badge Dinámico */}
             <motion.div 
-                whileHover={{ scale: 1.1 }}
-                className={`stock-badge tarjeta-producto__badge-stock ${isOutOfStock ? 'low-stock' : isLowStock ? 'low-stock' : 'in-stock'}`}
+                whileHover={{ scale: 1.08 }}
+                className={`stock-badge tarjeta-producto__badge-stock ${isOutOfStock ? 'stock-badge--agotado' : isLowStock ? 'stock-badge--bajo' : 'stock-badge--disponible'}`}
             >
-                {isOutOfStock ? "Agotado" : `${producto.stock} uds`}
+                {isOutOfStock ? "Agotado (0 uds)" : isLowStock ? `¡Bajo Stock: ${producto.stock} uds!` : `En Stock: ${producto.stock} uds`}
             </motion.div>
 
             {/* Imagen del producto con efecto glass */}

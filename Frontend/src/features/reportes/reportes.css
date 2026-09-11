@@ -46,6 +46,57 @@
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
+/* ============================================
+   SKELETON LOADERS Y FILTROS DE PERÍODO EN REPORTES
+   ============================================ */
+.reportes-skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.reportes-skeleton-card {
+    background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+    background-size: 200% 100%;
+    border-radius: 18px;
+    height: 110px;
+    animation: shimmerReportes 1.5s infinite linear;
+}
+
+@keyframes shimmerReportes {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.reportes-periodo-pills {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+}
+
+.reportes-periodo-pill {
+    padding: 0.45rem 1rem;
+    border-radius: 100px;
+    border: 1px solid #E2E8F0;
+    background: #FFFFFF;
+    color: #64748B;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reportes-periodo-pill:hover,
+.reportes-periodo-pill.active {
+    background: #C0392B;
+    color: #FFFFFF;
+    border-color: #C0392B;
+    box-shadow: 0 4px 12px rgba(192, 57, 43, 0.25);
+}
+
 .reporte-pestanas button {
     padding: 0.8rem 1.5rem;
     border-radius: 12px;

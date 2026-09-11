@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileText, ChevronDown, ChevronUp, CheckCircle, XCircle, Clock, Trash2, ArrowLeft, RefreshCw, Eye } from "lucide-react";
+import { FileText, ChevronDown, ChevronUp, CheckCircle, XCircle, Clock, Trash2, ArrowLeft, RefreshCw, Eye, Printer } from "lucide-react";
 import { api } from "../../config/api";
 import "../../compartido/styles/seguimiento-compartido.css";
 import "./cotizaciones.css";
@@ -243,7 +243,70 @@ export default function HistorialCotizaciones() {
                 <div style={{ marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid #e2e8f0" }}>
                   <h3 style={{ fontSize: "0.9rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>Acciones sobre la Cotización</h3>
                   
-                  <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
+                    <button 
+                      onClick={() => {
+                        const totalSub = calcularTotal(modalDetalle);
+                        const fecha = formatearFecha(modalDetalle.fecha_cotizacion);
+                        const cliente = modalDetalle.cliente;
+                        const htmlContent = `
+                          <!DOCTYPE html>
+                          <html>
+                          <head>
+                            <title>Cotización #${modalDetalle.id_cotizacion} - Pronavid</title>
+                            <style>
+                              body { font-family: sans-serif; padding: 40px; color: #1e293b; }
+                              .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #C0392B; padding-bottom: 20px; margin-bottom: 30px; }
+                              .logo { font-size: 24px; font-weight: 800; color: #C0392B; margin: 0; }
+                              .card { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #e2e8f0; }
+                              table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                              th { background: #C0392B; color: white; padding: 12px; text-align: left; }
+                              td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+                              .total { text-align: right; font-size: 20px; font-weight: 800; color: #C0392B; margin-top: 20px; }
+                            </style>
+                          </head>
+                          <body>
+                            <div class="header">
+                              <div>
+                                <h1 class="logo">🍞 PRONAVID</h1>
+                                <p style="margin:4px 0 0; color:#64748b;">Documento Oficial de Cotización #${modalDetalle.id_cotizacion}</p>
+                              </div>
+                              <div><p><strong>Fecha:</strong> ${fecha}</p></div>
+                            </div>
+                            <div class="card">
+                              <h3 style="margin:0 0 10px; color:#C0392B;">INFORMACIÓN DEL CLIENTE</h3>
+                              <p style="margin:4px 0;"><strong>Cliente:</strong> ${cliente?.nombre_cliente || 'N/A'}</p>
+                              <p style="margin:4px 0;"><strong>Identificación:</strong> ${cliente?.identificacion || 'N/A'}</p>
+                            </div>
+                            <table>
+                              <thead>
+                                <tr><th>Producto</th><th>Cantidad</th><th>Precio Unit.</th><th>Subtotal</th></tr>
+                              </thead>
+                              <tbody>
+                                ${modalDetalle.detalle_cotizacion?.map(item => `
+                                  <tr>
+                                    <td>${item.producto?.nombre_producto || `Producto #${item.id_producto}`}</td>
+                                    <td>${item.cantidad}</td>
+                                    <td>${formatearMoneda(item.precio_unitario)}</td>
+                                    <td>${formatearMoneda(item.precio_unitario * item.cantidad)}</td>
+                                  </tr>
+                                `).join('')}
+                              </tbody>
+                            </table>
+                            <div class="total">TOTAL GENERAL: ${formatearMoneda(totalSub)}</div>
+                          </body>
+                          </html>
+                        `;
+                        const v = window.open('', '_blank');
+                        v.document.write(htmlContent);
+                        v.document.close();
+                        setTimeout(() => { v.print(); }, 400);
+                      }}
+                      style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", borderRadius: "100px", border: "1.5px solid #C0392B", background: "white", color: "#C0392B", fontWeight: 700, fontSize: "0.95rem", cursor: "pointer" }}
+                    >
+                      <Printer size={18} /> Imprimir / PDF
+                    </button>
+
                     {modalDetalle.estado === "Pendiente" && (
                       <>
                         <button disabled={cargandoAccion} onClick={() => handleCambiarEstado(modalDetalle.id_cotizacion, "Aprobada")} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", borderRadius: "100px", border: "none", background: "#dcfce7", color: "#16a34a", fontWeight: 700, fontSize: "0.95rem", cursor: cargandoAccion ? "wait" : "pointer" }}>
