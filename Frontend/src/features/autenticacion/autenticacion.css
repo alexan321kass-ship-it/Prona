@@ -10,60 +10,51 @@
 .auth-page {
   font-family: var(--font-main);
   min-height: 100vh;
-  background: #fdfdfd;
-  background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-  background-size: 32px 32px;
+  background: #0F172A;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(192, 57, 43, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(30, 41, 59, 0.8) 0px, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.9) 0%, #090D16 100%);
   position: relative;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Efectos de fondo sutiles (sin colores llamativos, solo cristal) */
-.auth-page::before {
-  content: "";
+.auth-ambient-glow {
   position: absolute;
-  top: -20%;
-  left: -10%;
-  width: 60%;
-  height: 80%;
-  background: radial-gradient(circle, rgba(0,0,0,0.03) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: 0;
-}
-
-.auth-page::after {
-  content: "";
-  position: absolute;
-  bottom: -30%;
-  right: -20%;
-  width: 70%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: 0;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(192, 57, 43, 0.18) 0%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* ============================================
-   HEADER (Ajustado para integrarse al fondo blanco)
+   HEADER
    ============================================ */
 .encabezado {
   position: relative;
   z-index: 10;
   width: 100%;
   background: transparent;
-  padding: 2rem 0 1rem;
+  padding: 2.5rem 0 1rem;
   text-align: center;
   box-shadow: none;
 }
 
 .encabezado .logo {
-  height: 60px;
-  /* Logo en su color original */
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+  height: 64px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .encabezado .logo:hover {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 /* ============================================
@@ -75,104 +66,173 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 120px);
-  padding: 1rem 1rem 3rem;
+  flex: 1;
+  padding: 1rem 1rem 4rem;
 }
 
 /* ============================================
-   CARD PRINCIPAL (Glassmorphism premium sin bordes duros)
+   CARD PRINCIPAL (Glassmorphism ultra-premium)
    ============================================ */
 .glass-card {
   width: 100%;
   max-width: 440px;
   padding: 3rem 2.5rem;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.04), 
-    0 1px 3px rgba(0, 0, 0, 0.02);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+    0 25px 50px -12px rgba(0, 0, 0, 0.35), 
+    0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-4px);
   box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.08), 
-    0 1px 3px rgba(0, 0, 0, 0.02);
+    0 30px 60px -12px rgba(0, 0, 0, 0.45), 
+    0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* ============================================
-   FORMULARIO
+   FORMULARIO Y ENCABEZADOS
    ============================================ */
-.formulario h2 {
-  font-size: 1.85rem;
-  font-weight: 700;
+.auth-card-header {
   text-align: center;
-  color: #111827; /* Dark gray, nearly black */
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.5px;
+  margin-bottom: 2rem;
+}
+
+.formulario h2 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  text-align: center;
+  color: #0F172A;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.02em;
 }
 
 .formulario .subtitulo {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   text-align: center;
-  color: #6B7280;
-  margin-bottom: 2.5rem;
+  color: #64748B;
+  margin-bottom: 0;
+  line-height: 1.4;
 }
 
 /* ============================================
-   INPUTS
+   INPUTS CON ÍCONOS Y EYE TOGGLE
    ============================================ */
 .input-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.input-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 .input-label {
   display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 0.6rem;
-  letter-spacing: 0.3px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.auth-forgot-link {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #C0392B;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.auth-forgot-link:hover {
+  color: #962D22;
+  text-decoration: underline;
+}
+
+.input-field-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1.1rem;
+  color: #94A3B8;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.formulario .input.input-with-icon {
+  padding-left: 3rem;
+}
+
+.formulario .input.input-with-eye {
+  padding-right: 3rem;
 }
 
 .formulario .input,
 .formulario input,
 .formulario select {
   width: 100%;
-  padding: 1rem 1.2rem;
-  font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
-  color: #111827;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  height: 52px;
+  padding: 0 1.2rem;
+  font-family: inherit;
+  font-size: 0.98rem;
+  color: #0F172A;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  transition: all 0.2s ease;
   outline: none;
+  font-weight: 600;
 }
 
 .formulario .input::placeholder,
 .formulario input::placeholder {
-  color: #9ca3af;
+  color: #94A3B8;
+  font-weight: 500;
 }
 
 .formulario .input:focus,
 .formulario input:focus,
 .formulario select:focus {
-  background: #ffffff;
-  border-color: #111827;
-  box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.05);
+  background: #FFFFFF;
+  border-color: #C0392B;
+  box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.1);
 }
 
-.formulario .input:disabled,
-.formulario input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background: #f3f4f6;
+.input-field-wrapper:focus-within .input-icon {
+  color: #C0392B;
+}
+
+/* EYE TOGGLE BUTTON */
+.btn-toggle-eye {
+  position: absolute;
+  right: 0.8rem;
+  background: transparent;
+  border: none;
+  color: #64748B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-toggle-eye:hover {
+  color: #C0392B;
+  background: rgba(192, 57, 43, 0.08);
 }
 
 /* ============================================
@@ -180,29 +240,31 @@
    ============================================ */
 .btn-submit {
   width: 100%;
-  padding: 1.15rem;
-  margin-top: 1.5rem;
-  font-family: var(--font-main);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #ffffff;
-  background: #C0392B; /* Rojo de la marca elegante */
-  border: 1px solid #C0392B;
-  border-radius: 12px;
+  height: 52px;
+  margin-top: 1.8rem;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #C0392B 0%, #A93226 100%);
+  border: none;
+  border-radius: 14px;
   cursor: pointer;
-  display: flex;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 8px 20px rgba(192, 57, 43, 0.3);
+}
+
+.btn-content-inline {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 14px rgba(192, 57, 43, 0.25);
-  letter-spacing: 0.5px;
+  gap: 0.6rem;
 }
 
 .btn-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  background: #A93226; /* Rojo ligeramente más oscuro */
-  box-shadow: 0 8px 25px rgba(192, 57, 43, 0.35);
+  background: linear-gradient(135deg, #D9381E 0%, #B92B1D 100%);
+  box-shadow: 0 12px 28px rgba(192, 57, 43, 0.4);
 }
 
 .btn-submit:active:not(:disabled) {
@@ -210,8 +272,7 @@
 }
 
 .btn-submit:disabled {
-  background: #9ca3af;
-  border-color: #9ca3af;
+  background: #CBD5E1;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -234,28 +295,31 @@
 }
 
 /* ============================================
-   MENSAJES
+   MENSAJES / FEEDBACK TOAST
    ============================================ */
 .mensaje {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-align: center;
-  animation: slideUp 0.3s ease;
+  margin-top: 1.4rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  animation: slideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .mensaje.success {
-  background: rgba(16, 185, 129, 0.08);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: #ECFDF5;
+  color: #047857;
+  border: 1px solid #A7F3D0;
 }
 
 .mensaje.error {
-  background: rgba(239, 68, 68, 0.08);
-  color: #dc2626;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: #FEF2F2;
+  color: #B91C1C;
+  border: 1px solid #FCA5A5;
 }
 
 @keyframes slideUp {
