@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { UserSearch, X, CheckCircle2 } from "lucide-react";
+import { UserSearch, X, CheckCircle2, Building2 } from "lucide-react";
 import "./pedidos.css";
 
-export default function SelectorCliente({ clientes, clienteSeleccionado, setClienteSeleccionado }) {
+export default function SelectorCliente({ clientes = [], clienteSeleccionado, setClienteSeleccionado }) {
     const [busqueda, setBusqueda] = useState("");
     const [abierto, setAbierto] = useState(false);
     const ref = useRef();
@@ -15,10 +15,13 @@ export default function SelectorCliente({ clientes, clienteSeleccionado, setClie
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    const filtrados = clientes.filter(c => 
+    const safeClientes = Array.isArray(clientes) ? clientes : [];
+
+    const filtrados = safeClientes.filter(c => 
         c.nombre_cliente?.toLowerCase().includes(busqueda.toLowerCase()) ||
-        c.identificacion?.includes(busqueda)
-    ).slice(0, 6);
+        c.identificacion?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        c.correo_cliente?.toLowerCase().includes(busqueda.toLowerCase())
+    );
 
     const seleccionar = (cli) => {
         setClienteSeleccionado(cli);
@@ -32,9 +35,9 @@ export default function SelectorCliente({ clientes, clienteSeleccionado, setClie
     };
 
     return (
-        <div ref={ref} className="selector-cliente">
+        <div ref={ref} className="selector-cliente" style={{ position: "relative" }}>
             <label className="selector-cliente__etiqueta">
-                SELECCIONAR CLIENTE
+                SELECCIONAR CLIENTE ({safeClientes.length} DISPONIBLES)
             </label>
             
             <div className="selector-cliente__campo">
@@ -58,32 +61,46 @@ export default function SelectorCliente({ clientes, clienteSeleccionado, setClie
                         setAbierto(true);
                     }}
                     onFocus={() => setAbierto(true)}
-                    placeholder="Buscar por nombre o identificación..."
+                    placeholder="Buscar por nombre, NIT o cédula..."
                     className={`seg-input selector-cliente__input ${clienteSeleccionado ? "selector-cliente__input--seleccionado" : ""}`}
                     readOnly={!!clienteSeleccionado}
                 />
                 
                 {clienteSeleccionado && (
-                    <button onClick={limpiar} className="selector-cliente__boton-limpiar">
+                    <button onClick={limpiar} className="selector-cliente__boton-limpiar" type="button" title="Cambiar cliente">
                         <X size={18} />
                     </button>
                 )}
             </div>
 
-            {abierto && !clienteSeleccionado && filtrados.length > 0 && (
+            {abierto && !clienteSeleccionado && (
                 <div className="selector-cliente__dropdown">
-                    <div className="selector-cliente__dropdown-lista">
-                        {filtrados.map((c) => (
-                            <div 
-                                key={c.id_cliente} 
-                                onClick={() => seleccionar(c)}
-                                className="selector-cliente__opcion"
-                            >
-                                <span className="selector-cliente__opcion-nombre">{c.nombre_cliente}</span>
-                                <span className="selector-cliente__opcion-id">{c.identificacion}</span>
-                            </div>
-                        ))}
-                    </div>
+                    {filtrados.length > 0 ? (
+                        <div className="selector-cliente__dropdown-lista">
+                            {filtrados.map((c) => (
+                                <div 
+                                    key={c.id_cliente} 
+                                    onClick={() => seleccionar(c)}
+                                    className="selector-cliente__opcion"
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                        <Building2 size={16} className="text-gray-400" />
+                                        <div>
+                                            <div className="selector-cliente__opcion-nombre">{c.nombre_cliente}</div>
+                                            {c.correo_cliente && (
+                                                <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>{c.correo_cliente}</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <span className="selector-cliente__opcion-id">NIT/CC: {c.identificacion}</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div style={{ padding: '1rem 1.5rem', textAlign: 'center', color: '#9CA3AF', fontSize: '0.9rem' }}>
+                            No se encontraron clientes coincidentes
+                        </div>
+                    )}
                 </div>
             )}
         </div>

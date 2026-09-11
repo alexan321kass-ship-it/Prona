@@ -151,27 +151,46 @@
 /* Dropdown de sugerencias del selector (Glassmorphism) */
 .selector-cliente__dropdown {
     position: absolute;
-    top: calc(100% + 10px);
+    top: calc(100% + 8px);
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    z-index: 100;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(192, 57, 43, 0.15);
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    z-index: 9999;
     animation: deslizarArriba 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+.selector-cliente__dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.selector-cliente__dropdown::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 10px;
+}
+
+.selector-cliente__dropdown::-webkit-scrollbar-thumb {
+    background: rgba(192, 57, 43, 0.3);
+    border-radius: 10px;
+}
+
+.selector-cliente__dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(192, 57, 43, 0.6);
+}
+
 .selector-cliente__opcion {
-    padding: 1rem 1.5rem;
+    padding: 0.9rem 1.2rem;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.03);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
     transition: all 0.2s ease;
 }
 
@@ -180,21 +199,23 @@
 }
 
 .selector-cliente__opcion:hover {
-    background: rgba(var(--color-primary-rgb), 0.05);
-    padding-left: 1.8rem;
+    background: rgba(192, 57, 43, 0.06);
+    padding-left: 1.5rem;
 }
 
 .selector-cliente__opcion-nombre {
     font-weight: 600;
     color: #1f2937;
+    font-size: 0.95rem;
 }
 
 .selector-cliente__opcion-id {
-    font-size: 0.85rem;
-    color: #6b7280;
+    font-size: 0.8rem;
+    color: #4b5563;
     background: #f3f4f6;
-    padding: 0.2rem 0.6rem;
+    padding: 0.25rem 0.65rem;
     border-radius: 100px;
+    font-weight: 500;
 }
 
 /* ============================================
