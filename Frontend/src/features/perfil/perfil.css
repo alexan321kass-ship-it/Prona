@@ -71,45 +71,31 @@
 
 /* Banner Rojo de Fondo */
 .perfil-hero-card__bg-accent {
-    min-height: 110px;
-    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 115px;
     background: linear-gradient(135deg, #C0392B 0%, #962D22 50%, #78281F 100%);
-    padding: 1.4rem 2.5rem 1.4rem 160px;
-    display: flex;
-    align-items: center;
+    z-index: 1;
 }
 
-.perfil-hero-header-text {
-    width: 100%;
-}
-
-.perfil-user-info__nombre {
-    margin: 0;
-    font-size: clamp(1.3rem, 2.8vw, 1.9rem);
-    font-weight: 800;
-    color: #FFFFFF;
-    letter-spacing: -0.01em;
-    line-height: 1.25;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-
-/* Cuerpo Blanco de la Tarjeta */
-.perfil-hero-card__body {
+.perfil-hero-card__content {
     position: relative;
-    padding: 1.2rem 2.5rem 1.4rem 160px;
-    min-height: 60px;
-    background: #FFFFFF;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.5rem 2.5rem 1.2rem;
 }
 
 /* Avatar Flotante */
 .perfil-avatar-wrapper {
-    position: absolute;
-    top: -55px;
-    left: 2.5rem;
-    z-index: 3;
+    position: relative;
     flex-shrink: 0;
+    width: 96px;
+    height: 96px;
+    margin-top: 0.2rem;
 }
 
 .perfil-avatar-glow {
@@ -123,14 +109,14 @@
 
 .perfil-avatar-circulo {
     position: relative;
-    width: 110px;
-    height: 110px;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
     color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.4rem;
+    font-size: 2.1rem;
     font-weight: 800;
     border: 4px solid #FFFFFF;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -141,8 +127,8 @@
     position: absolute;
     bottom: 2px;
     right: 2px;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     background: #10B981;
     border-radius: 50%;
     border: 3px solid #FFFFFF;
@@ -152,12 +138,35 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-/* Correo y Rol en Fondo Blanco */
-.perfil-user-meta-body {
+/* User Info Container */
+.perfil-user-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.perfil-user-info__nombre {
+    margin: 0 0 0.8rem 0;
+    font-size: clamp(1.4rem, 2.5vw, 2.1rem);
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.perfil-user-info__meta {
     display: flex;
     align-items: center;
     gap: 1.2rem;
     flex-wrap: wrap;
+    padding-top: 0.6rem;
 }
 
 .perfil-user-info__correo {
@@ -611,23 +620,32 @@
 /* RESPONSIVE */
 @media (max-width: 640px) {
     .perfil-hero-card__bg-accent {
-        padding: 1.5rem 1.2rem 2.2rem 1.2rem;
-        justify-content: center;
-        text-align: center;
+        height: 140px;
     }
 
-    .perfil-hero-card__body {
-        padding: 3.5rem 1.2rem 1.2rem 1.2rem;
+    .perfil-hero-card__content {
+        flex-direction: column;
+        align-items: center;
         text-align: center;
+        padding: 1.5rem 1.2rem 1.2rem;
     }
 
     .perfil-avatar-wrapper {
-        left: 50%;
-        transform: translateX(-50%);
-        top: -55px;
+        margin-top: 0;
     }
 
-    .perfil-user-meta-body {
+    .perfil-user-info {
+        align-items: center;
+        text-align: center;
+    }
+
+    .perfil-user-info__nombre {
+        min-height: auto;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .perfil-user-info__meta {
         justify-content: center;
     }
 
