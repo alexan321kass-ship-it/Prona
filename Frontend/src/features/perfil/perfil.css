@@ -75,7 +75,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 110px;
+    height: 125px;
     background: linear-gradient(135deg, #C0392B 0%, #962D22 50%, #78281F 100%);
 }
 
@@ -85,7 +85,7 @@
     display: flex;
     align-items: flex-end;
     gap: 2rem;
-    padding-top: 50px;
+    padding-top: 2rem;
 }
 
 /* Avatar con iniciales */
@@ -105,14 +105,14 @@
 
 .perfil-avatar-circulo {
     position: relative;
-    width: 104px;
-    height: 104px;
+    width: 108px;
+    height: 108px;
     border-radius: 50%;
     color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.2rem;
+    font-size: 2.3rem;
     font-weight: 800;
     border: 4px solid #FFFFFF;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -137,16 +137,17 @@
 /* Info Usuario Hero */
 .perfil-user-info {
     flex: 1;
-    padding-bottom: 0.3rem;
+    padding-bottom: 0.2rem;
 }
 
 .perfil-user-info__nombre {
-    margin: 0 0 0.5rem;
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #0F172A;
+    margin: 0 0 0.8rem;
+    font-size: 2.3rem;
+    font-weight: 900;
+    color: #FFFFFF;
     letter-spacing: -0.02em;
-    line-height: 1.2;
+    line-height: 1.1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .perfil-user-info__meta {
