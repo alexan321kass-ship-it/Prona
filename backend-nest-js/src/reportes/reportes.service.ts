@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
 
 @Injectable()
@@ -51,17 +51,17 @@ export class ReportesService {
     return this.serializeBigInt(result);
   }
 
-  // Identificar los productos con mayor volumen de ventas
+  // Identificar los productos con mayor volumen de ventas (PostgreSQL)
   async getMasVendidos() {
     const ventas = await this.prisma.$queryRaw`
       SELECT 
-          MONTHNAME(v.fecha_venta) AS mes,
+          trim(to_char(v.fecha_venta, 'Month')) AS mes,
           p.nombre_producto AS producto,
           SUM(dv.cantidad) AS cantidad
       FROM venta v
       JOIN detalle_venta dv ON v.id_venta = dv.id_venta
       JOIN producto p ON dv.id_producto = p.id_producto
-      GROUP BY mes, producto
+      GROUP BY trim(to_char(v.fecha_venta, 'Month')), p.nombre_producto
       ORDER BY cantidad DESC
     `;
 
@@ -71,7 +71,7 @@ export class ReportesService {
           SUM(dv.cantidad) AS total
       FROM detalle_venta dv
       JOIN producto p ON dv.id_producto = p.id_producto
-      GROUP BY p.id_producto
+      GROUP BY p.id_producto, p.nombre_producto
       ORDER BY total DESC
     `;
 
@@ -81,7 +81,7 @@ export class ReportesService {
     };
   }
 
-  // Análisis de clientes frecuentes y sus productos de mayor consumo
+  // Análisis de clientes frecuentes y sus productos de mayor consumo (PostgreSQL)
   async getClientesFrecuentes() {
     const result = await this.prisma.$queryRaw`
       WITH compras AS (
@@ -95,7 +95,7 @@ export class ReportesService {
           JOIN venta v ON pe.id_pedido = v.id_pedido
           JOIN detalle_venta dv ON v.id_venta = dv.id_venta
           JOIN producto p ON dv.id_producto = p.id_producto
-          GROUP BY c.id_cliente, p.id_producto
+          GROUP BY c.id_cliente, c.nombre_cliente, p.id_producto, p.nombre_producto
       ),
       producto_top AS (
           SELECT *,
@@ -118,7 +118,7 @@ export class ReportesService {
       JOIN producto_top pt ON t.id_cliente = pt.id_cliente AND pt.rn = 1
       ORDER BY t.cantidad_total DESC
     `;
-    return this.serializeBigInt(result);
+    return { clientes: this.serializeBigInt(result) };
   }
 
   // Obtener resumen global de ingresos y unidades vendidas
@@ -126,8 +126,8 @@ export class ReportesService {
     const result: any[] = await this.prisma.$queryRaw`
       SELECT 
           COUNT(DISTINCT v.id_venta) AS totalVentas,
-          SUM(dv.cantidad) AS totalProductos,
-          SUM(dv.cantidad * p.precio) AS totalIngresos
+          COALESCE(SUM(dv.cantidad), 0) AS totalProductos,
+          COALESCE(SUM(dv.cantidad * p.precio), 0) AS totalIngresos
       FROM venta v
       JOIN detalle_venta dv ON v.id_venta = dv.id_venta
       JOIN producto p ON dv.id_producto = p.id_producto
@@ -138,32 +138,32 @@ export class ReportesService {
     );
   }
 
-  // Reporte de rendimiento de ventas segmentado por mes (año actual)
+  // Reporte de rendimiento de ventas segmentado por mes (PostgreSQL)
   async getVentasMensuales() {
     const result = await this.prisma.$queryRaw`
       SELECT 
-          DATE_FORMAT(v.fecha_venta, '%Y-%m') as mes_key,
-          MONTHNAME(v.fecha_venta) as mes,
+          to_char(v.fecha_venta, 'YYYY-MM') as mes_key,
+          trim(to_char(v.fecha_venta, 'Month')) as mes,
           SUM(dv.cantidad * p.precio) as total_valor,
           SUM(dv.cantidad) as total_unidades
       FROM venta v
       JOIN detalle_venta dv ON v.id_venta = dv.id_venta
       JOIN producto p ON dv.id_producto = p.id_producto
-      WHERE YEAR(v.fecha_venta) = YEAR(CURDATE())
-      GROUP BY mes_key, mes
+      WHERE EXTRACT(YEAR FROM v.fecha_venta) = EXTRACT(YEAR FROM CURRENT_DATE)
+      GROUP BY to_char(v.fecha_venta, 'YYYY-MM'), trim(to_char(v.fecha_venta, 'Month'))
       ORDER BY mes_key ASC
     `;
     return this.serializeBigInt(result);
   }
 
-  // Métricas operativas generales del sistema
+  // Métricas operativas generales del sistema (PostgreSQL)
   async getMetricasGrales() {
-    const result = await this.prisma.$queryRaw`
+    const result: any[] = await this.prisma.$queryRaw`
       SELECT 
         (SELECT COUNT(*) FROM cliente) as total_clientes,
         (SELECT COUNT(*) FROM producto WHERE stock > 0) as productos_activos,
         COALESCE((SELECT SUM(dv.cantidad * p.precio) FROM detalle_venta dv JOIN producto p ON dv.id_producto = p.id_producto), 0) as ingresos_historicos,
-        (SELECT COUNT(id_pedido) FROM pedido WHERE estado_pedido = 'Pendiente') as pedidos_pendientes
+        (SELECT COUNT(id_pedido) FROM pedido WHERE estado_pedido = 'Pendiente'::pedido_estado_pedido) as pedidos_pendientes
     `;
     const serialized = this.serializeBigInt(result);
     return (
