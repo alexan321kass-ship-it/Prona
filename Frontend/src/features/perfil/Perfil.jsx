@@ -1,7 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, ClipboardList, Pencil, LogOut, Lock, Save } from "lucide-react";
-import { API_BASE } from "../../config/api";
+import { 
+    ArrowLeft, 
+    User, 
+    Mail, 
+    Shield, 
+    Lock, 
+    Pencil, 
+    LogOut, 
+    Save, 
+    CheckCircle2, 
+    KeyRound, 
+    Sparkles, 
+    BadgeCheck, 
+    IdCard 
+} from "lucide-react";
 import { usuariosService } from "../autenticacion/usuarios.service";
 import { servicioAutenticacion } from "../autenticacion/autenticacion.service";
 import "../../compartido/styles/seguimiento-compartido.css";
@@ -97,7 +110,7 @@ export default function Perfil() {
                 dataToSend.contrasena_nueva = formData.contrasena_nueva;
             }
 
-            const data = await usuariosService.update(usuario.id_usuario, dataToSend);
+            await usuariosService.update(usuario.id_usuario, dataToSend);
 
             // Sincronizar datos de sesión localmente
             const updatedUser = {
@@ -109,7 +122,7 @@ export default function Perfil() {
             localStorage.setItem("usuario", JSON.stringify(updatedUser));
             setUsuario(updatedUser);
 
-            setMensaje({ texto: "Perfil actualizado correctamente", tipo: "success" });
+            setMensaje({ texto: "¡Perfil actualizado con éxito!", tipo: "success" });
             setModoEdicion(false);
             setCambiarPassword(false);
             setFormData(prev => ({
@@ -131,229 +144,302 @@ export default function Perfil() {
         await servicioAutenticacion.logout();
     };
 
-    const getRolNombre = (id_rol) => {
-        return id_rol === 1 ? "Administrador" : id_rol === 3 ? "Super Administrador" : id_rol === 2 ? "Asesor" : "Usuario";
+    const getRolInfo = (id_rol) => {
+        switch (id_rol) {
+            case 3:
+                return { nombre: "Super Administrador", color: "#C0392B", bg: "rgba(192, 57, 43, 0.12)", badgeClass: "perfil-badge-super" };
+            case 1:
+                return { nombre: "Administrador", color: "#E67E22", bg: "rgba(230, 126, 34, 0.12)", badgeClass: "perfil-badge-admin" };
+            case 2:
+                return { nombre: "Asesor Comercial", color: "#2980B9", bg: "rgba(41, 128, 185, 0.12)", badgeClass: "perfil-badge-asesor" };
+            default:
+                return { nombre: "Usuario", color: "#7F8C8D", bg: "rgba(127, 140, 141, 0.12)", badgeClass: "perfil-badge-default" };
+        }
+    };
+
+    const rolInfo = getRolInfo(usuario?.id_rol);
+
+    const getIniciales = () => {
+        const n = usuario?.primer_nombre?.charAt(0) || "U";
+        const a = usuario?.primer_apellido?.charAt(0) || "";
+        return (n + a).toUpperCase();
     };
 
     if (cargando) {
         return (
-            <div className="seguimiento-page">
-                <div className="seg-loading">
+            <div className="seguimiento-page flex items-center justify-center min-h-screen">
+                <div className="seg-loading text-center">
                     <div className="loader"></div>
-                    <p>Cargando perfil...</p>
+                    <p style={{ marginTop: '1rem', color: '#6b7280', fontWeight: 600 }}>Cargando perfil...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="seguimiento-page">
-            {/* HEADER */}
-            <header className="seg-header">
-                <img src={logoPronavid} alt="Pronavid" className="seg-logo" />
-            </header>
+        <div className="perfil-pagina-v2">
+            {/* Top Bar Header */}
+            <div className="perfil-topbar">
+                <button onClick={volverDashboard} className="perfil-topbar__btn-volver" title="Volver al Panel">
+                    <ArrowLeft size={18} />
+                    <span>Volver</span>
+                </button>
 
-            {/* BOTÓN VOLVER */}
-            <button onClick={volverDashboard} className="btn-volver" title="Volver">
-                <ArrowLeft size={20} />
-            </button>
+                <img src={logoPronavid} alt="Pronavid" className="perfil-topbar__logo" />
+            </div>
 
-            {/* CONTENIDO */}
-            <div className="seg-container">
-                <div className="seg-card perfil-card">
-                    {/* Header del perfil */}
-                    <div className="perfil-cabecera">
-                        <div className="perfil-avatar flex items-center justify-center">
-                            <User size={40} className="text-gray-400" />
+            <div className="perfil-contenedor-principal">
+                {/* HERO USER HEADER CARD */}
+                <div className="perfil-hero-card">
+                    <div className="perfil-hero-card__bg-accent"></div>
+                    
+                    <div className="perfil-hero-card__content">
+                        {/* Avatar con anillo luminoso */}
+                        <div className="perfil-avatar-wrapper">
+                            <div className="perfil-avatar-glow"></div>
+                            <div className="perfil-avatar-circulo">
+                                {getIniciales()}
+                            </div>
+                            <div className="perfil-avatar-status" title="Cuenta Activa">
+                                <BadgeCheck size={16} color="#ffffff" />
+                            </div>
                         </div>
-                        <h2 className="perfil-nombre">
-                            {usuario?.primer_nombre} {usuario?.primer_apellido}
-                        </h2>
-                        <span className="perfil-rol-badge">
-                            {getRolNombre(usuario?.id_rol)}
-                        </span>
+
+                        {/* Nombre y Rol */}
+                        <div className="perfil-user-info">
+                            <h1 className="perfil-user-info__nombre">
+                                {usuario?.primer_nombre} {usuario?.primer_apellido}
+                            </h1>
+                            <p className="perfil-user-info__correo">
+                                <Mail size={15} /> {usuario?.correo}
+                            </p>
+                            <span 
+                                className="perfil-user-info__badge" 
+                                style={{ color: rolInfo.color, backgroundColor: rolInfo.bg, borderColor: rolInfo.color }}
+                            >
+                                <Shield size={14} /> {rolInfo.nombre}
+                            </span>
+                        </div>
                     </div>
+                </div>
 
-                    {/* Mensaje */}
-                    {mensaje.texto && (
-                        <div className={`seg-mensaje ${mensaje.tipo}`}>
-                            {mensaje.texto}
-                        </div>
-                    )}
+                {/* FEEDBACK TOAST */}
+                {mensaje.texto && (
+                    <div className={`perfil-alerta ${mensaje.tipo === 'success' ? 'perfil-alerta--exito' : 'perfil-alerta--error'}`}>
+                        {mensaje.tipo === 'success' ? <CheckCircle2 size={20} /> : <Sparkles size={20} />}
+                        <span>{mensaje.texto}</span>
+                    </div>
+                )}
 
-                    {/* Información del perfil */}
-                    <div className="perfil-contenido">
-                        {!modoEdicion ? (
-                            <>
-                                <div>
-                                    <h3 className="perfil-seccion-titulo">
-                                        <ClipboardList size={20} className="inline-block mr-2" /> Información Personal
-                                    </h3>
+                {/* MAIN CONTENT CARD */}
+                <div className="perfil-card-body">
+                    {!modoEdicion ? (
+                        /* VISTA LECTURA */
+                        <div className="perfil-vista-modo">
+                            <div className="perfil-header-seccion">
+                                <h3 className="perfil-titulo-seccion">
+                                    <IdCard size={20} className="text-red-600" /> Datos de la Cuenta
+                                </h3>
+                                <p className="perfil-subtitulo-seccion">Gestiona tus datos personales y credenciales de acceso</p>
+                            </div>
 
-                                    <div className="perfil-datos-grid">
-                                        <div className="perfil-dato-item">
-                                            <span className="perfil-dato-item__etiqueta">Nombre:</span>
-                                            <span className="perfil-dato-item__valor">
-                                                {usuario?.primer_nombre} {usuario?.primer_apellido}
-                                            </span>
-                                        </div>
-
-                                        <div className="perfil-dato-item">
-                                            <span className="perfil-dato-item__etiqueta">Correo:</span>
-                                            <span className="perfil-dato-item__valor">
-                                                {usuario?.correo || "-"}
-                                            </span>
-                                        </div>
-
-                                        <div className="perfil-dato-item">
-                                            <span className="perfil-dato-item__etiqueta">Rol:</span>
-                                            <span className="perfil-dato-item__valor perfil-dato-item__valor--acento">
-                                                {getRolNombre(usuario?.id_rol)}
-                                            </span>
-                                        </div>
+                            <div className="perfil-grid-detalles">
+                                <div className="perfil-campo-card">
+                                    <div className="perfil-campo-card__icono">
+                                        <User size={20} />
+                                    </div>
+                                    <div>
+                                        <span className="perfil-campo-card__etiqueta">Nombre Completo</span>
+                                        <p className="perfil-campo-card__valor">{usuario?.primer_nombre} {usuario?.primer_apellido}</p>
                                     </div>
                                 </div>
 
-                                <div className="perfil-botones">
-                                    <button
-                                        onClick={() => setModoEdicion(true)}
-                                        className="btn-primary perfil-boton-flex"
-                                    >
-                                        <Pencil size={18} className="inline-block mr-2" /> Editar Perfil
-                                    </button>
-                                    <button
-                                        onClick={cerrarSesion}
-                                        className="btn-secondary perfil-boton-flex perfil-boton-cerrar"
-                                    >
-                                        <LogOut size={18} className="inline-block mr-2" /> Cerrar Sesión
-                                    </button>
+                                <div className="perfil-campo-card">
+                                    <div className="perfil-campo-card__icono">
+                                        <Mail size={20} />
+                                    </div>
+                                    <div>
+                                        <span className="perfil-campo-card__etiqueta">Correo Electrónico</span>
+                                        <p className="perfil-campo-card__valor">{usuario?.correo}</p>
+                                    </div>
                                 </div>
-                            </>
-                        ) : (
-                            <form onSubmit={guardarPerfil}>
-                                <h3 className="perfil-seccion-titulo">
-                                    <Pencil size={20} className="inline-block mr-2" /> Editar Información
-                                </h3>
 
-                                <div className="form-group">
-                                    <label>Primer Nombre *</label>
+                                <div className="perfil-campo-card">
+                                    <div className="perfil-campo-card__icono">
+                                        <Shield size={20} />
+                                    </div>
+                                    <div>
+                                        <span className="perfil-campo-card__etiqueta">Tipo de Rol asignado</span>
+                                        <p className="perfil-campo-card__valor" style={{ color: rolInfo.color }}>
+                                            {rolInfo.nombre}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="perfil-acciones-footer">
+                                <button
+                                    onClick={() => setModoEdicion(true)}
+                                    className="perfil-btn perfil-btn--primary"
+                                >
+                                    <Pencil size={18} /> Editar Perfil
+                                </button>
+
+                                <button
+                                    onClick={cerrarSesion}
+                                    className="perfil-btn perfil-btn--danger"
+                                >
+                                    <LogOut size={18} /> Cerrar Sesión
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        /* VISTA EDICIÓN */
+                        <form onSubmit={guardarPerfil} className="perfil-form-edicion">
+                            <div className="perfil-header-seccion">
+                                <h3 className="perfil-titulo-seccion">
+                                    <Pencil size={20} className="text-red-600" /> Modificar Perfil
+                                </h3>
+                                <p className="perfil-subtitulo-seccion">Actualiza tus nombres o contraseña de acceso</p>
+                            </div>
+
+                            <div className="perfil-form-grid">
+                                <div className="perfil-form-group">
+                                    <label className="perfil-form-label">
+                                        <User size={16} /> Primer Nombre *
+                                    </label>
                                     <input
                                         type="text"
                                         name="primer_nombre"
                                         value={formData.primer_nombre}
                                         onChange={handleChange}
-                                        className="seg-input"
+                                        className="perfil-form-input"
                                         placeholder="Tu nombre"
                                         required
                                     />
                                 </div>
 
-                                <div className="form-group">
-                                    <label>Primer Apellido *</label>
+                                <div className="perfil-form-group">
+                                    <label className="perfil-form-label">
+                                        <User size={16} /> Primer Apellido *
+                                    </label>
                                     <input
                                         type="text"
                                         name="primer_apellido"
                                         value={formData.primer_apellido}
                                         onChange={handleChange}
-                                        className="seg-input"
+                                        className="perfil-form-input"
                                         placeholder="Tu apellido"
                                         required
                                     />
                                 </div>
+                            </div>
 
-                                <div className="form-group">
-                                    <label>Correo electrónico</label>
+                            <div className="perfil-form-group">
+                                <label className="perfil-form-label">
+                                    <Mail size={16} /> Correo Electrónico
+                                </label>
+                                <input
+                                    type="email"
+                                    name="correo"
+                                    value={formData.correo}
+                                    onChange={handleChange}
+                                    className="perfil-form-input"
+                                    placeholder="correo@ejemplo.com"
+                                />
+                            </div>
+
+                            {/* ACORDEÓN / TOGGLE CAMBIO DE CONTRASEÑA */}
+                            <div className="perfil-card-seguridad">
+                                <label className="perfil-checkbox-label">
                                     <input
-                                        type="email"
-                                        name="correo"
-                                        value={formData.correo}
-                                        onChange={handleChange}
-                                        className="seg-input"
-                                        placeholder="correo@ejemplo.com"
+                                        type="checkbox"
+                                        checked={cambiarPassword}
+                                        onChange={(e) => setCambiarPassword(e.target.checked)}
+                                        className="perfil-checkbox-input"
                                     />
-                                </div>
-
-                                {/* Toggle cambiar contraseña */}
-                                <div className="perfil-toggle-password">
-                                    <label className="perfil-toggle-label">
-                                        <input
-                                            type="checkbox"
-                                            checked={cambiarPassword}
-                                            onChange={(e) => setCambiarPassword(e.target.checked)}
-                                        />
-                                        <span className="perfil-toggle-texto">
-                                            <Lock size={16} className="inline-block mr-2" /> Cambiar contraseña
-                                        </span>
-                                    </label>
-                                </div>
+                                    <div className="perfil-checkbox-content">
+                                        <KeyRound size={20} className="text-red-600" />
+                                        <div>
+                                            <span className="perfil-checkbox-titulo">Cambiar Contraseña de Acceso</span>
+                                            <p className="perfil-checkbox-desc">Activa esta opción para actualizar tu clave de seguridad</p>
+                                        </div>
+                                    </div>
+                                </label>
 
                                 {cambiarPassword && (
-                                    <div className="perfil-password-section">
-                                        <div className="form-group">
-                                            <label>Contraseña actual *</label>
+                                    <div className="perfil-password-box">
+                                        <div className="perfil-form-group">
+                                            <label className="perfil-form-label">Contraseña Actual *</label>
                                             <input
                                                 type="password"
                                                 name="contrasena_actual"
                                                 value={formData.contrasena_actual}
                                                 onChange={handleChange}
-                                                className="seg-input"
-                                                placeholder="Tu contraseña actual"
+                                                className="perfil-form-input"
+                                                placeholder="Ingresa tu clave actual"
                                             />
                                         </div>
 
-                                        <div className="form-group">
-                                            <label>Nueva contraseña *</label>
-                                            <input
-                                                type="password"
-                                                name="contrasena_nueva"
-                                                value={formData.contrasena_nueva}
-                                                onChange={handleChange}
-                                                className="seg-input"
-                                                placeholder="Mínimo 6 caracteres"
-                                            />
-                                        </div>
+                                        <div className="perfil-form-grid">
+                                            <div className="perfil-form-group">
+                                                <label className="perfil-form-label">Nueva Contraseña *</label>
+                                                <input
+                                                    type="password"
+                                                    name="contrasena_nueva"
+                                                    value={formData.contrasena_nueva}
+                                                    onChange={handleChange}
+                                                    className="perfil-form-input"
+                                                    placeholder="Mínimo 6 caracteres"
+                                                />
+                                            </div>
 
-                                        <div className="form-group">
-                                            <label>Confirmar nueva contraseña *</label>
-                                            <input
-                                                type="password"
-                                                name="confirmar_contrasena"
-                                                value={formData.confirmar_contrasena}
-                                                onChange={handleChange}
-                                                className="seg-input"
-                                                placeholder="Repite la nueva contraseña"
-                                            />
+                                            <div className="perfil-form-group">
+                                                <label className="perfil-form-label">Confirmar Nueva Contraseña *</label>
+                                                <input
+                                                    type="password"
+                                                    name="confirmar_contrasena"
+                                                    value={formData.confirmar_contrasena}
+                                                    onChange={handleChange}
+                                                    className="perfil-form-input"
+                                                    placeholder="Repite la clave nueva"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 )}
+                            </div>
 
-                                <div className="modal-actions perfil-acciones">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setModoEdicion(false);
-                                            setCambiarPassword(false);
-                                        }}
-                                        className="btn-secondary"
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="btn-primary flex items-center justify-center gap-2"
-                                        disabled={guardando}
-                                    >
-                                        <span style={{ display: guardando ? 'inline-block' : 'none' }}>
-                                            Guardando...
-                                        </span>
-                                        <span style={{ display: !guardando ? 'inline-flex' : 'none', alignItems: 'center', gap: '8px' }}>
+                            {/* BOTONES ACCIÓN FORMULARIO */}
+                            <div className="perfil-acciones-footer">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setModoEdicion(false);
+                                        setCambiarPassword(false);
+                                        setMensaje({ texto: "", tipo: "" });
+                                    }}
+                                    className="perfil-btn perfil-btn--secondary"
+                                >
+                                    Cancelar
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="perfil-btn perfil-btn--primary"
+                                    disabled={guardando}
+                                >
+                                    {guardando ? (
+                                        <span>Guardando...</span>
+                                    ) : (
+                                        <>
                                             <Save size={18} /> Guardar Cambios
-                                        </span>
-                                    </button>
-                                </div>
-                            </form>
-                        )}
-                    </div>
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    )}
                 </div>
             </div>
         </div>
