@@ -252,11 +252,17 @@ export default function Perfil() {
             <div className="perfil-contenedor-principal">
                 {/* HERO USER HEADER CARD */}
                 <div className="perfil-hero-card">
-                    {/* Banner Rojo de Fondo */}
-                    <div className="perfil-hero-card__bg-accent"></div>
+                    {/* Banner Rojo de Fondo con Nombre en Blanco */}
+                    <div className="perfil-hero-card__bg-accent">
+                        <div className="perfil-hero-header-text">
+                            <h1 className="perfil-user-info__nombre">
+                                {usuario?.primer_nombre} {usuario?.primer_apellido}
+                            </h1>
+                        </div>
+                    </div>
                     
-                    {/* Contenido Flex: Avatar a la izquierda, Nombre y Meta a la derecha */}
-                    <div className="perfil-hero-card__content">
+                    {/* Cuerpo Blanco con Avatar, Correo y Rol */}
+                    <div className="perfil-hero-card__body">
                         {/* Avatar Flotante */}
                         <div className="perfil-avatar-wrapper">
                             <div className="perfil-avatar-glow"></div>
@@ -271,23 +277,17 @@ export default function Perfil() {
                             </div>
                         </div>
 
-                        {/* Info Usuario */}
-                        <div className="perfil-user-info">
-                            <h1 className="perfil-user-info__nombre">
-                                {usuario?.primer_nombre} {usuario?.primer_apellido}
-                            </h1>
-
-                            <div className="perfil-user-info__meta">
-                                <span className="perfil-user-info__correo">
-                                    <Mail size={15} /> {usuario?.correo}
-                                </span>
-                                <span 
-                                    className="perfil-user-info__badge" 
-                                    style={{ color: rolInfo.color, backgroundColor: rolInfo.bg, borderColor: rolInfo.color }}
-                                >
-                                    <Shield size={13} /> {rolInfo.nombre}
-                                </span>
-                            </div>
+                        {/* Correo y Rol en Fondo Blanco */}
+                        <div className="perfil-user-meta-body">
+                            <span className="perfil-user-info__correo">
+                                <Mail size={15} /> {usuario?.correo}
+                            </span>
+                            <span 
+                                className="perfil-user-info__badge" 
+                                style={{ color: rolInfo.color, backgroundColor: rolInfo.bg, borderColor: rolInfo.color }}
+                            >
+                                <Shield size={13} /> {rolInfo.nombre}
+                            </span>
                         </div>
                     </div>
 
