@@ -71,9 +71,10 @@
 
 /* Banner Rojo de Fondo */
 .perfil-hero-card__bg-accent {
-    height: 110px;
+    min-height: 110px;
+    height: auto;
     background: linear-gradient(135deg, #C0392B 0%, #962D22 50%, #78281F 100%);
-    padding: 1.6rem 2.5rem 0 160px;
+    padding: 1.4rem 2.5rem 1.4rem 160px;
     display: flex;
     align-items: center;
 }
@@ -84,12 +85,14 @@
 
 .perfil-user-info__nombre {
     margin: 0;
-    font-size: 2.2rem;
-    font-weight: 900;
+    font-size: clamp(1.3rem, 2.8vw, 1.9rem);
+    font-weight: 800;
     color: #FFFFFF;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Cuerpo Blanco de la Tarjeta */
@@ -607,14 +610,25 @@
 
 /* RESPONSIVE */
 @media (max-width: 640px) {
-    .perfil-hero-card__content {
-        flex-direction: column;
-        align-items: center;
+    .perfil-hero-card__bg-accent {
+        padding: 1.5rem 1.2rem 2.2rem 1.2rem;
+        justify-content: center;
         text-align: center;
     }
 
-    .perfil-status-strip {
-        grid-template-columns: 1fr;
+    .perfil-hero-card__body {
+        padding: 3.5rem 1.2rem 1.2rem 1.2rem;
+        text-align: center;
+    }
+
+    .perfil-avatar-wrapper {
+        left: 50%;
+        transform: translateX(-50%);
+        top: -55px;
+    }
+
+    .perfil-user-meta-body {
+        justify-content: center;
     }
 
     .perfil-palette-selector {
@@ -625,8 +639,8 @@
         grid-template-columns: 1fr;
     }
 
-    .perfil-card-body, .perfil-hero-card {
-        padding: 1.8rem 1.5rem;
+    .perfil-card-body {
+        padding: 1.8rem 1.2rem;
     }
 
     .perfil-acciones-footer {
