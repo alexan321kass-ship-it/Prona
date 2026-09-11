@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Layers, Plus, Edit2, Trash2, X, Check,
     AlertCircle, CheckCircle2, Package, Search,
-    ToggleLeft, ToggleRight
+    ToggleLeft, ToggleRight, ChevronLeft
 } from "lucide-react";
 import { productosService } from "./productos.service";
 
 export default function GestionCategorias() {
+    const navigate = useNavigate();
     const [categorias, setCategorias] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [busqueda, setBusqueda] = useState("");
@@ -126,6 +128,13 @@ export default function GestionCategorias() {
             {/* Header */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <button onClick={() => navigate("/catalogo")} style={{
+                        background: "rgba(0,0,0,0.03)", border: "none", borderRadius: "50%",
+                        width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center",
+                        cursor: "pointer", color: "#374151", transition: "all .2s",
+                    }} onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(0,0,0,0.08)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(0,0,0,0.03)"; }} title="Volver al Catálogo">
+                        <ChevronLeft size={24} />
+                    </button>
                     <div style={{ background: "linear-gradient(135deg,#E31E24,#F7941D)", borderRadius: 14, padding: 10, display: "flex" }}>
                         <Layers size={24} color="white" />
                     </div>
@@ -146,18 +155,25 @@ export default function GestionCategorias() {
             </div>
 
             {/* Search */}
-            <div style={{ position: "relative", marginBottom: 24 }}>
-                <Search size={16} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#9ca3af" }} />
+            <div style={{ position: "relative", marginBottom: 30 }}>
+                <Search size={20} style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "#9ca3af" }} />
                 <input
                     value={busqueda}
                     onChange={e => setBusqueda(e.target.value)}
                     placeholder="Buscar categorías..."
                     style={{
                         width: "100%", boxSizing: "border-box",
-                        padding: "11px 16px 11px 40px",
-                        border: "1.5px solid #e5e7eb", borderRadius: 12,
-                        fontSize: 14, outline: "none", background: "#f9fafb", color: "#1a1c1e",
+                        padding: "14px 16px 14px 44px",
+                        border: "1px solid rgba(226, 232, 240, 0.8)", borderRadius: 16,
+                        fontSize: 15, outline: "none", 
+                        background: "rgba(255,255,255,0.6)", 
+                        backdropFilter: "blur(12px)",
+                        color: "#1a1c1e",
+                        boxShadow: "0 4px 15px rgba(0,0,0,0.02), inset 0 2px 4px rgba(255,255,255,0.5)",
+                        transition: "all 0.3s"
                     }}
+                    onFocus={(e) => { e.target.style.background = "#ffffff"; e.target.style.boxShadow = "0 0 0 4px rgba(227, 30, 36, 0.1)"; }}
+                    onBlur={(e) => { e.target.style.background = "rgba(255,255,255,0.6)"; e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.02), inset 0 2px 4px rgba(255,255,255,0.5)"; }}
                 />
             </div>
 
@@ -178,23 +194,27 @@ export default function GestionCategorias() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.96 }}
-                                transition={{ delay: i * 0.04 }}
+                                whileHover={{ y: -5, scale: 1.01, boxShadow: "0 20px 40px rgba(0,0,0,0.08), inset 0 2px 4px rgba(255,255,255,0.8)", borderColor: "rgba(227, 30, 36, 0.2)" }}
+                                transition={{ delay: i * 0.04, type: "spring", stiffness: 300, damping: 20 }}
                                 style={{
-                                    background: "white", borderRadius: 16,
-                                    border: "1.5px solid #f0f0f0",
-                                    padding: "16px 20px",
-                                    display: "flex", alignItems: "center", gap: 16,
-                                    boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+                                    background: "linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.7) 100%)",
+                                    backdropFilter: "blur(12px)",
+                                    borderRadius: 20,
+                                    border: "1px solid rgba(255, 255, 255, 0.8)",
+                                    padding: "20px 24px",
+                                    display: "flex", alignItems: "center", gap: 18,
+                                    boxShadow: "0 4px 15px rgba(0,0,0,0.03), inset 0 1px 2px rgba(255,255,255,0.5)",
                                 }}
                             >
                                 {/* Icon */}
                                 <div style={{
-                                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                                    background: "linear-gradient(135deg,#fff0f0,#fff5ee)",
+                                    width: 52, height: 52, borderRadius: 16, flexShrink: 0,
+                                    background: "linear-gradient(135deg, rgba(227, 30, 36, 0.1), rgba(247, 148, 29, 0.1))",
                                     display: "flex", alignItems: "center", justifyContent: "center",
-                                    border: "1.5px solid #fde0d0",
+                                    border: "1px solid rgba(227, 30, 36, 0.15)",
+                                    boxShadow: "0 4px 10px rgba(227, 30, 36, 0.05)"
                                 }}>
-                                    <Layers size={20} color="#E31E24" />
+                                    <Layers size={24} color="#E31E24" />
                                 </div>
                                 {/* Info */}
                                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -222,18 +242,18 @@ export default function GestionCategorias() {
                                 {/* Actions */}
                                 <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                                     <button onClick={() => abrirEditar(cat)} style={{
-                                        background: "#f3f4f6", border: "none", borderRadius: 10,
-                                        width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",
-                                        cursor: "pointer", color: "#374151", transition: "background .2s",
-                                    }} title="Editar">
-                                        <Edit2 size={16} />
+                                        background: "rgba(243, 244, 246, 0.8)", border: "1px solid rgba(226, 232, 240, 0.8)", borderRadius: 12,
+                                        width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center",
+                                        cursor: "pointer", color: "#374151", transition: "all .2s",
+                                    }} onMouseEnter={(e) => { e.currentTarget.style.background = "#EBF5FB"; e.currentTarget.style.color = "#3498DB"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(243, 244, 246, 0.8)"; e.currentTarget.style.color = "#374151"; }} title="Editar">
+                                        <Edit2 size={18} />
                                     </button>
                                     <button onClick={() => setConfirmDelete(cat.id_categoria)} style={{
-                                        background: "#fee2e2", border: "none", borderRadius: 10,
-                                        width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center",
-                                        cursor: "pointer", color: "#dc2626", transition: "background .2s",
-                                    }} title="Eliminar">
-                                        <Trash2 size={16} />
+                                        background: "rgba(254, 226, 226, 0.5)", border: "1px solid rgba(254, 226, 226, 0.8)", borderRadius: 12,
+                                        width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center",
+                                        cursor: "pointer", color: "#dc2626", transition: "all .2s",
+                                    }} onMouseEnter={(e) => { e.currentTarget.style.background = "#fee2e2"; e.currentTarget.style.transform = "scale(1.05)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(254, 226, 226, 0.5)"; e.currentTarget.style.transform = "scale(1)"; }} title="Eliminar">
+                                        <Trash2 size={18} />
                                     </button>
                                 </div>
                             </motion.div>

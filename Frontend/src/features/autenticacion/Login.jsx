@@ -46,7 +46,8 @@ export default function Login() {
             setTipoMensaje("success");
 
             setTimeout(() => {
-                if (data.user.id_rol === 1 || data.user.id_rol === 3) {
+                const rol = Number(data.user.id_rol);
+                if (rol === 1 || rol === 3) {
                     navigate("/DashboardAdmin");
                 } else {
                     navigate("/DashboardAsesor");
@@ -105,19 +106,18 @@ export default function Login() {
                             className="btn-submit"
                             disabled={cargando}
                         >
-                            {cargando ? (
-                                <>
-                                    <span className="loader-inline"></span>
-                                    Ingresando...
-                                </>
-                            ) : (
-                                "Iniciar Sesión"
-                            )}
+                            <span style={{ display: cargando ? 'inline-flex' : 'none', alignItems: 'center', gap: '8px' }}>
+                                <span className="loader-inline"></span>
+                                <span>Ingresando...</span>
+                            </span>
+                            <span style={{ display: !cargando ? 'inline-block' : 'none' }}>
+                                <span>Iniciar Sesión</span>
+                            </span>
                         </button>
 
                         {mensaje && (
                             <div className={`mensaje ${tipoMensaje}`}>
-                                {tipoMensaje === "success" ? "✓" : "!"} {mensaje}
+                                <span>{tipoMensaje === "success" ? "✓" : "!"}</span> <span>{mensaje}</span>
                             </div>
                         )}
 

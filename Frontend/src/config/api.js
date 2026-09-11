@@ -35,7 +35,11 @@ export const fetchAPI = async (endpoint, options = {}) => {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || data.message || "Error en la petición");
+            let errorMessage = data.message;
+            if (Array.isArray(errorMessage)) {
+                errorMessage = errorMessage.join(", ");
+            }
+            throw new Error(errorMessage || data.error || "Error en la petición");
         }
 
         return data;

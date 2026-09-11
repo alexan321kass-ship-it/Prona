@@ -56,7 +56,6 @@ export class UsersController {
 
   // Actualizar información de usuario
   @Put(":id")
-  @Roles("Administrador", "Super Administrador")
   async update(
     @Param("id", ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
@@ -66,6 +65,12 @@ export class UsersController {
     if (!targetUser) throw new BadRequestException("Usuario no encontrado");
 
     const currentUserRole = req.user.rol.nombre_rol;
+
+    // Validación: Un usuario normal solo puede editarse a sí mismo.
+    // Un Admin puede editar a otros.
+    if (req.user.id_usuario !== id && currentUserRole !== "Administrador" && currentUserRole !== "Super Administrador") {
+      throw new ForbiddenException("No tienes permiso para editar a este usuario");
+    }
 
     if (currentUserRole === "Administrador") {
       if (
@@ -84,6 +89,11 @@ export class UsersController {
       ) {
         throw new ForbiddenException("No tienes permiso para asignar este rol");
       }
+    }
+
+    // Prevención: No se puede cambiar el propio rol
+    if (req.user.id_usuario === id && updateUserDto.id_rol && updateUserDto.id_rol !== req.user.id_rol) {
+      throw new ForbiddenException("No puedes cambiar tu propio rol");
     }
 
     await this.usersService.update(id, updateUserDto);

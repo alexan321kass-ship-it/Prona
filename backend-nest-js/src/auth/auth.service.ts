@@ -107,6 +107,7 @@ export class AuthService {
           primer_apellido: user.primer_apellido,
           correo: user.correo,
           id_rol: user.id_rol,
+          requiere_cambio_contrasena: user.requiere_cambio_contrasena,
         },
       };
     } catch (error) {

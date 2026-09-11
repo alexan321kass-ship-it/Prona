@@ -1,17 +1,17 @@
 services:
-  # Base de Datos (MySQL)
+  # Base de Datos (PostgreSQL)
   db:
-    image: mysql:8.0
+    image: postgres:15
     container_name: pronavid-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER:-root}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "3308:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./mysql_init:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - pronavid-network
 
@@ -21,4 +21,4 @@ networks:
     external: true
 
 volumes:
-  mysql_data:
+  postgres_data:

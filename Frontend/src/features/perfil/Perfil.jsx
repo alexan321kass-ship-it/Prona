@@ -121,7 +121,7 @@ export default function Perfil() {
 
         } catch (error) {
             console.error("Error actualizando perfil:", error);
-            setMensaje({ texto: "Error de conexión", tipo: "error" });
+            setMensaje({ texto: error.message || "Error al actualizar perfil", tipo: "error" });
         } finally {
             setGuardando(false);
         }
@@ -343,7 +343,12 @@ export default function Perfil() {
                                         className="btn-primary flex items-center justify-center gap-2"
                                         disabled={guardando}
                                     >
-                                        {guardando ? "Guardando..." : <><Save size={18} /> Guardar Cambios</>}
+                                        <span style={{ display: guardando ? 'inline-block' : 'none' }}>
+                                            Guardando...
+                                        </span>
+                                        <span style={{ display: !guardando ? 'inline-flex' : 'none', alignItems: 'center', gap: '8px' }}>
+                                            <Save size={18} /> Guardar Cambios
+                                        </span>
                                     </button>
                                 </div>
                             </form>

@@ -1,142 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileText, ChevronDown, ChevronUp, CheckCircle, XCircle, Clock, Trash2, ArrowLeft, RefreshCw } from "lucide-react";
+import { FileText, ChevronDown, ChevronUp, CheckCircle, XCircle, Clock, Trash2, ArrowLeft, RefreshCw, Eye } from "lucide-react";
 import { api } from "../../config/api";
-import CabeceraPanel from "../paneles/CabeceraPanel";
+import "../../compartido/styles/seguimiento-compartido.css";
 import "./cotizaciones.css";
-
-const ESTADO_CONFIG = {
-  Pendiente: { label: "Pendiente", icon: Clock, className: "estado--pendiente" },
-  Aprobada:  { label: "Aprobada",  icon: CheckCircle, className: "estado--aprobada" },
-  Rechazada: { label: "Rechazada", icon: XCircle, className: "estado--rechazada" },
-};
-
-function BadgeEstado({ estado }) {
-  const cfg = ESTADO_CONFIG[estado] || ESTADO_CONFIG.Pendiente;
-  const Icono = cfg.icon;
-  return (
-    <span className={`badge-estado ${cfg.className}`}>
-      <Icono size={13} />
-      {cfg.label}
-    </span>
-  );
-}
-
-function FilaCotizacion({ cotizacion, onCambiarEstado, onEliminar }) {
-  const [abierto, setAbierto] = useState(false);
-  const [cargando, setCargando] = useState(false);
-
-  const formatearMoneda = (v) =>
-    new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(v || 0);
-
-  const formatearFecha = (f) =>
-    new Date(f).toLocaleDateString("es-CO", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
-
-  const calcularTotal = () =>
-    cotizacion.detalle_cotizacion?.reduce((acc, d) => acc + Number(d.precio_unitario) * d.cantidad, 0) || 0;
-
-  const handleCambiarEstado = async (nuevoEstado) => {
-    setCargando(true);
-    await onCambiarEstado(cotizacion.id_cotizacion, nuevoEstado);
-    setCargando(false);
-  };
-
-  return (
-    <div className={`cot-fila ${abierto ? "cot-fila--abierta" : ""}`}>
-      {/* Cabecera de la fila */}
-      <div className="cot-fila__cabecera" onClick={() => setAbierto(!abierto)}>
-        <div className="cot-fila__info">
-          <span className="cot-fila__id">#{cotizacion.id_cotizacion}</span>
-          <div>
-            <p className="cot-fila__cliente">{cotizacion.cliente?.nombre_cliente || "—"}</p>
-            <p className="cot-fila__meta">{cotizacion.cliente?.identificacion} · {formatearFecha(cotizacion.fecha_cotizacion)}</p>
-          </div>
-        </div>
-        <div className="cot-fila__derecha">
-          <p className="cot-fila__total">{formatearMoneda(calcularTotal())}</p>
-          <BadgeEstado estado={cotizacion.estado} />
-          <p className="cot-fila__items">{cotizacion.detalle_cotizacion?.length || 0} producto(s)</p>
-          {abierto ? <ChevronUp size={18} className="cot-fila__chevron" /> : <ChevronDown size={18} className="cot-fila__chevron" />}
-        </div>
-      </div>
-
-      {/* Detalle expandido */}
-      {abierto && (
-        <div className="cot-fila__detalle">
-          <p className="cot-fila__asesor">
-            Asesor: <strong>{cotizacion.usuario?.primer_nombre} {cotizacion.usuario?.primer_apellido}</strong>
-          </p>
-          <table className="cot-tabla">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Código</th>
-                <th className="text-center">Cantidad</th>
-                <th className="text-right">Precio Unit.</th>
-                <th className="text-right">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cotizacion.detalle_cotizacion?.map((d) => (
-                <tr key={d.id_detalle_cotizacion}>
-                  <td>{d.producto?.nombre_producto || d.id_producto}</td>
-                  <td className="text-muted">{d.producto?.codigo_interno || "—"}</td>
-                  <td className="text-center">{d.cantidad}</td>
-                  <td className="text-right">{formatearMoneda(d.precio_unitario)}</td>
-                  <td className="text-right">{formatearMoneda(Number(d.precio_unitario) * d.cantidad)}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan={4} className="text-right"><strong>Total</strong></td>
-                <td className="text-right cot-total">{formatearMoneda(calcularTotal())}</td>
-              </tr>
-            </tfoot>
-          </table>
-
-          {/* Acciones de estado */}
-          <div className="cot-fila__acciones">
-            {cotizacion.estado === "Pendiente" && (
-              <>
-                <button
-                  className="btn-accion btn-accion--aprobar"
-                  disabled={cargando}
-                  onClick={() => handleCambiarEstado("Aprobada")}
-                >
-                  <CheckCircle size={15} /> Aprobar
-                </button>
-                <button
-                  className="btn-accion btn-accion--rechazar"
-                  disabled={cargando}
-                  onClick={() => handleCambiarEstado("Rechazada")}
-                >
-                  <XCircle size={15} /> Rechazar
-                </button>
-                <button
-                  className="btn-accion btn-accion--eliminar"
-                  disabled={cargando}
-                  onClick={() => onEliminar(cotizacion.id_cotizacion)}
-                >
-                  <Trash2 size={15} /> Eliminar
-                </button>
-              </>
-            )}
-            {cotizacion.estado !== "Pendiente" && (
-              <button
-                className="btn-accion btn-accion--pendiente"
-                disabled={cargando}
-                onClick={() => handleCambiarEstado("Pendiente")}
-              >
-                <Clock size={15} /> Reabrir como Pendiente
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function HistorialCotizaciones() {
   const navigate = useNavigate();
@@ -144,6 +11,8 @@ export default function HistorialCotizaciones() {
   const [cargando, setCargando] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState("Todos");
   const [mensaje, setMensaje] = useState(null);
+  const [modalDetalle, setModalDetalle] = useState(null);
+  const [cargandoAccion, setCargandoAccion] = useState(false);
 
   const cargarCotizaciones = useCallback(async () => {
     setCargando(true);
@@ -160,105 +29,250 @@ export default function HistorialCotizaciones() {
   useEffect(() => { cargarCotizaciones(); }, [cargarCotizaciones]);
 
   const handleCambiarEstado = async (id, nuevoEstado) => {
+    setCargandoAccion(true);
     try {
       await api.put(`/cotizaciones/${id}/estado`, { estado: nuevoEstado });
-      setCotizaciones(prev =>
-        prev.map(c => c.id_cotizacion === id ? { ...c, estado: nuevoEstado } : c)
-      );
+      setCotizaciones(prev => prev.map(c => c.id_cotizacion === id ? { ...c, estado: nuevoEstado } : c));
+      if (modalDetalle?.id_cotizacion === id) {
+        setModalDetalle(prev => ({ ...prev, estado: nuevoEstado }));
+      }
       setMensaje({ texto: `Cotización #${id} marcada como ${nuevoEstado}`, tipo: "success" });
     } catch (e) {
       setMensaje({ texto: e.message || "Error al cambiar estado", tipo: "error" });
+    } finally {
+      setCargandoAccion(false);
+      setTimeout(() => setMensaje(null), 3000);
     }
-    setTimeout(() => setMensaje(null), 3000);
   };
 
   const handleEliminar = async (id) => {
     if (!window.confirm(`¿Eliminar la cotización #${id}? Esta acción no se puede deshacer.`)) return;
+    setCargandoAccion(true);
     try {
       await api.delete(`/cotizaciones/${id}`);
       setCotizaciones(prev => prev.filter(c => c.id_cotizacion !== id));
+      setModalDetalle(null);
       setMensaje({ texto: `Cotización #${id} eliminada`, tipo: "success" });
     } catch (e) {
       setMensaje({ texto: e.message || "Error al eliminar", tipo: "error" });
+    } finally {
+      setCargandoAccion(false);
+      setTimeout(() => setMensaje(null), 3000);
     }
-    setTimeout(() => setMensaje(null), 3000);
   };
 
-  const cotizacionesFiltradas = filtroEstado === "Todos"
-    ? cotizaciones
-    : cotizaciones.filter(c => c.estado === filtroEstado);
+  const formatearMoneda = (v) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(v || 0);
+  const formatearFecha = (f) => new Date(f).toLocaleDateString("es-CO", { year: "numeric", month: "short", day: "numeric" });
+  const calcularTotal = (cotizacion) => cotizacion?.detalle_cotizacion?.reduce((acc, d) => acc + Number(d.precio_unitario) * d.cantidad, 0) || 0;
 
+  const cotizacionesFiltradas = filtroEstado === "Todos" ? cotizaciones : cotizaciones.filter(c => c.estado === filtroEstado);
   const contarEstado = (e) => cotizaciones.filter(c => c.estado === e).length;
 
-  return (
-    <>
-      {/* Contenido principal */}
+  const getEstadoClase = (estado) => {
+    switch (estado) {
+      case "Aprobada": return "estado-badge estado-entregado";
+      case "Rechazada": return "estado-badge estado-cancelado";
+      case "Pendiente": return "estado-badge estado-pendiente";
+      default: return "estado-badge";
+    }
+  };
 
-      <div className="cot-page">
-        {/* Header */}
-        <div className="cot-header">
-          <button className="btn-volver" onClick={() => navigate(-1)}>
-            <ArrowLeft size={18} /> Volver
-          </button>
-          <div className="cot-header__titulo">
-            <FileText size={28} color="var(--color-primary)" />
-            <div>
-              <h1>Historial de Cotizaciones</h1>
-              <p>{cotizaciones.length} cotización(es) en total</p>
-            </div>
+  const FILTROS = [
+    { label: "Todos",     count: cotizaciones.length,         icon: "📋" },
+    { label: "Pendiente", count: contarEstado("Pendiente"),   icon: "🕒" },
+    { label: "Aprobada",  count: contarEstado("Aprobada"),    icon: "✅" },
+    { label: "Rechazada", count: contarEstado("Rechazada"),   icon: "❌" },
+  ];
+
+  return (
+    <div className="pedidos-pagina">
+      <div className="pedidos-contenido fade-in">
+        
+        {/* Cabecera Premium */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2.5rem", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <h1 style={{ fontSize: "2.2rem", fontWeight: 800, color: "#1e293b", margin: "0 0 0.5rem 0", letterSpacing: "-0.03em" }}>Historial de Cotizaciones</h1>
+            <p style={{ margin: 0, color: "#64748b", fontSize: "1.05rem" }}>Consulta y gestiona las cotizaciones de tus clientes</p>
           </div>
-          <button className="btn-refrescar" onClick={cargarCotizaciones} title="Recargar">
-            <RefreshCw size={18} />
+          <button 
+            className="btn-ver-detalle" 
+            onClick={cargarCotizaciones} 
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.25rem" }}
+          >
+            <RefreshCw size={18} /> Actualizar Datos
           </button>
         </div>
 
-        {/* Resumen de estados */}
-        <div className="cot-resumen">
-          {[
-            { label: "Todos", count: cotizaciones.length },
-            { label: "Pendiente", count: contarEstado("Pendiente") },
-            { label: "Aprobada",  count: contarEstado("Aprobada") },
-            { label: "Rechazada", count: contarEstado("Rechazada") },
-          ].map(({ label, count }) => (
+        {/* Chips de filtro */}
+        <div style={{ display: "flex", gap: "0.75rem", marginBottom: "2rem", flexWrap: "wrap" }}>
+          {FILTROS.map(f => (
             <button
-              key={label}
-              className={`cot-resumen__chip ${filtroEstado === label ? "active" : ""}`}
-              onClick={() => setFiltroEstado(label)}
+              key={f.label}
+              onClick={() => setFiltroEstado(f.label)}
+              style={{
+                display: "flex", alignItems: "center", gap: "0.5rem",
+                padding: "0.75rem 1.25rem", borderRadius: "100px", border: "none", cursor: "pointer",
+                background: filtroEstado === f.label ? "var(--color-primary)" : "#ffffff",
+                color: filtroEstado === f.label ? "white" : "#475569",
+                fontWeight: 700, fontSize: "0.95rem",
+                boxShadow: filtroEstado === f.label ? "0 8px 20px rgba(192,57,43,0.25)" : "0 2px 8px rgba(0,0,0,0.04)",
+                transition: "all 0.25s ease",
+              }}
             >
-              {label}
-              <span className="cot-resumen__badge">{count}</span>
+              <span>{f.icon}</span>
+              {f.label}
+              <span style={{ 
+                background: filtroEstado === f.label ? "rgba(255,255,255,0.2)" : "#f1f5f9", 
+                padding: "0.15rem 0.6rem", borderRadius: "100px", fontSize: "0.8rem" 
+              }}>
+                {f.count}
+              </span>
             </button>
           ))}
         </div>
 
         {/* Mensaje de feedback */}
         {mensaje && (
-          <div className={`cot-mensaje ${mensaje.tipo}`}>
+          <div style={{
+            padding: "1rem 1.5rem", borderRadius: "16px", fontWeight: 600, fontSize: "0.95rem",
+            marginBottom: "2rem", animation: "modalSlide 0.3s ease",
+            background: mensaje.tipo === "success" ? "#dcfce7" : "#fee2e2",
+            color: mensaje.tipo === "success" ? "#16a34a" : "#dc2626",
+            border: `1px solid ${mensaje.tipo === "success" ? "#bbf7d0" : "#fecaca"}`,
+            display: "flex", alignItems: "center", gap: "0.75rem"
+          }}>
+            {mensaje.tipo === "success" ? <CheckCircle size={20} /> : <XCircle size={20} />} 
             {mensaje.texto}
           </div>
         )}
 
-        {/* Lista */}
-        <div className="cot-lista">
-          {cargando ? (
-            [1, 2, 3].map(i => <div key={i} className="cot-skeleton" />)
-          ) : cotizacionesFiltradas.length === 0 ? (
-            <div className="cot-vacio">
-              <FileText size={60} color="var(--color-text-light)" />
-              <p>No hay cotizaciones {filtroEstado !== "Todos" ? `en estado "${filtroEstado}"` : "registradas"}</p>
-            </div>
-          ) : (
-            cotizacionesFiltradas.map(c => (
-              <FilaCotizacion
-                key={c.id_cotizacion}
-                cotizacion={c}
-                onCambiarEstado={handleCambiarEstado}
-                onEliminar={handleEliminar}
-              />
-            ))
-          )}
+        {/* Tabla Floating Pill */}
+        <div className="seg-table-container">
+          <table className="seg-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th className="celda-centrada">Productos</th>
+                <th className="celda-derecha">Total (COP)</th>
+                <th className="celda-centrada">Estado</th>
+                <th className="celda-centrada">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cargando ? (
+                <tr><td colSpan="7" className="celda-centrada" style={{ padding: "3rem" }}>Cargando cotizaciones...</td></tr>
+              ) : cotizacionesFiltradas.length === 0 ? (
+                <tr><td colSpan="7" className="celda-centrada" style={{ padding: "3rem", color: "#94a3b8" }}>No hay cotizaciones registradas para este filtro.</td></tr>
+              ) : (
+                cotizacionesFiltradas.map((c) => (
+                  <tr key={c.id_cotizacion}>
+                    <td style={{ fontWeight: "800", color: "var(--color-primary)" }}>#{c.id_cotizacion}</td>
+                    <td style={{ fontWeight: "600", color: "#64748b" }}>{formatearFecha(c.fecha_cotizacion)}</td>
+                    <td style={{ fontWeight: "700", color: "#1e293b" }}>{c.cliente?.nombre_cliente || "—"}</td>
+                    <td className="celda-centrada" style={{ fontWeight: "600", color: "#64748b" }}>{c.detalle_cotizacion?.length || 0}</td>
+                    <td className="celda-derecha" style={{ fontWeight: "800", color: "#0f172a" }}>{formatearMoneda(calcularTotal(c))}</td>
+                    <td className="celda-centrada">
+                      <span className={getEstadoClase(c.estado)}>{c.estado}</span>
+                    </td>
+                    <td className="celda-centrada">
+                      <button className="btn-ver-detalle" onClick={() => setModalDetalle(c)}>
+                        <Eye size={18} /> Ver Detalles
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
+
+        {/* Modal de Detalle (Premium) */}
+        {modalDetalle && (
+          <div className="modal-overlay" onClick={() => setModalDetalle(null)}>
+            <div className="modal-content modal-detalle" onClick={e => e.stopPropagation()}>
+              <div className="modal-header-gradient">
+                <div className="modal-header-icon"><FileText size={28} /></div>
+                <div>
+                  <p className="modal-header-subtitle">Detalle de Cotización</p>
+                  <h2 className="modal-header-title">Cotización #{modalDetalle.id_cotizacion}</h2>
+                </div>
+                <button className="modal-close-btn" onClick={() => setModalDetalle(null)}>×</button>
+              </div>
+
+              <div className="modal-body">
+                {/* Info Cliente */}
+                <div className="detalle-cliente-card">
+                  <div className="detalle-cliente-avatar">
+                    {modalDetalle.cliente?.nombre_cliente?.charAt(0).toUpperCase() || "C"}
+                  </div>
+                  <div className="detalle-cliente-info">
+                    <h3>{modalDetalle.cliente?.nombre_cliente || "Sin Nombre"}</h3>
+                    <p>ID: {modalDetalle.cliente?.identificacion || "—"}</p>
+                    <p>Asesor: {modalDetalle.usuario?.primer_nombre} {modalDetalle.usuario?.primer_apellido}</p>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                     <span className={getEstadoClase(modalDetalle.estado)} style={{ fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}>{modalDetalle.estado}</span>
+                  </div>
+                </div>
+
+                {/* Lista de Productos */}
+                <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#1e293b", margin: "1.5rem 0 1rem" }}>Productos Cotizados</h3>
+                <div className="detalle-productos-lista">
+                  {modalDetalle.detalle_cotizacion?.map((prod, idx) => (
+                    <div key={idx} className="detalle-producto-item">
+                      <div className="detalle-producto-cantidad">{prod.cantidad}</div>
+                      <div className="detalle-producto-nombre">
+                        <p>{prod.producto?.nombre_producto || `Producto #${prod.id_producto}`}</p>
+                        <span>{formatearMoneda(prod.precio_unitario)} c/u</span>
+                      </div>
+                      <div className="detalle-producto-subtotal">
+                        {formatearMoneda(prod.precio_unitario * prod.cantidad)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="detalle-total-banner" style={{ marginTop: "1.5rem" }}>
+                  <span>Total Cotizado</span>
+                  <span className="detalle-total-monto">{formatearMoneda(calcularTotal(modalDetalle))}</span>
+                </div>
+
+                {/* Controles de Estado */}
+                <div style={{ marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid #e2e8f0" }}>
+                  <h3 style={{ fontSize: "0.9rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>Acciones sobre la Cotización</h3>
+                  
+                  <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                    {modalDetalle.estado === "Pendiente" && (
+                      <>
+                        <button disabled={cargandoAccion} onClick={() => handleCambiarEstado(modalDetalle.id_cotizacion, "Aprobada")} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", borderRadius: "100px", border: "none", background: "#dcfce7", color: "#16a34a", fontWeight: 700, fontSize: "0.95rem", cursor: cargandoAccion ? "wait" : "pointer" }}>
+                          <CheckCircle size={18} /> Aprobar
+                        </button>
+                        <button disabled={cargandoAccion} onClick={() => handleCambiarEstado(modalDetalle.id_cotizacion, "Rechazada")} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", borderRadius: "100px", border: "none", background: "#fee2e2", color: "#dc2626", fontWeight: 700, fontSize: "0.95rem", cursor: cargandoAccion ? "wait" : "pointer" }}>
+                          <XCircle size={18} /> Rechazar
+                        </button>
+                        <button disabled={cargandoAccion} onClick={() => handleEliminar(modalDetalle.id_cotizacion)} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", borderRadius: "100px", border: "1.5px solid #e2e8f0", background: "white", color: "#64748b", fontWeight: 700, fontSize: "0.95rem", cursor: cargandoAccion ? "wait" : "pointer", marginLeft: "auto" }}>
+                          <Trash2 size={18} /> Eliminar
+                        </button>
+                      </>
+                    )}
+                    
+                    {modalDetalle.estado !== "Pendiente" && (
+                      <button disabled={cargandoAccion} onClick={() => handleCambiarEstado(modalDetalle.id_cotizacion, "Pendiente")} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", borderRadius: "100px", border: "none", background: "#fef3c7", color: "#d97706", fontWeight: 700, fontSize: "0.95rem", cursor: cargandoAccion ? "wait" : "pointer" }}>
+                        <Clock size={18} /> Reabrir como Pendiente
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
-    </>
+    </div>
   );
 }
+

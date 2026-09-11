@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { servicioEmpleados } from "./empleados.service";
-import "../autenticacion/autenticacion.css"; // Usa los estilos del formulario de auth
+import "./empleados.css";
 
 export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
     const [formData, setFormData] = useState({
@@ -54,6 +54,7 @@ export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
         if (!formData.nombre.trim()) { setMensaje("El nombre es requerido"); setTipoMensaje("error"); return false; }
         if (!formData.apellido.trim()) { setMensaje("El apellido es requerido"); setTipoMensaje("error"); return false; }
         if (!formData.numDoc.trim()) { setMensaje("El documento es requerido"); setTipoMensaje("error"); return false; }
+        if (!/^\d+$/.test(formData.numDoc.trim())) { setMensaje("El documento solo puede contener números"); setTipoMensaje("error"); return false; }
         if (!formData.correo.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
             setMensaje("Ingresa un correo electrónico válido"); setTipoMensaje("error"); return false;
         }
@@ -93,70 +94,70 @@ export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
     };
 
     return (
-        <div>
-            <form onSubmit={handleActualizar} className="formulario">
-                <h2>Editar Usuario</h2>
-                <p className="subtitulo">Actualizar información de {empleado?.primer_nombre}</p>
-
-                <div className="form-row">
-                    <div className="input-group">
-                        <label className="input-label">Nombre</label>
-                        <input type="text" name="nombre" className="input" value={formData.nombre} onChange={handleChange} disabled={cargando} />
-                    </div>
-                    <div className="input-group">
-                        <label className="input-label">Apellido</label>
-                        <input type="text" name="apellido" className="input" value={formData.apellido} onChange={handleChange} disabled={cargando} />
-                    </div>
+        <form onSubmit={handleActualizar}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-group">
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Nombre</label>
+                    <input type="text" name="nombre" className="form-control" value={formData.nombre} onChange={handleChange} disabled={cargando} />
                 </div>
-
-                <div className="form-row registro-row-doc">
-                    <div className="input-group">
-                        <label className="input-label">Tipo Doc.</label>
-                        <select name="tipoDoc" className="input" value={formData.tipoDoc} onChange={handleChange} disabled={cargando}>
-                            <option value="CC">Cédula</option>
-                            <option value="TI">Tarjeta ID</option>
-                            <option value="CE">Cédula Ext.</option>
-                        </select>
-                    </div>
-                    <div className="input-group">
-                        <label className="input-label">Número de documento</label>
-                        <input type="text" name="numDoc" className="input" value={formData.numDoc} onChange={handleChange} disabled={cargando} />
-                    </div>
+                <div className="form-group">
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Apellido</label>
+                    <input type="text" name="apellido" className="form-control" value={formData.apellido} onChange={handleChange} disabled={cargando} />
                 </div>
+            </div>
 
-                <div className="input-group">
-                    <label className="input-label">Correo electrónico</label>
-                    <input type="email" name="correo" className="input" value={formData.correo} onChange={handleChange} disabled={cargando} />
-                </div>
-
-                <div className="input-group">
-                    <label className="input-label">Tipo de cuenta</label>
-                    <select name="rol" className="input" value={formData.rol} onChange={handleChange} disabled={cargando || currentUserRol === 1}>
-                        <option value="Asesor">Asesor</option>
-                        {currentUserRol === 3 && (
-                            <>
-                                <option value="Administrador">Administrador</option>
-                                <option value="Super Administrador">Super Administrador</option>
-                            </>
-                        )}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
+                <div className="form-group">
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Tipo Doc.</label>
+                    <select name="tipoDoc" className="form-control" value={formData.tipoDoc} onChange={handleChange} disabled={cargando}>
+                        <option value="CC">Cédula</option>
+                        <option value="TI">Tarjeta ID</option>
+                        <option value="CE">Cédula Ext.</option>
                     </select>
                 </div>
-
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-                    <button type="button" className="btn-submit" style={{ background: '#6C737A' }} onClick={onCancel} disabled={cargando}>
-                        Cancelar
-                    </button>
-                    <button type="submit" className="btn-submit" disabled={cargando}>
-                        {cargando ? "Actualizando..." : "Guardar Cambios"}
-                    </button>
+                <div className="form-group">
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Número de documento</label>
+                    <input type="text" name="numDoc" className="form-control" value={formData.numDoc} onChange={handleChange} disabled={cargando} />
                 </div>
+            </div>
 
-                {mensaje && (
-                    <div className={`mensaje ${tipoMensaje}`}>
-                        {tipoMensaje === "success" ? "✓" : "!"} {mensaje}
-                    </div>
-                )}
-            </form>
-        </div>
+            <div className="form-group">
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Correo electrónico</label>
+                <input type="email" name="correo" className="form-control" value={formData.correo} onChange={handleChange} disabled={cargando} />
+            </div>
+
+            <div className="form-group">
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Tipo de cuenta</label>
+                <select name="rol" className="form-control" value={formData.rol} onChange={handleChange} disabled={cargando || currentUserRol === 1}>
+                    <option value="Asesor">Asesor</option>
+                    {currentUserRol === 3 && (
+                        <>
+                            <option value="Administrador">Administrador</option>
+                            <option value="Super Administrador">Super Administrador</option>
+                        </>
+                    )}
+                </select>
+            </div>
+
+            {mensaje && (
+                <div style={{ 
+                    padding: "0.8rem 1rem", borderRadius: "10px", marginTop: "1rem", fontSize: "0.9rem", fontWeight: 600,
+                    background: tipoMensaje === "success" ? "#dcfce7" : "#fee2e2",
+                    color: tipoMensaje === "success" ? "#16a34a" : "#dc2626",
+                    border: `1px solid ${tipoMensaje === "success" ? "#bbf7d0" : "#fecaca"}`
+                }}>
+                    {tipoMensaje === "success" ? "✓" : "!"} {mensaje}
+                </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                <button type="button" className="btn-submit" style={{ background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', flex: 1 }} onClick={onCancel} disabled={cargando}>
+                    Cancelar
+                </button>
+                <button type="submit" className="btn-submit" disabled={cargando} style={{ flex: 2 }}>
+                    {cargando ? "Actualizando..." : "Guardar Cambios"}
+                </button>
+            </div>
+        </form>
     );
 }

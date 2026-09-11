@@ -9,7 +9,7 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=postgresql://root:rootpassword@pronavid-db:5432/pronavid?schema=public
       - JWT_SECRET=${JWT_SECRET}
       - PORT=4000
       - SMTP_HOST=smtp.gmail.com

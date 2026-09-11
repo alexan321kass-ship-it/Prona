@@ -1,0 +1,284 @@
+/**
+ * Estilos para el módulo de Clientes (Estilo CRM Moderno)
+ */
+
+.clientes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.cliente-card-enterprise {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cliente-card-enterprise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.1));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: all 0.4s ease;
+}
+
+.cliente-card-enterprise:hover {
+    transform: translateY(-6px);
+    box-shadow: 
+        0 15px 30px rgba(0,0,0,0.08),
+        0 0 25px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.cliente-card-enterprise:hover::before {
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+}
+
+.cliente-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.cliente-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    /* Mesh Gradient approximation using radial gradients */
+    background: radial-gradient(circle at 10% 20%, rgb(98, 116, 231) 0%, transparent 50%), 
+                radial-gradient(circle at 90% 80%, rgb(60, 219, 234) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgb(165, 126, 246) 0%, transparent 50%),
+                linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background-size: 150% 150%;
+    animation: mesh-movement 6s ease infinite alternate;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 6px 12px rgba(var(--color-primary-rgb), 0.25);
+    border: 2px solid rgba(255,255,255,0.4);
+}
+
+@keyframes mesh-movement {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.cliente-info-basica {
+    flex: 1;
+    overflow: hidden;
+}
+
+.cliente-info-basica h4 {
+    margin: 0 0 0.2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    word-break: break-word; /* Allows long names to wrap naturally */
+}
+
+.cliente-identificacion {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+.cliente-datos-contacto {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    flex: 1;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    pointer-events: none;
+}
+
+.cliente-card-enterprise:hover .cliente-datos-contacto {
+    max-height: 100px;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 0.5rem;
+    pointer-events: auto;
+}
+
+.cliente-dato-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--color-text-main);
+}
+
+.cliente-dato-icono {
+    color: var(--color-primary-dark);
+    opacity: 0.7;
+}
+
+.cliente-acciones-flotantes {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.25, 1.2, 0.5, 1);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 6px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.cliente-card-enterprise:hover .cliente-acciones-flotantes {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.btn-cliente-accion {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: #6b7280;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.btn-cliente-accion:hover {
+    transform: translateY(-2px) scale(1.1);
+}
+
+.btn-cliente-accion.edit:hover {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3);
+}
+
+.btn-cliente-accion.delete:hover {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Rediseño del Buscador en Clientes */
+.clientes-search-container {
+    max-width: 400px;
+    margin-bottom: 2rem;
+}
+
+.clientes-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    background: #f9fafb;
+    border-radius: 20px;
+    color: var(--color-text-muted);
+    text-align: center;
+    border: 2px dashed #e5e7eb;
+}
+
+.clientes-empty-state svg {
+    margin-bottom: 1rem;
+    color: #cbd5e1;
+}
+
+.clientes-empty-state h3 {
+    margin: 0 0 0.5rem;
+    color: var(--color-text-main);
+    font-weight: 700;
+}
+
+/* ============================================
+   FORMULARIO CORPORATE ENTERPRISE (MODAL)
+   ============================================ */
+
+.form-group-enterprise {
+    margin-bottom: 1.25rem;
+}
+
+.form-group-enterprise label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon .input-icon {
+    position: absolute;
+    left: 14px;
+    color: #9ca3af;
+    transition: color 0.3s ease;
+    pointer-events: none;
+}
+
+.input-with-icon .input-enterprise {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    background: #ffffff;
+    border: 1.5px solid #d1d5db;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #111827;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.input-with-icon .input-enterprise::placeholder {
+    color: #9ca3af;
+}
+
+.input-with-icon .input-enterprise:hover {
+    border-color: #9ca3af;
+}
+
+.input-with-icon .input-enterprise:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.input-with-icon .input-enterprise:focus + .input-icon,
+.input-with-icon .input-enterprise:focus ~ .input-icon {
+    color: var(--color-primary);
+}

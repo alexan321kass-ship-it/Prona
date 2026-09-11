@@ -1,0 +1,48 @@
+:root {
+  /* Primary colors */
+  --color-primary: hsl(210, 70%, 55%);
+  --color-primary-dark: hsl(210, 70%, 45%);
+  --color-primary-light: hsl(210, 70%, 65%);
+
+  /* Accent colors */
+  --color-accent: hsl(340, 80%, 60%);
+  --color-accent-dark: hsl(340, 80%, 50%);
+  --color-accent-light: hsl(340, 80%, 70%);
+
+  /* neutrals */
+  --color-bg: hsl(220, 15%, 10%);
+  --color-bg-light: hsl(220, 15%, 15%);
+  --color-surface: hsl(220, 15%, 12%);
+  --color-text: hsl(0, 0%, 90%);
+  --color-text-muted: hsl(0, 0%, 60%);
+
+  /* Glassmorphism - Ultra Premium */
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-bg-strong: rgba(255, 255, 255, 0.7);
+  --glass-blur: blur(24px);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  
+  /* Sombras Profundas y Contrastantes */
+  --glass-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+  --glass-shadow-hover: 0 20px 50px -10px rgba(var(--color-primary-rgb), 0.3), 0 0 20px rgba(255, 255, 255, 0.5);
+  
+  /* Premium Inputs */
+  --input-bg-glass: rgba(255, 255, 255, 0.6);
+  --input-border-glass: rgba(255, 255, 255, 1);
+  --input-focus-glow: 0 0 20px rgba(var(--color-primary-rgb), 0.25);
+  
+  /* Colores RGB base para usar con rgba() */
+  --color-primary-rgb: 41, 128, 185; /* hsl(204, 64%, 44%) aprox para un azul fuerte */
+  --color-accent-rgb: 231, 76, 60;   /* hsl(5, 78%, 57%) aprox para un rojo/naranja vivo */
+}
+
+/* Light mode (optional) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: hsl(0, 0%, 98%);
+    --color-bg-light: hsl(0, 0%, 95%);
+    --color-surface: hsl(0, 0%, 100%);
+    --color-text: hsl(220, 15%, 15%);
+    --color-text-muted: hsl(220, 15%, 40%);
+  }
+}

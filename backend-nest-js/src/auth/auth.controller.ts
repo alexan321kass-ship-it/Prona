@@ -6,6 +6,7 @@ import {
   LoginDto,
   ForgotPasswordDto,
   ResetPasswordDto,
+  ChangePasswordDto,
 } from "./dto/auth.dto";
 import { Public } from "./public.decorator";
 import { ApiBearerAuth } from "@nestjs/swagger";
@@ -85,6 +86,19 @@ export class AuthController {
     return this.authService.resetPassword(
       dto.token,
       dto.codigo,
+      dto.nuevaContrasena,
+    );
+  }
+
+  // Cambiar contraseña obligatoria (requiere JWT)
+  @ApiBearerAuth("JWT-auth")
+  @Post("change-password")
+  async changePassword(
+    @Request() req: any,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(
+      req.user.id_usuario,
       dto.nuevaContrasena,
     );
   }

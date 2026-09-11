@@ -4,6 +4,7 @@ import { servicioAutenticacion } from "./autenticacion.service";
 import "./autenticacion.css";
 import CabeceraPanel from "../paneles/CabeceraPanel";
 import PiePanel from "../paneles/PiePanel";
+import { CheckCircle2, XCircle, Eye, EyeOff } from "lucide-react";
 
 export default function Registro({ isModal = false, onSuccess = null }) {
     const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ export default function Registro({ isModal = false, onSuccess = null }) {
     const [mensaje, setMensaje] = useState("");
     const [tipoMensaje, setTipoMensaje] = useState("");
     const [cargando, setCargando] = useState(false);
+    const [mostrarContrasena, setMostrarContrasena] = useState(false);
     const [currentUserRol, setCurrentUserRol] = useState(null);
     const navigate = useNavigate();
 
@@ -72,16 +74,24 @@ export default function Registro({ isModal = false, onSuccess = null }) {
             setTipoMensaje("error");
             return false;
         }
+        if (!/^\d+$/.test(formData.numDoc.trim())) {
+            setMensaje("El número de documento solo puede contener números");
+            setTipoMensaje("error");
+            return false;
+        }
         if (!formData.correo.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
             setMensaje("Ingresa un correo electrónico válido");
             setTipoMensaje("error");
             return false;
         }
-        if (formData.contrasena.length < 6) {
-            setMensaje("La contraseña debe tener al menos 6 caracteres");
+
+        const pass = formData.contrasena;
+        if (pass.length < 7 || !/\d/.test(pass) || !/[A-Z]/.test(pass) || !/[\W_]/.test(pass)) {
+            setMensaje("La contraseña no cumple con los requisitos de seguridad");
             setTipoMensaje("error");
             return false;
         }
+
         if (formData.contrasena !== formData.confirmarContrasena) {
             setMensaje("Las contraseñas no coinciden");
             setTipoMensaje("error");
@@ -89,6 +99,14 @@ export default function Registro({ isModal = false, onSuccess = null }) {
         }
         return true;
     };
+
+    const passReqs = {
+        length: formData.contrasena.length >= 7,
+        number: /\d/.test(formData.contrasena),
+        upper: /[A-Z]/.test(formData.contrasena),
+        special: /[\W_]/.test(formData.contrasena)
+    };
+    const isPassSecure = passReqs.length && passReqs.number && passReqs.upper && passReqs.special;
 
     const handleRegistro = async (e) => {
         e.preventDefault();
@@ -130,152 +148,133 @@ export default function Registro({ isModal = false, onSuccess = null }) {
 
     const contenidoFormulario = (
         <div className={!isModal ? "glass-card fade-in registro-card" : ""} style={!isModal ? { maxWidth: '600px', margin: '0 auto' } : {}}>
-            <form onSubmit={handleRegistro} className="formulario">
-                        <h2>Registrar Nuevo Usuario</h2>
-                        <p className="subtitulo">Añadir un nuevo Asesor o Administrador al sistema</p>
+            <form onSubmit={handleRegistro}>
+                {!isModal && (
+                    <>
+                        <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1e293b', marginBottom: '0.2rem' }}>Registrar Nuevo Usuario</h2>
+                        <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Añadir un nuevo Asesor o Administrador al sistema</p>
+                    </>
+                )}
 
-                        <div className="form-row">
-                            <div className="input-group">
-                                <label className="input-label">Nombre</label>
-                                <input
-                                    type="text"
-                                    name="nombre"
-                                    className="input"
-                                    value={formData.nombre}
-                                    onChange={handleChange}
-                                    placeholder="Tu nombre"
-                                    disabled={cargando}
-                                    pattern="^[^0-9]*$"
-                                    title="No se permiten números"
-                                />
-                            </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="form-group">
+                        <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Nombre</label>
+                        <input type="text" name="nombre" className="form-control" value={formData.nombre} onChange={handleChange} placeholder="Tu nombre" disabled={cargando} pattern="^[^0-9]*$" title="No se permiten números" />
+                    </div>
+                    <div className="form-group">
+                        <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Apellido</label>
+                        <input type="text" name="apellido" className="form-control" value={formData.apellido} onChange={handleChange} placeholder="Tu apellido" disabled={cargando} pattern="^[^0-9]*$" title="No se permiten números" />
+                    </div>
+                </div>
 
-                            <div className="input-group">
-                                <label className="input-label">Apellido</label>
-                                <input
-                                    type="text"
-                                    name="apellido"
-                                    className="input"
-                                    value={formData.apellido}
-                                    onChange={handleChange}
-                                    placeholder="Tu apellido"
-                                    disabled={cargando}
-                                    pattern="^[^0-9]*$"
-                                    title="No se permiten números"
-                                />
-                            </div>
-                        </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
+                    <div className="form-group">
+                        <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Tipo Doc.</label>
+                        <select name="tipoDoc" className="form-control" value={formData.tipoDoc} onChange={handleChange} disabled={cargando}>
+                            <option value="CC">Cédula</option>
+                            <option value="TI">Tarjeta ID</option>
+                            <option value="CE">Cédula Ext.</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Número de documento</label>
+                        <input type="text" name="numDoc" className="form-control" value={formData.numDoc} onChange={handleChange} placeholder="1234567890" disabled={cargando} />
+                    </div>
+                </div>
 
-                        <div className="form-row registro-row-doc">
-                            <div className="input-group">
-                                <label className="input-label">Tipo Doc.</label>
-                                <select
-                                    name="tipoDoc"
-                                    className="input"
-                                    value={formData.tipoDoc}
-                                    onChange={handleChange}
-                                    disabled={cargando}
-                                >
-                                    <option value="CC">Cédula</option>
-                                    <option value="TI">Tarjeta ID</option>
-                                    <option value="CE">Cédula Ext.</option>
-                                </select>
-                            </div>
+                <div className="form-group">
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Correo electrónico</label>
+                    <input type="email" name="correo" className="form-control" value={formData.correo} onChange={handleChange} placeholder="ejemplo@correo.com" disabled={cargando} />
+                </div>
 
-                            <div className="input-group">
-                                <label className="input-label">Número de documento</label>
-                                <input
-                                    type="text"
-                                    name="numDoc"
-                                    className="input"
-                                    value={formData.numDoc}
-                                    onChange={handleChange}
-                                    placeholder="1234567890"
-                                    disabled={cargando}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="input-group">
-                            <label className="input-label">Correo electrónico</label>
-                            <input
-                                type="email"
-                                name="correo"
-                                className="input"
-                                value={formData.correo}
-                                onChange={handleChange}
-                                placeholder="ejemplo@correo.com"
-                                disabled={cargando}
-                            />
-                        </div>
-
-                        <div className="form-row">
-                            <div className="input-group">
-                                <label className="input-label">Contraseña</label>
-                                <input
-                                    type="password"
-                                    name="contrasena"
-                                    className="input"
-                                    value={formData.contrasena}
-                                    onChange={handleChange}
-                                    placeholder="••••••••"
-                                    disabled={cargando}
-                                />
-                            </div>
-
-                            <div className="input-group">
-                                <label className="input-label">Confirmar</label>
-                                <input
-                                    type="password"
-                                    name="confirmarContrasena"
-                                    className="input"
-                                    value={formData.confirmarContrasena}
-                                    onChange={handleChange}
-                                    placeholder="••••••••"
-                                    disabled={cargando}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="input-group">
-                            <label className="input-label">Tipo de cuenta</label>
-                            <select
-                                name="rol"
-                                className="input"
-                                value={formData.rol}
-                                onChange={handleChange}
-                                disabled={cargando || currentUserRol === 1}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="form-group">
+                        <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Contraseña</label>
+                        <div style={{ position: 'relative' }}>
+                            <input type={mostrarContrasena ? "text" : "password"} name="contrasena" className="form-control" value={formData.contrasena} onChange={handleChange} placeholder="••••••••" disabled={cargando} style={{ paddingRight: '2.5rem' }} />
+                            <button 
+                                type="button" 
+                                onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                                style={{ position: 'absolute', right: '0.8rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             >
-                                <option value="Asesor">Asesor</option>
-                                {currentUserRol === 3 && (
-                                    <>
-                                        <option value="Administrador">Administrador</option>
-                                        <option value="Super Administrador">Super Administrador</option>
-                                    </>
-                                )}
-                            </select>
+                                {mostrarContrasena ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
                         </div>
-
-                        <button
-                            type="submit"
-                            className="btn-submit"
-                            disabled={cargando}
-                        >
-                            {cargando ? (
-                                <>
-                                    <span className="loader-inline"></span>
-                                    Registrando...
-                                </>
-                            ) : (
-                                "Crear Usuario"
-                            )}
-                        </button>
-
-                        {mensaje && (
-                            <div className={`mensaje ${tipoMensaje}`}>
-                                {tipoMensaje === "success" ? "✓" : "!"} {mensaje}
+                        
+                        {formData.contrasena.length > 0 && (
+                            <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: passReqs.length ? '#16a34a' : '#94a3b8' }}>
+                                    {passReqs.length ? <CheckCircle2 size={14} /> : <XCircle size={14} />} Mínimo 7 caracteres
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: passReqs.upper ? '#16a34a' : '#94a3b8' }}>
+                                    {passReqs.upper ? <CheckCircle2 size={14} /> : <XCircle size={14} />} Una mayúscula
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: passReqs.number ? '#16a34a' : '#94a3b8' }}>
+                                    {passReqs.number ? <CheckCircle2 size={14} /> : <XCircle size={14} />} Un número
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: passReqs.special ? '#16a34a' : '#94a3b8' }}>
+                                    {passReqs.special ? <CheckCircle2 size={14} /> : <XCircle size={14} />} Un carácter especial
+                                </div>
+                                {isPassSecure && (
+                                    <div style={{ marginTop: '0.3rem', color: '#16a34a', fontWeight: 600, fontSize: '0.85rem' }}>
+                                        ¡Contraseña Segura!
+                                    </div>
+                                )}
                             </div>
                         )}
+                    </div>
+                    <div className="form-group">
+                        <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Confirmar</label>
+                        <div style={{ position: 'relative' }}>
+                            <input type={mostrarContrasena ? "text" : "password"} name="confirmarContrasena" className="form-control" value={formData.confirmarContrasena} onChange={handleChange} placeholder="••••••••" disabled={cargando} style={{ paddingRight: '2.5rem' }} />
+                            <button 
+                                type="button" 
+                                onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                                style={{ position: 'absolute', right: '0.8rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            >
+                                {mostrarContrasena ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
+                        
+                        {formData.confirmarContrasena.length > 0 && (
+                            <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem', color: formData.contrasena === formData.confirmarContrasena ? '#16a34a' : '#dc2626' }}>
+                                {formData.contrasena === formData.confirmarContrasena ? (
+                                    <><CheckCircle2 size={14} /> Las contraseñas coinciden</>
+                                ) : (
+                                    <><XCircle size={14} /> Las contraseñas no coinciden</>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Tipo de cuenta</label>
+                    <select name="rol" className="form-control" value={formData.rol} onChange={handleChange} disabled={cargando || currentUserRol === 1}>
+                        <option value="Asesor">Asesor</option>
+                        {currentUserRol === 3 && (
+                            <>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Super Administrador">Super Administrador</option>
+                            </>
+                        )}
+                    </select>
+                </div>
+
+                {mensaje && (
+                    <div style={{ 
+                        padding: "0.8rem 1rem", borderRadius: "10px", marginTop: "1rem", fontSize: "0.9rem", fontWeight: 600,
+                        background: tipoMensaje === "success" ? "#dcfce7" : "#fee2e2",
+                        color: tipoMensaje === "success" ? "#16a34a" : "#dc2626",
+                        border: `1px solid ${tipoMensaje === "success" ? "#bbf7d0" : "#fecaca"}`
+                    }}>
+                        {tipoMensaje === "success" ? "✓" : "!"} {mensaje}
+                    </div>
+                )}
+
+                <button type="submit" className="btn-submit" disabled={cargando} style={{ marginTop: '1.5rem', width: '100%', padding: '0.85rem', borderRadius: '12px', background: 'var(--color-primary)', color: 'white', fontWeight: 700, fontSize: '1rem', border: 'none', cursor: 'pointer', transition: 'all 0.2s ease' }}>
+                    {cargando ? "Registrando..." : "Crear Usuario"}
+                </button>
             </form>
         </div>
     );

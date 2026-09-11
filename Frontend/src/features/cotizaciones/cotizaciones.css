@@ -420,6 +420,214 @@
 }
 
 /* ============================================
+   MODAL DE DETALLES PREMIUM
+   ============================================ */
+.modal-detalle {
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  max-width: 650px;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+.modal-header-gradient {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  padding: 2.5rem 2rem 2rem;
+  color: white;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-shrink: 0;
+}
+
+.modal-header-icon {
+  background: rgba(255, 255, 255, 0.2);
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.modal-header-subtitle {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+}
+
+.modal-header-title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: white;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 2rem;
+  background: white;
+  overflow-y: auto;
+}
+
+/* Tarjeta Cliente */
+.detalle-cliente-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: #f8fafc;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+}
+
+.detalle-cliente-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.detalle-cliente-info h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.detalle-cliente-info p {
+  margin: 0 0 0.15rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Lista de Productos */
+.detalle-productos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detalle-producto-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  background: #ffffff;
+  transition: all 0.2s;
+}
+
+.detalle-producto-item:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.detalle-producto-cantidad {
+  background: var(--color-primary-glass);
+  color: var(--color-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.detalle-producto-nombre {
+  flex: 1;
+}
+
+.detalle-producto-nombre p {
+  margin: 0 0 0.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.detalle-producto-nombre span {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.detalle-producto-subtotal {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--color-primary);
+}
+
+/* Total Banner */
+.detalle-total-banner {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px dashed #e2e8f0;
+}
+
+.detalle-total-banner span:first-child {
+  font-weight: 700;
+  color: #64748b;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detalle-total-monto {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 @media (max-width: 640px) {
@@ -428,4 +636,9 @@
   .cot-fila__cabecera { flex-direction: column; align-items: flex-start; }
   .cot-fila__derecha { justify-content: flex-start; }
   .cot-tabla { font-size: 0.78rem; }
+  
+  .detalle-cliente-card { flex-direction: column; align-items: flex-start; }
+  .detalle-cliente-card > div:last-child { align-self: flex-start; margin-top: 0.5rem; }
+  .modal-header-gradient { padding: 1.5rem; }
+  .modal-body { padding: 1.25rem; }
 }

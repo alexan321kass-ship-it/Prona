@@ -56,3 +56,9 @@ openjdk/
 
 # Docker volumes
 mysql_data/
+
+# Scripts temporales de seed/debug
+backend-nest-js/seed_*.js
+backend-nest-js/check_*.js
+backend-nest-js/fix.js
+test_*.js

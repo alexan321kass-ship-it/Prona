@@ -263,9 +263,10 @@ body {
 
 /* --- Tags y Estados --- */
 .tab-pill.active {
-    background: var(--primary) !important;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
     color: white !important;
-    box-shadow: 0 5px 15px rgba(192, 57, 43, 0.2) !important;
+    box-shadow: 0 6px 20px rgba(192, 57, 43, 0.25), inset 0 1px 1px rgba(255,255,255,0.2) !important;
+    transform: translateY(-2px);
 }
 
 .stock-badge.in-stock {
@@ -325,12 +326,20 @@ body {
 .tab-pill {
     background: transparent;
     border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 14px;
-    font-weight: 600;
-    color: var(--text-light);
+    padding: 0.8rem 1.8rem;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #64748B;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.tab-pill:hover {
+    color: #0F172A;
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateY(-1px);
 }
 
 .action-btn {

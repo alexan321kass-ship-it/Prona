@@ -34,18 +34,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     const isAuthenticated = (await super.canActivate(context)) as boolean;
     if (!isAuthenticated) return false;
 
-    // Después de que Passport validó el JWT, verificamos si requiere cambio de contraseña
-    const requestAfterAuth = context.switchToHttp().getRequest();
-    const user = requestAfterAuth.user;
 
-    if (user && user.requiere_cambio_contrasena) {
-      // Permitimos que acceda a la ruta de cambiar contraseña, pero a ninguna otra
-      if (!requestAfterAuth.url.includes("/auth/change-password")) {
-        throw new ForbiddenException(
-          "Debe cambiar su contraseña temporal antes de continuar.",
-        );
-      }
-    }
 
     return true;
   }

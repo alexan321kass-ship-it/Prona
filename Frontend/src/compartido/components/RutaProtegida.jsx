@@ -26,7 +26,8 @@ const RutaProtegida = ({ children, rolRequerido }) => {
 
     // Si hay rol requerido y no coincide, al login o dashboard base
     // NOTA: El admin (1) puede entrar a rutas de asesor (2)
-    if (rolRequerido && usuario.id_rol !== rolRequerido && usuario.id_rol !== 1 && usuario.id_rol !== 3) {
+    const idRol = Number(usuario.id_rol);
+    if (rolRequerido && idRol !== rolRequerido && idRol !== 1 && idRol !== 3) {
         return <Navigate to="/" replace />;
     }
 

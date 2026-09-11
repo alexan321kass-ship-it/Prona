@@ -162,24 +162,28 @@ export default function SeguimientoAdmin() {
     };
 
     return (
-        <div className="seguimiento-page">
-            {/* HEADER */}
-            <header className="seg-header">
-                <img src={logoPronavid} alt="Pronavid" className="seg-logo" />
-            </header>
-
-            {/* BOTÓN VOLVER */}
-            <button onClick={volverDashboard} className="btn-volver" title="Volver">
-                <ArrowLeft size={20} />
-            </button>
-
-            {/* CONTENIDO */}
-            <div className="seg-container">
-                <div className="seg-card">
-                    <div className="seg-card-header">
-                        <h2><BarChart3 size={24} className="inline-block mr-2 text-blue-600" /> Seguimiento de Pedidos (Admin)</h2>
+        <div className="pedidos-pagina">
+            <div className="pedidos-contenido">
+                
+                {/* PREMIUM HEADER */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ background: 'var(--color-primary-glass)', padding: '0.8rem', borderRadius: '14px', color: 'var(--color-primary)' }}>
+                            <BarChart3 size={28} />
+                        </div>
+                        <div>
+                            <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: 800, color: '#111827', letterSpacing: '-0.03em' }}>
+                                Seguimiento de Pedidos (Admin)
+                            </h2>
+                            <p style={{ margin: 0, color: '#6b7280', fontSize: '0.95rem', fontWeight: 500 }}>
+                                Administra el estado y los detalles de los pedidos
+                            </p>
+                        </div>
                     </div>
+                </div>
 
+                <div style={{ background: 'rgba(255, 255, 255, 0.7)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '20px', padding: '2rem', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+                    
                     {/* Buscador */}
                     <div className="seg-search-row">
                         <EntradaAutocompletado
@@ -236,11 +240,12 @@ export default function SeguimientoAdmin() {
                                                     {r.estado_pedido}
                                                 </span>
                                             </td>
-                                            <td className="acciones-cell">
+                                            <td className="acciones-cell" style={{ display: 'flex', gap: '0.5rem' }}>
                                                 <button
                                                     onClick={() => abrirDetalle(r)}
                                                     className="btn-action btn-view"
                                                     title="Ver detalle y productos"
+                                                    style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', border: 'none', background: '#F3F4F6', color: '#111827', cursor: 'pointer' }}
                                                 >
                                                     <Eye size={16} />
                                                 </button>
@@ -248,6 +253,7 @@ export default function SeguimientoAdmin() {
                                                     onClick={() => abrirActualizar(r)}
                                                     className="btn-action btn-edit"
                                                     title="Actualizar estado"
+                                                    style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', border: 'none', background: 'var(--color-primary-glass)', color: 'var(--color-primary)', cursor: 'pointer' }}
                                                 >
                                                     <Pencil size={16} />
                                                 </button>
@@ -260,7 +266,7 @@ export default function SeguimientoAdmin() {
                     </div>
 
                     {resultados.length > 0 && (
-                        <div className="resultados-conteo resultados-conteo--detallado">
+                        <div className="resultados-conteo">
                             <strong>{resultados.length}</strong> pedido(s) encontrado(s)
                         </div>
                     )}
@@ -371,65 +377,118 @@ export default function SeguimientoAdmin() {
             {/* MODAL: ACTUALIZAR ESTADO */}
             {modalActualizar && (
                 <div className="modal-overlay" onClick={() => setModalActualizar(null)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <h3><Pencil size={20} className="inline-block mr-2 text-blue-600" /> Actualizar Estado</h3>
+                    <div onClick={(e) => e.stopPropagation()} style={{
+                        background: '#ffffff',
+                        borderRadius: '24px',
+                        width: '100%',
+                        maxWidth: '480px',
+                        overflow: 'hidden',
+                        boxShadow: '0 30px 80px rgba(0,0,0,0.18)',
+                        animation: 'modalSlide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    }}>
 
-                        <div className="info-pedido">
-                            <p className="info-pedido__detalle">
-                                <strong>Pedido:</strong> #{modalActualizar.id_pedido}
-                            </p>
-                            <p className="info-pedido__detalle">
-                                <strong>Cliente:</strong> {modalActualizar.nombre_cliente}
-                            </p>
-                            <p className="info-pedido__detalle">
-                                <strong>Estado actual:</strong>{" "}
-                                <span className={getEstadoClase(modalActualizar.estado_pedido)}>
-                                    {modalActualizar.estado_pedido}
-                                </span>
-                            </p>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Nuevo Estado</label>
-                            <select
-                                value={modalActualizar.nuevoEstado}
-                                onChange={(e) => setModalActualizar({
-                                    ...modalActualizar,
-                                    nuevoEstado: e.target.value
-                                })}
-                                className="seg-input"
-                            >
-                                <option value="Pendiente">Pendiente</option>
-                                <option value="En proceso">En proceso</option>
-                                <option value="Entregado">Entregado</option>
-                                <option value="Cancelado">Cancelado</option>
-                            </select>
-                        </div>
-
-                        {/* Preview del cambio */}
-                        {modalActualizar.nuevoEstado !== modalActualizar.estado_pedido && (
-                            <div className="cambio-estado-preview">
-                                <span className={getEstadoClase(modalActualizar.estado_pedido)}>
-                                    {modalActualizar.estado_pedido}
-                                </span>
-                                <span className="cambio-estado-flecha">→</span>
-                                <span className={getEstadoClase(modalActualizar.nuevoEstado)}>
-                                    {modalActualizar.nuevoEstado}
-                                </span>
+                        {/* HEADER */}
+                        <div style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)', padding: '2rem', color: 'white', position: 'relative', overflow: 'hidden' }}>
+                            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}></div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative', zIndex: 2 }}>
+                                <div style={{ background: 'rgba(255,255,255,0.15)', borderRadius: '12px', padding: '10px' }}>
+                                    <Pencil size={22} />
+                                </div>
+                                <div>
+                                    <p style={{ margin: 0, fontSize: '0.78rem', opacity: 0.7, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Cambio de Estado</p>
+                                    <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900 }}>Pedido #{modalActualizar.id_pedido}</h2>
+                                    <p style={{ margin: 0, opacity: 0.75, fontSize: '0.9rem', marginTop: '0.2rem' }}>{modalActualizar.nombre_cliente}</p>
+                                </div>
                             </div>
-                        )}
+                        </div>
 
-                        <div className="modal-actions">
-                            <button onClick={() => setModalActualizar(null)} className="btn-secondary">
-                                Cancelar
-                            </button>
-                            <button
-                                onClick={guardarActualizacion}
-                                className="btn-primary"
-                                disabled={actualizando || modalActualizar.nuevoEstado === modalActualizar.estado_pedido}
-                            >
-                                {actualizando ? "Guardando..." : <><Save size={18} className="inline-block mr-1" /> Guardar Cambio</>}
-                            </button>
+                        {/* CUERPO */}
+                        <div style={{ padding: '2rem' }}>
+
+                            {/* Estado actual */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', background: '#f8fafc', borderRadius: '14px', padding: '1rem 1.25rem' }}>
+                                <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Estado actual:</p>
+                                <span className={getEstadoClase(modalActualizar.estado_pedido)}>{modalActualizar.estado_pedido}</span>
+                            </div>
+
+                            {/* Selector visual de estados (pills) */}
+                            <p style={{ margin: '0 0 1rem', fontSize: '0.8rem', fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Selecciona el nuevo estado:</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                                {[
+                                    { valor: 'Pendiente',   emoji: '⏳', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)',  border: 'rgba(245,158,11,0.3)'  },
+                                    { valor: 'En proceso',  emoji: '🔄', color: '#3b82f6', bg: 'rgba(59,130,246,0.08)',  border: 'rgba(59,130,246,0.3)'  },
+                                    { valor: 'Entregado',   emoji: '✅', color: '#22c55e', bg: 'rgba(34,197,94,0.08)',   border: 'rgba(34,197,94,0.3)'   },
+                                    { valor: 'Cancelado',   emoji: '❌', color: '#ef4444', bg: 'rgba(239,68,68,0.08)',   border: 'rgba(239,68,68,0.3)'   },
+                                ].map(({ valor, emoji, color, bg, border }) => {
+                                    const isSelected = modalActualizar.nuevoEstado === valor;
+                                    return (
+                                        <button
+                                            key={valor}
+                                            onClick={() => setModalActualizar({ ...modalActualizar, nuevoEstado: valor })}
+                                            style={{
+                                                padding: '1rem',
+                                                borderRadius: '16px',
+                                                border: `2px solid ${isSelected ? color : 'transparent'}`,
+                                                background: isSelected ? bg : '#f8fafc',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.25s ease',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                gap: '0.4rem',
+                                                transform: isSelected ? 'scale(1.04)' : 'scale(1)',
+                                                boxShadow: isSelected ? `0 8px 20px ${border}` : 'none',
+                                            }}
+                                        >
+                                            <span style={{ fontSize: '1.8rem' }}>{emoji}</span>
+                                            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: isSelected ? color : '#475569' }}>{valor}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Preview de la transición */}
+                            {modalActualizar.nuevoEstado !== modalActualizar.estado_pedido && (
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '14px' }}>
+                                    <span className={getEstadoClase(modalActualizar.estado_pedido)}>{modalActualizar.estado_pedido}</span>
+                                    <span style={{ fontSize: '1.2rem', color: '#94a3b8', fontWeight: 700 }}>→</span>
+                                    <span className={getEstadoClase(modalActualizar.nuevoEstado)}>{modalActualizar.nuevoEstado}</span>
+                                </div>
+                            )}
+
+                            {/* Botones de acción */}
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                <button
+                                    onClick={() => setModalActualizar(null)}
+                                    style={{ flex: 1, padding: '0.9rem', borderRadius: '100px', border: 'none', background: '#f1f5f9', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem', transition: 'all 0.2s' }}
+                                    onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
+                                    onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={guardarActualizacion}
+                                    disabled={actualizando || modalActualizar.nuevoEstado === modalActualizar.estado_pedido}
+                                    style={{
+                                        flex: 2,
+                                        padding: '0.9rem',
+                                        borderRadius: '100px',
+                                        border: 'none',
+                                        background: (actualizando || modalActualizar.nuevoEstado === modalActualizar.estado_pedido) ? '#e2e8f0' : 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%)',
+                                        color: (actualizando || modalActualizar.nuevoEstado === modalActualizar.estado_pedido) ? '#94a3b8' : 'white',
+                                        fontWeight: 700,
+                                        cursor: (actualizando || modalActualizar.nuevoEstado === modalActualizar.estado_pedido) ? 'not-allowed' : 'pointer',
+                                        fontSize: '0.95rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                >
+                                    {actualizando ? "Guardando..." : <><Save size={16} /> Guardar Cambio</>}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

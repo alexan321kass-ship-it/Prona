@@ -1,5 +1,5 @@
 /**
- * Estilos de Autocompletado - Componente compartido
+ * Estilos de Autocompletado - Componente compartido (Ultra-Premium)
  */
 
 /* Contenedor principal */
@@ -10,86 +10,121 @@
 
 .autocompletado-campo {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 /* Icono de búsqueda */
 .autocompletado-icono-busqueda {
     position: absolute;
-    left: 12px;
+    left: 20px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--color-text-light);
+    color: #9ca3af;
+    transition: color 0.3s ease;
+    z-index: 2;
 }
 
 /* Input de búsqueda */
 .autocompletado-entrada {
     width: 100%;
-    padding: 0.85rem 1rem 0.85rem 2.5rem;
-    border-radius: 12px;
-    border: 2px solid transparent;
-    background: var(--color-bg);
-    font-size: 0.95rem;
+    height: 56px;
+    padding: 0 48px 0 52px;
+    border-radius: 100px; /* Floating pill look */
+    border: 1px solid rgba(0,0,0,0.06);
+    background: #ffffff;
+    font-size: 1rem;
     outline: none;
-    transition: all 0.2s ease;
-    font-family: var(--font-main);
-    color: var(--color-text-main);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-family: inherit;
+    color: #111827;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
 .autocompletado-entrada::placeholder {
-    color: var(--color-text-light);
+    color: #9ca3af;
 }
 
+.autocompletado-entrada:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+.autocompletado-entrada:focus,
 .autocompletado-entrada.activo {
-    border-color: var(--color-primary);
+    border-color: rgba(var(--color-primary-rgb), 0.5);
+    box-shadow: 0 8px 25px rgba(var(--color-primary-rgb), 0.15), 0 0 0 4px rgba(var(--color-primary-rgb), 0.08);
+    transform: translateY(-2px);
+}
+
+.autocompletado-entrada:focus ~ .autocompletado-icono-busqueda,
+.autocompletado-entrada.activo ~ .autocompletado-icono-busqueda {
+    color: var(--color-primary);
 }
 
 /* Botón de limpiar */
 .autocompletado-boton-limpiar {
     position: absolute;
-    right: 12px;
+    right: 20px;
     top: 50%;
     transform: translateY(-50%);
-    background: none;
+    background: #f3f4f6;
     border: none;
-    color: var(--color-text-light);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
     cursor: pointer;
-    padding: 4px;
+    transition: all 0.2s ease;
 }
 
-/* Lista de sugerencias */
+.autocompletado-boton-limpiar:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Lista de sugerencias (Glassmorphism) */
 .autocompletado-lista {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 12px);
     left: 0;
     right: 0;
-    background: var(--color-card);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     list-style: none;
     padding: 0.5rem;
     margin: 0;
     z-index: 1000;
-    border: 1px solid var(--color-border);
-    animation: deslizarArriba 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: deslizarArriba 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Item de sugerencia */
 .autocompletado-item {
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.15s ease;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    color: var(--color-text-main);
+    gap: 0.8rem;
+    color: #4b5563;
 }
 
+.autocompletado-item:hover,
 .autocompletado-item.activo {
-    background: #FEF5F4;
+    background: rgba(var(--color-primary-rgb), 0.08);
     color: var(--color-primary);
     font-weight: 600;
+    transform: translateX(4px);
 }
 
 /* Indicador de punto */
@@ -97,21 +132,25 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--color-border);
+    background: #d1d5db;
+    transition: all 0.2s ease;
 }
 
-.autocompletado-item.activo .autocompletado-indicador {
+.autocompletado-item.activo .autocompletado-indicador,
+.autocompletado-item:hover .autocompletado-indicador {
     background: var(--color-primary);
+    transform: scale(1.5);
+    box-shadow: 0 0 8px var(--color-primary-light);
 }
 
 /* Animación */
 @keyframes deslizarArriba {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(15px) scale(0.98);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }

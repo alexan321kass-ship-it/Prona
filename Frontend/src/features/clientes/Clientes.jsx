@@ -1,11 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Users, Plus, Phone, Mail, ChevronLeft, Search, X, User, CreditCard, MapPin } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { clientesService } from "./clientes.service";
 import "../../compartido/styles/seguimiento-compartido.css";
+import "./clientes.css";
 import EntradaAutocompletado from "../../compartido/components/EntradaAutocompletado";
 import logoPronavid from "../../images/Logopronavid.png";
+
+const getInitials = (name) => {
+    if (!name) return "CL";
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+};
 
 export default function Clientes() {
     const navigate = useNavigate();
@@ -44,7 +55,7 @@ export default function Clientes() {
             setClientes(data.clientes || data || []);
         } catch (error) {
             console.error("Error cargando clientes:", error);
-            setMensaje({ texto: "Error al cargar clientes", tipo: "error" });
+            setMensaje({ texto: `Error al cargar clientes: ${error.message}`, tipo: "error" });
         } finally {
             setCargando(false);
         }
@@ -150,193 +161,237 @@ export default function Clientes() {
 
     return (
         <div className="seguimiento-page">
-            {/* HEADER */}
-            <header className="seg-header">
-                <img src={logoPronavid} alt="Pronavid" className="seg-logo" />
-            </header>
+           
 
-            {/* BOTÓN VOLVER */}
-            <button onClick={volverDashboard} className="btn-volver" title="Volver">
-                <ArrowLeft size={20} />
-            </button>
-
-            {/* CONTENIDO */}
-            <div className="seg-container">
-                <div className="seg-card">
-                    <div className="seg-card-header">
-                        <h2>Gestión de Clientes</h2>
-                        <button
-                            onClick={() => abrirFormulario()}
-                            className="btn-primary"
-                        >
-                            + Nuevo Cliente
-                        </button>
+            {/* CONTENIDO CRM */}
+            <div className="catalogo-contenido">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="catalogo-wrapper-premium"
+                >
+                    <div className="catalogo-header-premium">
+                        <div className="catalogo-icono-titulo">
+                            <div className="catalogo-icono-badge">
+                                <Users size={24} />
+                            </div>
+                            <h2>Gestión de Clientes</h2>
+                        </div>
+                        <div className="catalogo-acciones-enterprise">
+                            <button onClick={() => abrirFormulario()} className="btn-premium">
+                                <Plus size={20} /> Nuevo Cliente
+                            </button>
+                        </div>
                     </div>
 
                     {/* Buscador */}
-                    <div className="seg-search-row">
-                        <EntradaAutocompletado
-                            value={busqueda}
-                            onChange={setBusqueda}
-                            suggestions={sugerencias}
-                            placeholder="Buscar por nombre o identificación..."
-                        />
+                    <div className="clientes-search-container">
+                        <div className="catalogo-buscador">
+                            <div className="catalogo-buscador__campo">
+                                <Search size={20} className="catalogo-buscador__icono" />
+                                <EntradaAutocompletado
+                                    value={busqueda}
+                                    onChange={setBusqueda}
+                                    suggestions={sugerencias}
+                                    placeholder="Buscar cliente por nombre o ID..."
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     {/* Mensaje */}
                     {mensaje.texto && (
-                        <div className={`seg-mensaje ${mensaje.tipo}`}>
+                        <div className={`seg-mensaje ${mensaje.tipo}`} style={{ marginBottom: '1.5rem' }}>
                             {mensaje.texto}
                         </div>
                     )}
 
-                    {/* Tabla */}
-                    <div className="seg-table-container">
-                        {cargando ? (
-                            <div className="seg-loading">
-                                <div className="loader"></div>
-                                <p>Cargando clientes...</p>
-                            </div>
-                        ) : clientes.length === 0 ? (
-                            <div className="seg-empty">
-                                <p>No se encontraron clientes</p>
-                            </div>
-                        ) : (
-                            <table className="seg-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Identificación</th>
-                                        <th>Teléfono</th>
-                                        <th>Correo</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {clientes.map((cliente) => (
-                                        <tr key={cliente.id_cliente}>
-                                            <td>{cliente.id_cliente}</td>
-                                            <td>{cliente.nombre_cliente}</td>
-                                            <td>{cliente.identificacion}</td>
-                                            <td>{cliente.telefono_cliente || "-"}</td>
-                                            <td>{cliente.correo_cliente || "-"}</td>
-                                            <td className="acciones-cell">
-                                                <button
-                                                    onClick={() => abrirFormulario(cliente)}
-                                                    className="btn-action btn-edit"
-                                                    title="Editar"
-                                                >
-                                                    <Pencil size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => eliminarCliente(cliente.id_cliente)}
-                                                    className="btn-action btn-delete"
-                                                    title="Eliminar"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </div>
-                </div>
+                    {/* Grid CRM */}
+                    {cargando ? (
+                        <div className="seg-loading">
+                            <div className="loader"></div>
+                            <p>Cargando clientes...</p>
+                        </div>
+                    ) : clientes.length === 0 ? (
+                        <div className="clientes-empty-state">
+                            <Users size={48} />
+                            <h3>No hay clientes registrados</h3>
+                            <p>Comienza agregando tu primer cliente al sistema.</p>
+                        </div>
+                    ) : (
+                        <div className="clientes-grid">
+                            {clientes.map((cliente) => (
+                                <div key={cliente.id_cliente} className="cliente-card-enterprise">
+                                    <div className="cliente-acciones-flotantes">
+                                        <button 
+                                            onClick={() => abrirFormulario(cliente)} 
+                                            className="btn-cliente-accion edit" 
+                                            title="Editar"
+                                        >
+                                            <Pencil size={14} />
+                                        </button>
+                                        <button 
+                                            onClick={() => eliminarCliente(cliente.id_cliente)} 
+                                            className="btn-cliente-accion delete" 
+                                            title="Eliminar"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
+
+                                    <div className="cliente-card-header">
+                                        <div className="cliente-avatar">
+                                            {getInitials(cliente.nombre_cliente)}
+                                        </div>
+                                        <div className="cliente-info-basica">
+                                            <h4 title={cliente.nombre_cliente}>{cliente.nombre_cliente}</h4>
+                                            <p className="cliente-identificacion">ID: {cliente.identificacion}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="cliente-datos-contacto">
+                                        <div className="cliente-dato-item">
+                                            <Phone size={16} className="cliente-dato-icono" />
+                                            <span>{cliente.telefono_cliente || "Sin teléfono"}</span>
+                                        </div>
+                                        <div className="cliente-dato-item">
+                                            <Mail size={16} className="cliente-dato-icono" />
+                                            <span style={{ wordBreak: 'break-all' }}>{cliente.correo_cliente || "Sin correo"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </motion.div>
             </div>
 
-            {/* MODAL FORMULARIO */}
-            {modalForm && (
-                <div className="modal-overlay" onClick={() => setModalForm(null)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <h3>{modalForm.tipo === "editar" ? "Editar Cliente" : "Nuevo Cliente"}</h3>
-
-                        <form onSubmit={guardarCliente}>
-                            <div className="form-group">
-                                <label>Nombre completo *</label>
-                                <input
-                                    type="text"
-                                    name="nombre_cliente"
-                                    value={formData.nombre_cliente}
-                                    onChange={handleChange}
-                                    className="seg-input"
-                                    placeholder="Nombre del cliente"
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Identificación *</label>
-                                <input
-                                    type="text"
-                                    name="identificacion"
-                                    value={formData.identificacion}
-                                    onChange={handleChange}
-                                    className="seg-input"
-                                    placeholder="Número de documento"
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Teléfono</label>
-                                    <input
-                                        type="text"
-                                        name="telefono"
-                                        value={formData.telefono}
-                                        onChange={handleChange}
-                                        className="seg-input"
-                                        placeholder="Teléfono"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Correo</label>
-                                    <input
-                                        type="email"
-                                        name="correo"
-                                        value={formData.correo}
-                                        onChange={handleChange}
-                                        className="seg-input"
-                                        placeholder="correo@ejemplo.com"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="form-group">
-                                <label>Dirección</label>
-                                <input
-                                    type="text"
-                                    name="direccion"
-                                    value={formData.direccion}
-                                    onChange={handleChange}
-                                    className="seg-input"
-                                    placeholder="Dirección completa"
-                                />
-                            </div>
-
-                            <div className="modal-actions">
-                                <button
-                                    type="button"
-                                    onClick={() => setModalForm(null)}
-                                    className="btn-secondary"
+            {/* MODAL FORMULARIO PREMIUM */}
+            <AnimatePresence>
+                {modalForm && (
+                    <div className="modal-overlay" onClick={() => !guardando && setModalForm(null)}>
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{ type: "spring", bounce: 0.4, duration: 0.5 }}
+                            className="modal-content" 
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ position: 'relative' }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <h3 style={{ margin: 0 }}>{modalForm.tipo === "editar" ? "Editar Cliente" : "Nuevo Cliente"}</h3>
+                                <button 
+                                    onClick={() => !guardando && setModalForm(null)} 
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280' }}
                                 >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="btn-primary"
-                                    disabled={guardando}
-                                >
-                                    {guardando ? "Guardando..." : "Guardar"}
+                                    <X size={24} />
                                 </button>
                             </div>
-                        </form>
+
+                            <div>
+                                <form onSubmit={guardarCliente}>
+                                    <div className="form-group-enterprise">
+                                        <label>Nombre completo *</label>
+                                        <div className="input-with-icon">
+                                            <input
+                                                type="text"
+                                                name="nombre_cliente"
+                                                value={formData.nombre_cliente}
+                                                onChange={handleChange}
+                                                className="input-enterprise"
+                                                placeholder="Nombre del cliente"
+                                                required
+                                            />
+                                            <User size={18} className="input-icon" />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group-enterprise">
+                                        <label>Identificación *</label>
+                                        <div className="input-with-icon">
+                                            <input
+                                                type="text"
+                                                name="identificacion"
+                                                value={formData.identificacion}
+                                                onChange={handleChange}
+                                                className="input-enterprise"
+                                                placeholder="Número de documento"
+                                                required
+                                            />
+                                            <CreditCard size={18} className="input-icon" />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-row">
+                                        <div className="form-group-enterprise">
+                                            <label>Teléfono</label>
+                                            <div className="input-with-icon">
+                                                <input
+                                                    type="text"
+                                                    name="telefono"
+                                                    value={formData.telefono}
+                                                    onChange={handleChange}
+                                                    className="input-enterprise"
+                                                    placeholder="Teléfono"
+                                                />
+                                                <Phone size={18} className="input-icon" />
+                                            </div>
+                                        </div>
+
+                                        <div className="form-group-enterprise">
+                                            <label>Correo</label>
+                                            <div className="input-with-icon">
+                                                <input
+                                                    type="email"
+                                                    name="correo"
+                                                    value={formData.correo}
+                                                    onChange={handleChange}
+                                                    className="input-enterprise"
+                                                    placeholder="correo@ejemplo.com"
+                                                />
+                                                <Mail size={18} className="input-icon" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group-enterprise">
+                                        <label>Dirección</label>
+                                        <div className="input-with-icon">
+                                            <input
+                                                type="text"
+                                                name="direccion"
+                                                value={formData.direccion}
+                                                onChange={handleChange}
+                                                className="input-enterprise"
+                                                placeholder="Dirección completa"
+                                            />
+                                            <MapPin size={18} className="input-icon" />
+                                        </div>
+                                    </div>
+
+                                    <div className="modal-actions">
+                                        <button
+                                            type="button"
+                                            onClick={() => setModalForm(null)}
+                                            className="btn-outline-enterprise"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="btn-premium"
+                                            disabled={guardando}
+                                        >
+                                            {guardando ? "Guardando..." : "Guardar Cliente"}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </motion.div>
                     </div>
-                </div>
-            )}
+                )}
+            </AnimatePresence>
         </div>
     );
 }

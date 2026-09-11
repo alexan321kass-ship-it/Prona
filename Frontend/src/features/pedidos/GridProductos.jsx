@@ -4,6 +4,8 @@ import { Search, X, Package, Plus } from "lucide-react";
 import TarjetaProducto from "./TarjetaProducto";
 import "./pedidos.css";
 
+import "../../compartido/styles/autocompletado.css";
+
 export default function GridProductos({ productos, agregarAlCarrito, formatearPrecio }) {
     const [busquedaProducto, setBusquedaProducto] = useState("");
     const [enfocado, setEnfocado] = useState(false);
@@ -34,16 +36,17 @@ export default function GridProductos({ productos, agregarAlCarrito, formatearPr
 
     return (
         <>
-            {/* Buscador con sugerencias */}
-            <div ref={searchRef} className="grid-buscador">
-                <div className="grid-buscador__campo">
+            {/* Buscador Píldora Flotante */}
+            <div ref={searchRef} className="autocompletado-contenedor" style={{ marginBottom: '2rem', zIndex: 100 }}>
+                <div className="autocompletado-campo">
                     <Search
                         size={20}
-                        className={`grid-buscador__icono ${enfocado ? "grid-buscador__icono--activo" : "grid-buscador__icono--inactivo"}`}
+                        className="autocompletado-icono-busqueda"
+                        style={{ color: enfocado ? 'var(--color-primary)' : '#9ca3af' }}
                     />
                     <input
                         type="text"
-                        placeholder="Buscar producto por nombre o código..."
+                        placeholder="Buscar producto por nombre o código SKU..."
                         value={busquedaProducto}
                         onChange={(e) => {
                             setBusquedaProducto(e.target.value);
@@ -54,56 +57,58 @@ export default function GridProductos({ productos, agregarAlCarrito, formatearPr
                             if (busquedaProducto.trim()) setMostrarSugerencias(true);
                         }}
                         onBlur={() => setEnfocado(false)}
-                        className={`seg-input grid-buscador__input ${enfocado ? "grid-buscador__input--enfocado" : ""}`}
+                        className={`autocompletado-entrada ${enfocado ? 'activo' : ''}`}
                     />
                     {busquedaProducto && (
                         <button
                             onClick={() => { setBusquedaProducto(""); setMostrarSugerencias(false); }}
-                            className="grid-buscador__boton-limpiar"
+                            className="autocompletado-boton-limpiar"
                         >
-                            <X size={18} />
+                            <X size={16} />
                         </button>
                     )}
                 </div>
 
                 {/* Dropdown de sugerencias */}
                 {mostrarSugerencias && sugerencias.length > 0 && (
-                    <div className="grid-dropdown">
-                        <div className="grid-dropdown__lista">
-                            {sugerencias.map((p) => (
-                                <div
-                                    key={p.id_producto}
-                                    className="grid-dropdown__item"
-                                    onClick={() => {
-                                        setBusquedaProducto(p.nombre_producto);
-                                        setMostrarSugerencias(false);
+                    <div className="autocompletado-lista">
+                        {sugerencias.map((p) => (
+                            <div
+                                key={p.id_producto}
+                                className="autocompletado-item"
+                                onClick={() => {
+                                    setBusquedaProducto(p.nombre_producto);
+                                    setMostrarSugerencias(false);
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                                    <div style={{
+                                        width: '40px', height: '40px', borderRadius: '10px',
+                                        background: 'var(--color-primary-glass)', display: 'flex',
+                                        alignItems: 'center', justifyContent: 'center'
+                                    }}>
+                                        <Package size={18} color="var(--color-primary)" />
+                                    </div>
+                                    <div>
+                                        <div style={{ fontWeight: 600, color: '#1f2937' }}>{p.nombre_producto}</div>
+                                        <div style={{ fontSize: '0.85rem', color: 'var(--color-primary-dark)' }}>{formatearPrecio(p.precio)}</div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        agregarAlCarrito(p);
+                                    }}
+                                    style={{
+                                        background: 'var(--color-primary)', color: 'white', padding: '6px',
+                                        borderRadius: '8px', border: 'none', cursor: 'pointer'
                                     }}
                                 >
-                                    <div className="grid-dropdown__item-info">
-                                        <div className="grid-dropdown__item-icono">
-                                            <Package size={18} color="var(--color-primary)" />
-                                        </div>
-                                        <div>
-                                            <div className="grid-dropdown__item-nombre">{p.nombre_producto}</div>
-                                            <div className="grid-dropdown__item-precio">{formatearPrecio(p.precio)}</div>
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        className="grid-dropdown__item-boton"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            agregarAlCarrito(p);
-                                        }}
-                                    >
-                                        <Plus size={16} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="grid-dropdown__pie">
-                            {filtrados.length} productos encontrados
-                        </div>
+                                    <Plus size={16} />
+                                </button>
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>

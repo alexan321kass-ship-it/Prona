@@ -32,7 +32,8 @@ export default function Pedidos() {
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("usuario"));
-      if (!user || (user.id_rol !== 1 && user.id_rol !== 2 && user.id_rol !== 3)) {
+      const rol = user ? Number(user.id_rol) : null;
+      if (!user || (rol !== 1 && rol !== 2 && rol !== 3)) {
         navigate("/login", { replace: true });
       }
     } catch {
@@ -121,7 +122,7 @@ export default function Pedidos() {
     }).format(precio);
   };
 
-  const exportarCotizacion = async () => {
+    const exportarCotizacion = async () => {
     if (!clienteSeleccionado) {
       setMensaje({ texto: "Selecciona un cliente primero", tipo: "error" });
       return;
@@ -138,30 +139,30 @@ export default function Pedidos() {
       setMensaje({ texto: "La vigencia es inválida (fecha requerida)", tipo: "error" });
       return;
     }
+    
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
+    const fechaMinima = new Date(hoy);
+    fechaMinima.setDate(hoy.getDate() + 4);
+
     const fechaVigencia = new Date(vigencia + "T00:00:00");
-    if (fechaVigencia < hoy) {
-      setMensaje({ texto: "La vigencia es inválida", tipo: "error" });
+    if (fechaVigencia < fechaMinima) {
+      setMensaje({ texto: "La cotización no se procesó porque la vigencia debe tener 4 días mínimo desde la fecha actual", tipo: "error" });
       return;
     }
 
     try {
-      const user = JSON.parse(localStorage.getItem("usuario"));
       const { api } = await import("../../config/api");
       
       const cotizacionData = {
         id_cliente: parseInt(clienteSeleccionado.id_cliente || clienteSeleccionado), // Maneja si es objeto o ID
-        id_usuario: user?.id_usuario || 1, // CP-10 auditoria
-        descuento: Number(descuento),
-        vigencia: vigencia,
         detalles: carrito.map(item => ({
           id_producto: item.id_producto,
-          cantidad: item.cantidad
+          cantidad: parseInt(item.cantidad) || 1
         }))
       };
 
-      // Guardar en la base de datos (CP-10 Auditoría)
+      // Guardar en la base de datos (Auditoría / Registro)
       await api.post("/cotizaciones", cotizacionData);
       
     } catch (error) {
@@ -269,6 +270,32 @@ export default function Pedidos() {
 
   const enviarPedido = async () => {
     if (!clienteSeleccionado || carrito.length === 0) return;
+
+    // Validación de stock
+    const itemSinStock = carrito.find(item => item.cantidad > item.stock);
+    if (itemSinStock) {
+      setMensaje({ 
+        texto: `El pedido no se procesó: La cantidad solicitada de "${itemSinStock.nombre_producto}" (${itemSinStock.cantidad}) supera el stock disponible (${itemSinStock.stock}).`, 
+        tipo: "error" 
+      });
+      return;
+    }
+    
+    if (!vigencia) {
+      setMensaje({ texto: "La fecha (vigencia) es requerida para el pedido", tipo: "error" });
+      return;
+    }
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const fechaMinima = new Date(hoy);
+    fechaMinima.setDate(hoy.getDate() + 4);
+
+    const fechaVigencia = new Date(vigencia + "T00:00:00");
+    if (fechaVigencia < fechaMinima) {
+      setMensaje({ texto: "El pedido no se procesó porque debe tener 4 días mínimo desde la fecha actual", tipo: "error" });
+      return;
+    }
+
     setEnviando(true);
     try {
       const user = JSON.parse(localStorage.getItem("usuario"));
@@ -297,15 +324,7 @@ export default function Pedidos() {
   };
 
   return (
-    <div className="seguimiento-page pedidos-pagina">
-      <header className="seg-header">
-        <img src={logoPronavid} alt="Pronavid" className="seg-logo" />
-      </header>
-
-      <button onClick={() => navigate("/DashboardAsesor")} className="btn-volver" title="Volver">
-        <ChevronLeft size={24} />
-      </button>
-
+    <div className="pedidos-pagina">
       {/* Botón Carrito Flotante */}
       <AnimatePresence>
         {!mostrarCarrito && (
@@ -313,8 +332,8 @@ export default function Pedidos() {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setMostrarCarrito(true)}
                 className="boton-carrito-flotante"
             >
@@ -330,16 +349,26 @@ export default function Pedidos() {
 
       {/* Contenido principal */}
       <div className={`pedidos-contenido ${mostrarCarrito ? "pedidos-contenido--con-carrito" : ""}`}>
-        <div>
-            <div className="seg-card seg-card--entrada">
-            <div className="seg-card-header">
-                <h2 className="pedidos-titulo-icono">
-                    <ShoppingCart size={28} color="var(--color-primary)" /> 
-                    Crear Nuevo Pedido
-                </h2>
+        
+        {/* PREMIUM HEADER */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ background: 'var(--color-primary-glass)', padding: '0.8rem', borderRadius: '14px', color: 'var(--color-primary)' }}>
+                    <ShoppingCart size={28} />
+                </div>
+                <div>
+                    <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: 800, color: '#111827', letterSpacing: '-0.03em' }}>
+                        Punto de Venta
+                    </h2>
+                    <p style={{ margin: 0, color: '#6b7280', fontSize: '0.95rem', fontWeight: 500 }}>
+                        Gestiona y procesa nuevos pedidos
+                    </p>
+                </div>
             </div>
+        </div>
 
-            <div className="pedidos-seccion-cliente">
+        <div>
+            <div className="pedidos-seccion-cliente" style={{ background: 'rgba(255, 255, 255, 0.7)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '20px', padding: '2rem', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
                 <SelectorCliente 
                     clientes={clientes}
                     clienteSeleccionado={clienteSeleccionado}
@@ -370,7 +399,6 @@ export default function Pedidos() {
                 agregarAlCarrito={agregarAlCarrito}
                 formatearPrecio={formatearPrecio}
             />
-            </div>
         </div>
       </div>
 

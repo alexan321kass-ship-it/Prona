@@ -45,6 +45,7 @@ export default function Catalogo() {
     const fileInputRef = useRef(null);
     const bulkInputRef = useRef(null);
     const [subiendoMasivo, setSubiendoMasivo] = useState(false);
+    const [imagenZoom, setImagenZoom] = useState(null);
 
     const userRaw = localStorage.getItem("usuario");
     const usuario = userRaw ? JSON.parse(userRaw) : null;
@@ -66,7 +67,8 @@ export default function Catalogo() {
     useEffect(() => {
         try {
             const user = JSON.parse(localStorage.getItem("usuario"));
-            if (!user || (user.id_rol !== 1 && user.id_rol !== 3)) {
+            const rol = user ? Number(user.id_rol) : null;
+            if (!user || (rol !== 1 && rol !== 3)) {
                 navigate("/DashboardAsesor", { replace: true });
             }
         } catch {
@@ -316,23 +318,17 @@ export default function Catalogo() {
     };
 
     return (
-        <div className="seguimiento-page">
-            <header className="seg-header">
-                <img src={logoPronavid} alt="Pronavid" className="seg-logo" />
-            </header>
-
-            <button onClick={() => navigate("/DashboardAdmin")} className="btn-volver" title="Volver">
-                <ChevronLeft size={24} />
-            </button>
+        <div className="dashboard-container">
+        
 
             {/* DISEÑO FULL WIDTH */}
             <div className="catalogo-contenido">
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="seg-card catalogo-card-full"
+                    className="catalogo-wrapper-premium"
                 >
-                    <div className="seg-card-header">
+                    <div className="catalogo-header-premium">
                         <div className="catalogo-icono-titulo">
                             <div className="catalogo-icono-badge">
                                 <Package size={24} />
@@ -340,7 +336,7 @@ export default function Catalogo() {
                             <h2>Gestión Integral de Productos</h2>
                         </div>
                         {(usuario?.id_rol === 1 || usuario?.id_rol === 3) && (
-                            <div style={{ display: "flex", gap: "10px" }}>
+                            <div className="catalogo-acciones-enterprise">
                                 <input 
                                     type="file" 
                                     ref={bulkInputRef} 
@@ -350,14 +346,14 @@ export default function Catalogo() {
                                   />
                                 <button 
                                     onClick={() => navigate("/categorias")}
-                                    style={{ border: "1.5px solid #e5e7eb", backgroundColor: "#f9fafb", color: "#374151", padding: "10px 16px", borderRadius: "var(--radius-md)", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", transition: "all 0.2s" }}
+                                    className="btn-outline-enterprise"
                                     title="Gestionar Categorías"
                                 >
                                     <Layers size={18} /> Categorías
                                 </button>
                                 <button 
                                     onClick={() => bulkInputRef.current?.click()} 
-                                    style={{ border: "none", backgroundColor: "var(--primary-light)", color: "var(--primary-dark)", padding: "10px 16px", borderRadius: "var(--radius-md)", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", transition: "all 0.2s" }}
+                                    className="btn-ghost-enterprise"
                                     disabled={subiendoMasivo}
                                     title="Subida Masiva Excel/CSV"
                                 >
@@ -411,42 +407,95 @@ export default function Catalogo() {
                                 </div>
                             ) : (
                                 <AnimatePresence mode="popLayout">
-                                    {productosFiltrados.map((producto, index) => (
-                                        <motion.div layout key={producto.id_producto} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * 0.03 }} className="premium-card product-item-card">
-                                            <div className="product-card-image catalogo-producto-imagen">
-                                                {producto.imagen_url ? (
-                                                    <img 
-                                                        src={resolveImageUrl(producto.imagen_url)} 
-                                                        alt={producto.nombre_producto}
-                                                    />
-                                                ) : (
-                                                    <Package size={50} className="product-card-icon" />
-                                                )}
-                                                <div className="category-tag">{producto.nombre_categoria}</div>
+                                    {productosFiltrados.map((producto, index) => {
+                                        const isLowStock = producto.stock > 0 && producto.stock <= 10;
+                                        const isOutOfStock = producto.stock === 0;
+                                        const imageUrl = producto.imagen_url ? resolveImageUrl(producto.imagen_url) : null;
+                                        
+                                        return (
+                                        <motion.div 
+                                            layout 
+                                            key={producto.id_producto} 
+                                            initial={{ opacity: 0, y: 30, scale: 0.9 }} 
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.9 }}
+                                            whileHover={{ y: -8, scale: 1.02 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 20, delay: index * 0.03 }}
+                                            className="premium-glass-card tarjeta-producto"
+                                        >
+                                            {/* Stock Badge */}
+                                            <motion.div 
+                                                whileHover={{ scale: 1.1 }}
+                                                className={`stock-badge tarjeta-producto__badge-stock ${isOutOfStock ? 'low-stock' : isLowStock ? 'low-stock' : 'in-stock'}`}
+                                            >
+                                                {isOutOfStock ? "Agotado" : `${producto.stock} uds`}
+                                            </motion.div>
+
+                                            {/* Imagen del producto con efecto glass */}
+                                            <div 
+                                                className="tarjeta-producto__imagen-container" 
+                                                onClick={() => { if (imageUrl) setImagenZoom(imageUrl); }}
+                                                style={{ cursor: imageUrl ? 'zoom-in' : 'default' }}
+                                            >
+                                                <div className="tarjeta-producto__imagen">
+                                                    {imageUrl ? (
+                                                        <img src={imageUrl} alt={producto.nombre_producto} />
+                                                    ) : (
+                                                        <Package size={40} className="product-card-icon" color="var(--color-primary)" />
+                                                    )}
+                                                </div>
+                                                <div className="tarjeta-producto__categoria-glass">
+                                                    {producto.nombre_categoria}
+                                                </div>
                                             </div>
 
-                                            <div className="product-card-body">
-                                                <span className="product-sku">{producto.codigo_interno || "S/N"}</span>
-                                                <h4 className="product-name">{producto.nombre_producto}</h4>
-                                                <p className="product-desc">{producto.descripcion || "Sin descripción"}</p>
-                                                <div className="product-footer">
-                                                    <div className="price-container">
-                                                        <span className="price-label">Precio</span>
-                                                        <span className="price-value">{formatearPrecio(producto.precio)}</span>
-                                                    </div>
-                                                    <div className={`stock-badge ${producto.stock < 10 ? 'low-stock' : 'in-stock'}`}>
-                                                        {producto.stock} uds
+                                            {/* Body */}
+                                            <div className="tarjeta-producto__cuerpo-glass">
+                                                <div className="tarjeta-producto__info">
+                                                    {producto.codigo_interno && (
+                                                        <span className="tarjeta-producto__codigo-glass">
+                                                            {producto.codigo_interno}
+                                                        </span>
+                                                    )}
+
+                                                    <h4 className="tarjeta-producto__nombre-glass" title={producto.nombre_producto}>
+                                                        {producto.nombre_producto}
+                                                    </h4>
+                                                    
+                                                    {producto.descripcion && (
+                                                        <p className="tarjeta-producto__desc-glass" title={producto.descripcion}>
+                                                            {producto.descripcion}
+                                                        </p>
+                                                    )}
+
+                                                    <div className="tarjeta-producto__precio-contenedor">
+                                                        <p className="tarjeta-producto__precio-glass">
+                                                            {formatearPrecio(producto.precio)}
+                                                        </p>
                                                     </div>
                                                 </div>
+
                                                 {(usuario?.id_rol === 1 || usuario?.id_rol === 3) && (
-                                                    <div className="product-actions">
-                                                        <button onClick={() => abrirFormulario(producto)} className="action-btn edit"><Edit2 size={16} /></button>
-                                                        <button onClick={() => eliminarProducto(producto.id_producto)} className="action-btn delete"><Trash2 size={16} /></button>
+                                                    <div style={{ display: 'flex', gap: '8px', marginTop: '1.2rem' }}>
+                                                        <motion.button 
+                                                            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                                                            onClick={() => abrirFormulario(producto)} 
+                                                            className="btn-glass-premium" style={{ flex: 1, padding: '0.6rem', fontSize: '0.8rem' }}
+                                                        >
+                                                            <Edit2 size={14} /> Editar
+                                                        </motion.button>
+                                                        <motion.button 
+                                                            whileHover={{ scale: 1.05, backgroundColor: 'rgba(231, 76, 60, 0.2)' }} whileTap={{ scale: 0.95 }}
+                                                            onClick={() => eliminarProducto(producto.id_producto)} 
+                                                            className="btn-glass-premium" style={{ flex: 1, padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: '1px solid var(--color-danger)', color: 'var(--color-danger)' }}
+                                                        >
+                                                            <Trash2 size={14} /> Borrar
+                                                        </motion.button>
                                                     </div>
                                                 )}
                                             </div>
                                         </motion.div>
-                                    ))}
+                                    )})}
                                 </AnimatePresence>
                             )}
                         </div>
@@ -553,30 +602,79 @@ export default function Catalogo() {
                                 <p className="catalogo-preview-etiqueta">
                                     Previsualización en Vivo
                                 </p>
-                                <div className="premium-card product-item-card catalogo-preview-card">
-                                    <div className="product-card-image catalogo-preview-imagen">
-                                        {previewUrl ? (
-                                            <img src={previewUrl} alt="Preview" />
-                                        ) : (
-                                            <Package size={50} className="product-card-icon" />
-                                        )}
+                                <div className="premium-glass-card tarjeta-producto catalogo-preview-card">
+                                    {/* Stock Badge */}
+                                    <div className="stock-badge tarjeta-producto__badge-stock in-stock">
+                                        {formData.stock || 0} uds
                                     </div>
-                                    <div className="product-card-body">
-                                        <span className="product-sku">{formData.codigo_interno || "SKU-000"}</span>
-                                        <h4 className="product-name">{formData.nombre_producto || "Nombre del Producto"}</h4>
-                                        <p className="product-desc">{formData.descripcion || "Aquí se verá la descripción..."}</p>
-                                        <div className="product-footer">
-                                            <div className="price-container">
-                                                <span className="price-label">Precio</span>
-                                                <span className="price-value">{formatearPrecio(formData.precio || 0)}</span>
+
+                                    {/* Imagen con efecto glass */}
+                                    <div className="tarjeta-producto__imagen-container">
+                                        <div className="tarjeta-producto__imagen">
+                                            {previewUrl ? (
+                                                <img src={previewUrl} alt="Preview" />
+                                            ) : (
+                                                <Package size={40} className="product-card-icon" color="var(--color-primary)" />
+                                            )}
+                                        </div>
+                                        <div className="tarjeta-producto__categoria-glass">
+                                            {categorias.find(c => c.id_categoria == formData.id_categoria)?.nombre_categoria || "Categoría"}
+                                        </div>
+                                    </div>
+
+                                    {/* Body */}
+                                    <div className="tarjeta-producto__cuerpo-glass">
+                                        <div className="tarjeta-producto__info">
+                                            <span className="tarjeta-producto__codigo-glass">
+                                                {formData.codigo_interno || "SKU-000"}
+                                            </span>
+
+                                            <h4 className="tarjeta-producto__nombre-glass">
+                                                {formData.nombre_producto || "Nombre del Producto"}
+                                            </h4>
+                                            
+                                            <p className="tarjeta-producto__desc-glass">
+                                                {formData.descripcion || "Descripción del producto..."}
+                                            </p>
+
+                                            <div className="tarjeta-producto__precio-contenedor">
+                                                <p className="tarjeta-producto__precio-glass">
+                                                    {formatearPrecio(formData.precio || 0)}
+                                                </p>
                                             </div>
-                                            <div className="stock-badge in-stock">{formData.stock || 0} uds</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </motion.div>
                     </div>
+                )}
+            </AnimatePresence>
+
+            {/* LIGHTBOX PARA ZOOM DE IMAGEN */}
+            <AnimatePresence>
+                {imagenZoom && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="catalogo-lightbox"
+                        onClick={() => setImagenZoom(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.8 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                            className="catalogo-lightbox-content"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button className="catalogo-lightbox-close" onClick={() => setImagenZoom(null)}>
+                                <X size={32} />
+                            </button>
+                            <img src={imagenZoom} alt="Zoom" className="catalogo-lightbox-img" />
+                        </motion.div>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>

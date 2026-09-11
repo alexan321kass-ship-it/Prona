@@ -148,24 +148,28 @@ export default function Seguimiento() {
     };
 
     return (
-        <div className="seguimiento-page">
-            {/* HEADER */}
-            <header className="seg-header">
-                <img src={logoPronavid} alt="Pronavid" className="seg-logo" />
-            </header>
-
-            {/* BOTÓN VOLVER */}
-            <button onClick={volverDashboard} className="btn-volver" title="Volver">
-                <ArrowLeft size={20} />
-            </button>
-
-            {/* CONTENIDO */}
-            <div className="seg-container">
-                <div className="seg-card">
-                    <div className="seg-card-header">
-                        <h2><Package size={24} className="inline-block mr-2 text-blue-600" /> Seguimiento de Pedidos</h2>
+        <div className="pedidos-pagina">
+            <div className="pedidos-contenido">
+                
+                {/* PREMIUM HEADER */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ background: 'var(--color-primary-glass)', padding: '0.8rem', borderRadius: '14px', color: 'var(--color-primary)' }}>
+                            <Package size={28} />
+                        </div>
+                        <div>
+                            <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: 800, color: '#111827', letterSpacing: '-0.03em' }}>
+                                Seguimiento de Pedidos
+                            </h2>
+                            <p style={{ margin: 0, color: '#6b7280', fontSize: '0.95rem', fontWeight: 500 }}>
+                                Consulta el estado y detalle de los pedidos de los clientes
+                            </p>
+                        </div>
                     </div>
+                </div>
 
+                <div style={{ background: 'rgba(255, 255, 255, 0.7)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '20px', padding: '2rem', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+                    
                     {/* Buscador */}
                     <div className="seg-search-row">
                         <EntradaAutocompletado
@@ -225,6 +229,9 @@ export default function Seguimiento() {
                                                     onClick={() => abrirDetalle(r)}
                                                     className="btn-action btn-view"
                                                     title="Ver productos"
+                                                    style={{ padding: '0.4rem 1rem', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: '0.4rem', border: 'none', background: '#F3F4F6', color: '#111827', fontWeight: 600, transition: 'all 0.2s' }}
+                                                    onMouseOver={(e) => { e.currentTarget.style.background = '#E5E7EB'; e.currentTarget.style.transform = 'scale(1.05)' }}
+                                                    onMouseOut={(e) => { e.currentTarget.style.background = '#F3F4F6'; e.currentTarget.style.transform = 'scale(1)' }}
                                                 >
                                                     <Eye size={16} /> Ver
                                                 </button>
@@ -247,86 +254,152 @@ export default function Seguimiento() {
             {/* MODAL: VER DETALLE CON PRODUCTOS */}
             {modalDetalle && (
                 <div className="modal-overlay" onClick={() => setModalDetalle(null)}>
-                    <div className="modal-content modal-ancho-medio" onClick={(e) => e.stopPropagation()}>
-                        <h3><Package size={20} className="inline-block mr-2 text-blue-600" /> Pedido #{modalDetalle.id_pedido}</h3>
+                    <div onClick={(e) => e.stopPropagation()} style={{
+                        background: '#ffffff',
+                        borderRadius: '24px',
+                        width: '100%',
+                        maxWidth: '580px',
+                        maxHeight: '90vh',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxShadow: '0 30px 80px rgba(0,0,0,0.18)',
+                        animation: 'modalSlide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    }}>
 
-                        {/* Info del cliente */}
-                        <div className="info-pedido">
-                            <div className="info-pedido__cabecera">
-                                <strong>{modalDetalle.nombre_cliente}</strong>
-                                <span className={getEstadoClase(modalDetalle.estado_pedido)}>
+                        {/* HEADER DEL MODAL */}
+                        <div style={{
+                            background: `linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%)`,
+                            padding: '2rem',
+                            color: 'white',
+                            position: 'relative',
+                            overflow: 'hidden',
+                        }}>
+                            {/* Decorative circles */}
+                            <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '120px', height: '120px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
+                            <div style={{ position: 'absolute', bottom: '-20px', right: '80px', width: '70px', height: '70px', background: 'rgba(255,255,255,0.08)', borderRadius: '50%' }}></div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 2 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                    <div style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '12px', padding: '10px' }}>
+                                        <Package size={26} />
+                                    </div>
+                                    <div>
+                                        <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Pedido</p>
+                                        <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900, letterSpacing: '-0.02em' }}>#{modalDetalle.id_pedido}</h2>
+                                    </div>
+                                </div>
+                                <span style={{
+                                    background: 'rgba(255,255,255,0.25)',
+                                    color: 'white',
+                                    padding: '0.4rem 1rem',
+                                    borderRadius: '100px',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 700,
+                                    backdropFilter: 'blur(8px)',
+                                }}>
                                     {modalDetalle.estado_pedido}
                                 </span>
                             </div>
-                            <p className="info-pedido__detalle">
-                                Fecha: {formatearFecha(modalDetalle.fecha_pedido)}
-                            </p>
+
+                            {/* Info del cliente dentro del header */}
+                            <div style={{ marginTop: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', position: 'relative', zIndex: 2 }}>
+                                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem' }}>
+                                    {modalDetalle.nombre_cliente?.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <p style={{ margin: 0, fontWeight: 700, fontSize: '1rem' }}>{modalDetalle.nombre_cliente}</p>
+                                    <p style={{ margin: 0, opacity: 0.75, fontSize: '0.85rem' }}>Fecha: {formatearFecha(modalDetalle.fecha_pedido)}</p>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Lista de productos */}
-                        <h4 className="info-pedido__titulo-productos">
-                            <ShoppingCart size={18} className="inline-block mr-2" /> Productos del Pedido
-                        </h4>
+                        {/* CUERPO DEL MODAL */}
+                        <div style={{ padding: '1.5rem 2rem', overflowY: 'auto', flexGrow: 1 }}>
+                            <p style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <ShoppingCart size={16} /> Productos del Pedido
+                            </p>
 
-                        {cargandoDetalle ? (
-                            <div className="seg-loading">
-                                <div className="loader"></div>
-                                <p>Cargando productos...</p>
-                            </div>
-                        ) : modalDetalle.productos?.length > 0 ? (
-                            <>
-                                <table className="seg-table tabla-con-margen">
-                                    <thead>
-                                        <tr>
-                                            <th>Producto</th>
-                                            <th className="celda-centrada">Cant.</th>
-                                            <th className="celda-derecha">Precio</th>
-                                            <th className="celda-derecha">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {modalDetalle.productos.map((p, i) => (
-                                            <tr key={i}>
-                                                <td>
-                                                    <span className="codigo-producto">
-                                                        {p.codigo_interno}
-                                                    </span>
-                                                    <br />
-                                                    {p.nombre_producto}
-                                                </td>
-                                                <td className="celda-centrada celda-negrita">
-                                                    {p.cantidad}
-                                                </td>
-                                                <td className="celda-derecha">
-                                                    {formatearPrecio(p.precio_unitario)}
-                                                </td>
-                                                <td className="celda-derecha celda-negrita celda-total">
-                                                    {formatearPrecio(p.subtotal)}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-
-                                <div className="total-pedido">
-                                    <span className="total-pedido__monto">
-                                        Total: <strong>{formatearPrecio(modalDetalle.total)}</strong>
-                                    </span>
+                            {cargandoDetalle ? (
+                                <div className="seg-loading">
+                                    <div className="loader"></div>
+                                    <p>Cargando productos...</p>
                                 </div>
-                            </>
-                        ) : (
-                            <div className="aviso-vacio">
-                                <p className="aviso-vacio__texto">
-                                    ⚠️ No hay productos registrados para este pedido
-                                </p>
-                                <p className="aviso-vacio__subtexto">
-                                    Los productos se registran al crear la cotización o venta
-                                </p>
-                            </div>
-                        )}
+                            ) : modalDetalle.productos?.length > 0 ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                    {modalDetalle.productos.map((p, i) => (
+                                        <div key={i} style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            background: '#f8fafc',
+                                            borderRadius: '14px',
+                                            padding: '1rem 1.25rem',
+                                            border: '1px solid #f1f5f9',
+                                            transition: 'all 0.2s ease',
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                {/* Badge de cantidad */}
+                                                <div style={{
+                                                    background: 'var(--color-primary-glass)',
+                                                    color: 'var(--color-primary)',
+                                                    borderRadius: '10px',
+                                                    width: '40px',
+                                                    height: '40px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontWeight: 900,
+                                                    fontSize: '1rem',
+                                                    flexShrink: 0,
+                                                }}>
+                                                    {p.cantidad}
+                                                </div>
+                                                <div>
+                                                    <p style={{ margin: 0, fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>{p.nombre_producto}</p>
+                                                    {p.codigo_interno && <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.78rem', fontWeight: 600 }}>{p.codigo_interno}</p>}
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                                <p style={{ margin: 0, fontWeight: 800, color: 'var(--color-primary)', fontSize: '1rem' }}>{formatearPrecio(p.subtotal)}</p>
+                                                <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.78rem' }}>{formatearPrecio(p.precio_unitario)} c/u</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="aviso-vacio">
+                                    <p className="aviso-vacio__texto">⚠️ No hay productos registrados para este pedido</p>
+                                    <p className="aviso-vacio__subtexto">Los productos se registran al crear la cotización o venta</p>
+                                </div>
+                            )}
+                        </div>
 
-                        <div className="modal-actions">
-                            <button onClick={() => setModalDetalle(null)} className="btn-secondary">
+                        {/* FOOTER DEL MODAL */}
+                        <div style={{ padding: '1.25rem 2rem', borderTop: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fafafa' }}>
+                            {modalDetalle.total > 0 && (
+                                <div>
+                                    <p style={{ margin: 0, fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total del Pedido</p>
+                                    <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '-0.02em' }}>{formatearPrecio(modalDetalle.total)}</p>
+                                </div>
+                            )}
+                            <button
+                                onClick={() => setModalDetalle(null)}
+                                style={{
+                                    padding: '0.7rem 2rem',
+                                    borderRadius: '100px',
+                                    border: 'none',
+                                    background: '#f1f5f9',
+                                    color: '#475569',
+                                    fontWeight: 700,
+                                    fontSize: '0.9rem',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                    marginLeft: 'auto',
+                                }}
+                                onMouseOver={(e) => { e.currentTarget.style.background = '#e2e8f0'; }}
+                                onMouseOut={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
+                            >
                                 Cerrar
                             </button>
                         </div>

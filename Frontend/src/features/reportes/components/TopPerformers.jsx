@@ -11,7 +11,11 @@ export default function TopPerformers({ clientes, masVendido, metricasGrales, fo
       
       {/* SECCIÓN CLIENTES CON PODIO */}
       <div>
-        <Card title={<><Trophy size={20} className="inline-block mr-2 text-yellow-500" /> Top Clientes (Fidelidad)</>}>
+        <div className="grafico-premium-card" style={{ height: '100%' }}>
+          <h3 style={{ margin: '0 0 1.5rem', color: '#1E293B', fontWeight: 800, fontSize: '1.2rem', display: 'flex', alignItems: 'center' }}>
+            <Trophy size={22} className="mr-2 text-yellow-500" /> Top Clientes (Fidelidad)
+          </h3>
+          
           {/* PODIO */}
           <div className="podio-contenedor">
             {/* Segundo Lugar */}
@@ -19,9 +23,9 @@ export default function TopPerformers({ clientes, masVendido, metricasGrales, fo
               <PodiumItem 
                 name={clientes[1].nombre_cliente} 
                 count={clientes[1].cantidad} 
-                rank={<Medal color="#BDC3C7" size={32} />} 
-                height="100px" 
-                color="#BDC3C7" 
+                rank={<Medal color="#94A3B8" size={36} />} 
+                height="120px" 
+                color="linear-gradient(180deg, #E2E8F0 0%, #94A3B8 100%)" 
               />
             )}
             {/* Primer Lugar */}
@@ -29,9 +33,9 @@ export default function TopPerformers({ clientes, masVendido, metricasGrales, fo
               <PodiumItem 
                 name={clientes[0].nombre_cliente} 
                 count={clientes[0].cantidad} 
-                rank={<Trophy color="#F1C40F" size={40} />} 
-                height="140px" 
-                color="#F1C40F" 
+                rank={<Trophy color="#F59E0B" size={48} />} 
+                height="160px" 
+                color="linear-gradient(180deg, #FCD34D 0%, #F59E0B 100%)" 
                 main
               />
             )}
@@ -40,39 +44,35 @@ export default function TopPerformers({ clientes, masVendido, metricasGrales, fo
               <PodiumItem 
                 name={clientes[2].nombre_cliente} 
                 count={clientes[2].cantidad} 
-                rank={<Medal color="#CD7F32" size={32} />} 
-                height="80px" 
-                color="#CD7F32" 
+                rank={<Medal color="#B45309" size={32} />} 
+                height="90px" 
+                color="linear-gradient(180deg, #FDBA74 0%, #B45309 100%)" 
               />
             )}
           </div>
 
-          <table className="seg-table">
-            <thead>
-              <tr>
-                <th>Rango</th>
-                <th>Cliente</th>
-                <th className="celda-derecha">Total Unidades</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientes.slice(3, 10).map((c, i) => (
-                <tr key={i}>
-                  <td className="celda-rango">#{i + 4}</td>
-                  <td className="celda-nombre">{c.nombre_cliente}</td>
-                  <td className="celda-cantidad">{c.cantidad}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
+          <div style={{ marginTop: '2rem' }}>
+            {clientes.slice(3, 8).map((c, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1rem', borderBottom: '1px solid #F1F5F9', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <span className="celda-rango">#{i + 4}</span>
+                  <span className="celda-nombre">{c.nombre_cliente}</span>
+                </div>
+                <span className="celda-cantidad">{c.cantidad} uds</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* SECCIÓN PRODUCTOS Y KPI EXTRAS */}
       <div className="ranking-columna">
         
         {/* RANKING VISUAL DE PRODUCTOS */}
-        <Card title={<><Flame size={20} className="inline-block mr-2 text-orange-500" /> Ranking de Productos</>}>
+        <div className="grafico-premium-card">
+          <h3 style={{ margin: '0 0 1.5rem', color: '#1E293B', fontWeight: 800, fontSize: '1.2rem', display: 'flex', alignItems: 'center' }}>
+            <Flame size={22} className="mr-2 text-orange-500" /> Ranking de Productos
+          </h3>
           <div className="ranking-lista">
             {masVendido.slice(0, 5).map((p, i) => (
               <div key={i}>
@@ -89,11 +89,11 @@ export default function TopPerformers({ clientes, masVendido, metricasGrales, fo
               </div>
             ))}
           </div>
-        </Card>
+        </div>
 
         {/* KPI CARDS EXTRAS */}
         <div className="kpi-extras-grid">
-           <div className="kpi-extra">
+           <div className="kpi-extra" style={{ '--kpi-bg': 'rgba(239, 68, 68, 0.1)' }}>
               <div className="kpi-extra__icono kpi-extra__icono--rojo">
                 <Calendar size={24} />
               </div>
@@ -101,7 +101,7 @@ export default function TopPerformers({ clientes, masVendido, metricasGrales, fo
               <h2 className="kpi-extra__valor">{metricasGrales.pedidos_pendientes || 0}</h2>
               <p className="kpi-extra__nota kpi-extra__nota--rojo">Por procesar</p>
            </div>
-           <div className="kpi-extra">
+           <div className="kpi-extra" style={{ '--kpi-bg': 'rgba(16, 185, 129, 0.1)' }}>
               <div className="kpi-extra__icono kpi-extra__icono--verde">
                 <TrendingUp size={24} />
               </div>
@@ -123,14 +123,14 @@ function PodiumItem({ name, count, rank, height, color, main = false }) {
         className={`podio-item__barra ${main ? "podio-item__barra--principal" : ""}`}
         style={{ 
           height: height, 
-          background: main ? `linear-gradient(180deg, ${color} 0%, #F39C12 100%)` : color,
-          color: main ? "white" : "#3D4449"
+          background: color,
+          color: main ? "white" : "#1E293B"
         }}
       >
         <div className="podio-item__cantidad">{count}</div>
         <div className="podio-item__unidad">uds</div>
       </div>
-      <div className="podio-item__nombre">
+      <div className="podio-item__nombre" title={name}>
         {name}
       </div>
     </div>

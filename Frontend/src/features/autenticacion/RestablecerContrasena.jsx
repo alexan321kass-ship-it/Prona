@@ -5,6 +5,7 @@ import "./autenticacion.css";
 import logoPronavid from "../../images/Logopronavid.png";
 
 export default function RestablecerContrasena() {
+    const [codigo, setCodigo] = useState("");
     const [nuevaContrasena, setNuevaContrasena] = useState("");
     const [confirmarContrasena, setConfirmarContrasena] = useState("");
     const [mensaje, setMensaje] = useState(null);
@@ -28,6 +29,12 @@ export default function RestablecerContrasena() {
 
         if (!token) return;
 
+        if (!codigo.trim()) {
+            setMensaje("El código de verificación es requerido");
+            setTipoMensaje("error");
+            return;
+        }
+
         if (nuevaContrasena.length < 6) {
             setMensaje("La contraseña debe tener al menos 6 caracteres");
             setTipoMensaje("error");
@@ -43,7 +50,7 @@ export default function RestablecerContrasena() {
         setCargando(true);
 
         try {
-            await servicioAutenticacion.resetPassword(token, nuevaContrasena);
+            await servicioAutenticacion.resetPassword(token, codigo, nuevaContrasena);
             setMensaje("¡Contraseña actualizada con éxito!");
             setTipoMensaje("success");
             
@@ -59,6 +66,7 @@ export default function RestablecerContrasena() {
         }
     };
 
+    
     return (
         <div className="auth-page">
             <header className="encabezado">
@@ -69,7 +77,19 @@ export default function RestablecerContrasena() {
                 <div className="glass-card fade-in">
                     <form onSubmit={handleSubmit} className="formulario">
                         <h2>Crear Nueva Contraseña</h2>
-                        <p className="subtitulo">Elige una nueva contraseña segura</p>
+                        <p className="subtitulo">Ingresa el código recibido en tu correo y tu nueva contraseña</p>
+
+                        <div className="input-group">
+                            <label className="input-label">Código de Verificación</label>
+                            <input
+                                type="text"
+                                className="input"
+                                value={codigo}
+                                onChange={(e) => setCodigo(e.target.value)}
+                                placeholder="Ej. 123456"
+                                disabled={cargando || !token}
+                            />
+                        </div>
 
                         <div className="input-group">
                             <label className="input-label">Nueva Contraseña</label>

@@ -79,8 +79,35 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException("Usuario no encontrado");
 
-    if (data.contrasena) {
-      data.contrasena = await bcrypt.hash(data.contrasena, 10);
+    if (data.correo) {
+      const existingEmail = await this.findByEmail(data.correo);
+      if (existingEmail && existingEmail.id_usuario !== id) {
+        throw new BadRequestException("Correo ya registrado");
+      }
+    }
+
+    if (data.numero_documento) {
+      const existingDoc = await this.findByDocument(data.numero_documento);
+      if (existingDoc && existingDoc.id_usuario !== id) {
+        throw new BadRequestException("Número de documento ya existe");
+      }
+    }
+
+    // Manejo de cambio de contraseña con validación de la actual
+    let nuevaContrasenaHash: string | undefined = undefined;
+
+    if (data.contrasena_nueva) {
+      if (!data.contrasena_actual) {
+        throw new BadRequestException("Debe proporcionar la contraseña actual para cambiarla");
+      }
+      const isValid = await bcrypt.compare(data.contrasena_actual, user.contrasena);
+      if (!isValid) {
+        throw new BadRequestException("La contraseña actual es incorrecta");
+      }
+      nuevaContrasenaHash = await bcrypt.hash(data.contrasena_nueva, 10);
+    } else if (data.contrasena) {
+      // Caso donde un admin fuerza el reset sin necesidad de la actual
+      nuevaContrasenaHash = await bcrypt.hash(data.contrasena, 10);
     }
 
     return this.prisma.usuario.update({
@@ -91,7 +118,7 @@ export class UsersService {
         tipo_documento: data.tipo_documento as any,
         numero_documento: data.numero_documento,
         correo: data.correo,
-        contrasena: data.contrasena,
+        contrasena: nuevaContrasenaHash,
         estado:
           data.estado !== undefined ? (Boolean(data.estado) as any) : undefined,
         id_rol: data.id_rol,
@@ -121,7 +148,6 @@ export class UsersService {
       where: { id_usuario: id },
       data: {
         contrasena: hashed,
-        requiere_cambio_contrasena: true,
       },
     });
 

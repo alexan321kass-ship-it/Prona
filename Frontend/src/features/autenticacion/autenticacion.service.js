@@ -58,5 +58,14 @@ export const servicioAutenticacion = {
      */
     resetPassword: async (token, codigo, nuevaContrasena) => {
         return await api.post("/auth/reset-password", { token, codigo, nuevaContrasena });
+    },
+
+    /**
+     * Cambia la contraseña obligatoria de un usuario que acaba de ingresar
+     * @param {string} nuevaContrasena 
+     * @returns {Promise<object>}
+     */
+    changePassword: async (nuevaContrasena) => {
+        return await api.post("/auth/change-password", { nuevaContrasena });
     }
 };

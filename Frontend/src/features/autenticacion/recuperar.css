@@ -44,7 +44,7 @@
 
 .paso-dot p {
     font-size: 0.7rem;
-    color: #A9AEB4;
+    color: #9ca3af;
     font-weight: 500;
     margin: 0;
     transition: color 0.3s ease;
@@ -59,7 +59,7 @@
     height: 2px;
     flex: 1;
     max-width: 60px;
-    background: #E9ECEF;
+    background: #e5e7eb;
     margin-top: 17px;
     transition: background 0.4s ease;
 }
@@ -96,14 +96,14 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #27AE60, #2ECC71);
+    background: #059669; /* Clean emerald green */
     color: white;
     font-size: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.25);
     animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 

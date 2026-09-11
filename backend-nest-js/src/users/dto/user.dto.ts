@@ -34,6 +34,15 @@ export class UpdateUserDto {
   @MinLength(6)
   contrasena?: string;
 
+  @IsString()
+  @IsOptional()
+  contrasena_actual?: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(6)
+  contrasena_nueva?: string;
+
   // 1 para Activo, 0 para Inactivo (bueno, depende del boolean xd)
   @IsNumber()
   @IsOptional()
