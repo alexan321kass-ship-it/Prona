@@ -42,11 +42,14 @@ export default function DashboardAsesor() {
                     api.get("/cotizaciones").catch(() => ({ cotizaciones: [] }))
                 ]);
                 
-                const pedidosArray = resPedidos?.pedidos || [];
+                const clientesArray = Array.isArray(resClientes) ? resClientes : (resClientes?.clientes || []);
+                const pedidosArray = Array.isArray(resPedidos) ? resPedidos : (resPedidos?.pedidos || []);
+                const cotizacionesArray = Array.isArray(resCotizaciones) ? resCotizaciones : (resCotizaciones?.cotizaciones || []);
+
                 setMetricas({
-                    clientes: Array.isArray(resClientes) ? resClientes.length : 0,
-                    pedidos: pedidosArray.length,
-                    cotizaciones: resCotizaciones?.cotizaciones?.length || 0
+                    clientes: clientesArray.length,
+                    pedidos: resPedidos?.total ?? pedidosArray.length,
+                    cotizaciones: resCotizaciones?.total ?? cotizacionesArray.length
                 });
 
                 // Obtener los 3 pedidos más recientes
