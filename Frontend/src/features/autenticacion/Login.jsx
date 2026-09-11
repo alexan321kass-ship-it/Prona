@@ -117,11 +117,16 @@ export default function Login() {
                                 <button
                                     type="button"
                                     className="btn-toggle-eye"
-                                    onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                                    onClick={() => setMostrarContrasena(prev => !prev)}
                                     title={mostrarContrasena ? "Ocultar contraseña" : "Ver contraseña"}
                                     tabIndex={-1}
                                 >
-                                    {mostrarContrasena ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    <span style={{ display: mostrarContrasena ? "inline-flex" : "none" }}>
+                                        <EyeOff size={18} />
+                                    </span>
+                                    <span style={{ display: !mostrarContrasena ? "inline-flex" : "none" }}>
+                                        <Eye size={18} />
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -132,26 +137,24 @@ export default function Login() {
                             className="btn-submit"
                             disabled={cargando}
                         >
-                            {cargando ? (
-                                <span className="btn-content-inline">
-                                    <span className="loader-inline"></span>
-                                    <span>Ingresando al sistema...</span>
-                                </span>
-                            ) : (
-                                <span className="btn-content-inline">
-                                    <span>Iniciar Sesión</span>
-                                    <LogIn size={18} />
-                                </span>
-                            )}
+                            <span className="btn-content-inline" style={{ display: cargando ? "inline-flex" : "none" }}>
+                                <span className="loader-inline"></span>
+                                <span>Ingresando al sistema...</span>
+                            </span>
+                            <span className="btn-content-inline" style={{ display: !cargando ? "inline-flex" : "none" }}>
+                                <span>Iniciar Sesión</span>
+                                <LogIn size={18} />
+                            </span>
                         </button>
 
                         {mensaje && (
                             <div className={`mensaje ${tipoMensaje}`}>
-                                {tipoMensaje === "success" ? (
+                                <span style={{ display: tipoMensaje === "success" ? "inline-flex" : "none" }}>
                                     <CheckCircle2 size={18} />
-                                ) : (
+                                </span>
+                                <span style={{ display: tipoMensaje !== "success" ? "inline-flex" : "none" }}>
                                     <AlertCircle size={18} />
-                                )}
+                                </span>
                                 <span>{mensaje}</span>
                             </div>
                         )}

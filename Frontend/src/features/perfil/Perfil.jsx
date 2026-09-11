@@ -471,10 +471,15 @@ export default function Perfil() {
                                                  <button
                                                      type="button"
                                                      className="perfil-btn-eye"
-                                                     onClick={() => setMostrarPassActual(!mostrarPassActual)}
+                                                     onClick={() => setMostrarPassActual(prev => !prev)}
                                                      title={mostrarPassActual ? "Ocultar contraseña" : "Ver contraseña"}
                                                  >
-                                                     {mostrarPassActual ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                     <span style={{ display: mostrarPassActual ? "inline-flex" : "none" }}>
+                                                         <EyeOff size={18} />
+                                                     </span>
+                                                     <span style={{ display: !mostrarPassActual ? "inline-flex" : "none" }}>
+                                                         <Eye size={18} />
+                                                     </span>
                                                  </button>
                                              </div>
                                          </div>
@@ -494,10 +499,15 @@ export default function Perfil() {
                                                      <button
                                                          type="button"
                                                          className="perfil-btn-eye"
-                                                         onClick={() => setMostrarPassNueva(!mostrarPassNueva)}
+                                                         onClick={() => setMostrarPassNueva(prev => !prev)}
                                                          title={mostrarPassNueva ? "Ocultar contraseña" : "Ver contraseña"}
                                                      >
-                                                         {mostrarPassNueva ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                         <span style={{ display: mostrarPassNueva ? "inline-flex" : "none" }}>
+                                                             <EyeOff size={18} />
+                                                         </span>
+                                                         <span style={{ display: !mostrarPassNueva ? "inline-flex" : "none" }}>
+                                                             <Eye size={18} />
+                                                         </span>
                                                      </button>
                                                  </div>
                                              </div>
@@ -516,10 +526,15 @@ export default function Perfil() {
                                                      <button
                                                          type="button"
                                                          className="perfil-btn-eye"
-                                                         onClick={() => setMostrarPassConfirmar(!mostrarPassConfirmar)}
+                                                         onClick={() => setMostrarPassConfirmar(prev => !prev)}
                                                          title={mostrarPassConfirmar ? "Ocultar contraseña" : "Ver contraseña"}
                                                      >
-                                                         {mostrarPassConfirmar ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                         <span style={{ display: mostrarPassConfirmar ? "inline-flex" : "none" }}>
+                                                             <EyeOff size={18} />
+                                                         </span>
+                                                         <span style={{ display: !mostrarPassConfirmar ? "inline-flex" : "none" }}>
+                                                             <Eye size={18} />
+                                                         </span>
                                                      </button>
                                                  </div>
                                              </div>
@@ -528,16 +543,12 @@ export default function Perfil() {
                                          {/* INDICADOR EN VIVO DE COINCIDENCIA DE CONTRASEÑA */}
                                          {(formData.contrasena_nueva || formData.confirmar_contrasena) && (
                                              <div className="perfil-coincidencia-box">
-                                                 {lasContrasenasCoinciden && (
-                                                     <span className="perfil-coincidencia-badge perfil-coincidencia-badge--success">
-                                                         <CheckCircle2 size={16} /> Las contraseñas coinciden perfectamente
-                                                     </span>
-                                                 )}
-                                                 {noCoinciden && (
-                                                     <span className="perfil-coincidencia-badge perfil-coincidencia-badge--error">
-                                                         <XCircle size={16} /> Las contraseñas no coinciden
-                                                     </span>
-                                                 )}
+                                                 <span className="perfil-coincidencia-badge perfil-coincidencia-badge--success" style={{ display: lasContrasenasCoinciden ? "inline-flex" : "none" }}>
+                                                     <CheckCircle2 size={16} /> Las contraseñas coinciden perfectamente
+                                                 </span>
+                                                 <span className="perfil-coincidencia-badge perfil-coincidencia-badge--error" style={{ display: noCoinciden ? "inline-flex" : "none" }}>
+                                                     <XCircle size={16} /> Las contraseñas no coinciden
+                                                 </span>
                                              </div>
                                          )}
 
@@ -597,13 +608,12 @@ export default function Perfil() {
                                     className="perfil-btn perfil-btn--primary"
                                     disabled={guardando}
                                 >
-                                    {guardando ? (
+                                    <span style={{ display: guardando ? "inline-flex" : "none", alignItems: "center", gap: "0.5rem" }}>
                                         <span>Guardando...</span>
-                                    ) : (
-                                        <>
-                                            <Save size={18} /> Guardar Cambios
-                                        </>
-                                    )}
+                                    </span>
+                                    <span style={{ display: !guardando ? "inline-flex" : "none", alignItems: "center", gap: "0.5rem" }}>
+                                        <Save size={18} /> Guardar Cambios
+                                    </span>
                                 </button>
                             </div>
                         </form>
