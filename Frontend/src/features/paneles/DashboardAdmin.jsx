@@ -76,10 +76,10 @@ export default function DashboardAdmin() {
                     reportesService.getMetricasGrales()
                 ]);
 
-                setMasVendido(dataMas.totales || []);
-                setClientes(dataClientes.clientes || []);
+                setMasVendido(Array.isArray(dataMas?.totales) ? dataMas.totales : (Array.isArray(dataMas) ? dataMas : []));
+                setClientes(Array.isArray(dataClientes?.clientes) ? dataClientes.clientes : (Array.isArray(dataClientes) ? dataClientes : []));
                 setResumen(dataResumen || { totalVentas: 0, totalProductos: 0, totalIngresos: 0 });
-                setVentasMensuales(dataMensual || []);
+                setVentasMensuales(Array.isArray(dataMensual) ? dataMensual : []);
                 setMetricasGrales(dataGrales || { total_clientes: 0, productos_activos: 0, ingresos_historicos: 0, pedidos_pendientes: 0 });
 
             } catch (err) {
