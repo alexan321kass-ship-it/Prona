@@ -441,6 +441,114 @@
     border: 1px solid #E2E8F0;
 }
 
+/* Eye Toggle Password Input Wrapper */
+.perfil-input-password-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.perfil-input-password-wrapper .perfil-form-input {
+    padding-right: 2.8rem;
+}
+
+.perfil-btn-eye {
+    position: absolute;
+    right: 0.8rem;
+    background: transparent;
+    border: none;
+    color: #64748B;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.perfil-btn-eye:hover {
+    color: #C0392B;
+    background: rgba(192, 57, 43, 0.08);
+}
+
+/* Indicador de Coincidencia */
+.perfil-coincidencia-box {
+    margin-top: 0.5rem;
+}
+
+.perfil-coincidencia-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.perfil-coincidencia-badge--success {
+    background: #ECFDF5;
+    color: #047857;
+    border: 1px solid #A7F3D0;
+}
+
+.perfil-coincidencia-badge--error {
+    background: #FEF2F2;
+    color: #B91C1C;
+    border: 1px solid #FCA5A5;
+}
+
+/* Requisitos de Contraseña Checklist */
+.perfil-req-card {
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid #E2E8F0;
+    margin-top: 0.5rem;
+}
+
+.perfil-req-title {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.6rem;
+}
+
+.perfil-req-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.perfil-req-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #94A3B8;
+    transition: all 0.2s ease;
+}
+
+.perfil-req-item--valid {
+    color: #0F172A;
+    font-weight: 700;
+}
+
+.perfil-req-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #CBD5E1;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
 /* BOTONES DE ACCIÓN FOOTER */
 .perfil-acciones-footer {
     display: flex;

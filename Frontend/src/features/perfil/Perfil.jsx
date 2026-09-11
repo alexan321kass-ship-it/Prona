@@ -10,11 +10,14 @@ import {
     LogOut, 
     Save, 
     CheckCircle2, 
+    XCircle,
     KeyRound, 
     Sparkles, 
     BadgeCheck, 
     IdCard,
-    Palette
+    Palette,
+    Eye,
+    EyeOff
 } from "lucide-react";
 import { usuariosService } from "../autenticacion/usuarios.service";
 import { servicioAutenticacion } from "../autenticacion/autenticacion.service";
@@ -47,6 +50,9 @@ export default function Perfil() {
     const [mensaje, setMensaje] = useState({ texto: "", tipo: "" });
     const [modoEdicion, setModoEdicion] = useState(false);
     const [cambiarPassword, setCambiarPassword] = useState(false);
+    const [mostrarPassActual, setMostrarPassActual] = useState(false);
+    const [mostrarPassNueva, setMostrarPassNueva] = useState(false);
+    const [mostrarPassConfirmar, setMostrarPassConfirmar] = useState(false);
 
     // Recuperar datos de sesión del usuario
     useEffect(() => {
@@ -88,17 +94,31 @@ export default function Perfil() {
         localStorage.setItem("perfil_avatar_color", id);
     };
 
+    const hasMinLength = formData.contrasena_nueva.length >= 7;
+    const hasUppercase = /[A-Z]/.test(formData.contrasena_nueva);
+    const hasNumber = /[0-9]/.test(formData.contrasena_nueva);
+
+    const lasContrasenasCoinciden = 
+        Boolean(formData.contrasena_nueva && 
+        formData.confirmar_contrasena && 
+        formData.contrasena_nueva === formData.confirmar_contrasena);
+
+    const noCoinciden = 
+        Boolean(formData.contrasena_nueva && 
+        formData.confirmar_contrasena && 
+        formData.contrasena_nueva !== formData.confirmar_contrasena);
+
     const getPasswordStrength = (pass) => {
         if (!pass) return { label: "", color: "#e2e8f0", percent: 0 };
         let score = 0;
-        if (pass.length >= 6) score += 1;
-        if (pass.length >= 8) score += 1;
+        if (pass.length >= 7) score += 1;
+        if (pass.length >= 10) score += 1;
         if (/[A-Z]/.test(pass)) score += 1;
         if (/[0-9]/.test(pass)) score += 1;
         if (/[^A-Za-z0-9]/.test(pass)) score += 1;
 
-        if (score <= 1) return { label: "Débil", color: "#ef4444", percent: 25 };
-        if (score <= 3) return { label: "Media", color: "#f59e0b", percent: 65 };
+        if (score <= 2) return { label: "Débil", color: "#ef4444", percent: 35 };
+        if (score <= 4) return { label: "Media", color: "#f59e0b", percent: 70 };
         return { label: "Fuerte y Segura", color: "#10b981", percent: 100 };
     };
 
@@ -117,12 +137,20 @@ export default function Perfil() {
                 setMensaje({ texto: "Ingresa tu contraseña actual", tipo: "error" });
                 return;
             }
-            if (formData.contrasena_nueva !== formData.confirmar_contrasena) {
-                setMensaje({ texto: "Las contraseñas nuevas no coinciden", tipo: "error" });
+            if (formData.contrasena_nueva.length < 7) {
+                setMensaje({ texto: "La nueva contraseña debe tener al menos 7 caracteres/dígitos", tipo: "error" });
                 return;
             }
-            if (formData.contrasena_nueva.length < 6) {
-                setMensaje({ texto: "La contraseña debe tener al menos 6 caracteres", tipo: "error" });
+            if (!/[A-Z]/.test(formData.contrasena_nueva)) {
+                setMensaje({ texto: "La nueva contraseña debe incluir al menos una letra mayúscula (A-Z)", tipo: "error" });
+                return;
+            }
+            if (!/[0-9]/.test(formData.contrasena_nueva)) {
+                setMensaje({ texto: "La nueva contraseña debe incluir al menos un número (0-9)", tipo: "error" });
+                return;
+            }
+            if (formData.contrasena_nueva !== formData.confirmar_contrasena) {
+                setMensaje({ texto: "Las contraseñas nuevas no coinciden", tipo: "error" });
                 return;
             }
         }
@@ -428,59 +456,126 @@ export default function Perfil() {
                                 </label>
 
                                 {cambiarPassword && (
-                                    <div className="perfil-password-box">
-                                        <div className="perfil-form-group">
-                                            <label className="perfil-form-label">Contraseña Actual *</label>
-                                            <input
-                                                type="password"
-                                                name="contrasena_actual"
-                                                value={formData.contrasena_actual}
-                                                onChange={handleChange}
-                                                className="perfil-form-input"
-                                                placeholder="Ingresa tu clave actual"
-                                            />
-                                        </div>
+                                     <div className="perfil-password-box">
+                                         <div className="perfil-form-group">
+                                             <label className="perfil-form-label">Contraseña Actual *</label>
+                                             <div className="perfil-input-password-wrapper">
+                                                 <input
+                                                     type={mostrarPassActual ? "text" : "password"}
+                                                     name="contrasena_actual"
+                                                     value={formData.contrasena_actual}
+                                                     onChange={handleChange}
+                                                     className="perfil-form-input"
+                                                     placeholder="Ingresa tu clave actual"
+                                                 />
+                                                 <button
+                                                     type="button"
+                                                     className="perfil-btn-eye"
+                                                     onClick={() => setMostrarPassActual(!mostrarPassActual)}
+                                                     title={mostrarPassActual ? "Ocultar contraseña" : "Ver contraseña"}
+                                                 >
+                                                     {mostrarPassActual ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                 </button>
+                                             </div>
+                                         </div>
 
-                                        <div className="perfil-form-grid">
-                                            <div className="perfil-form-group">
-                                                <label className="perfil-form-label">Nueva Contraseña *</label>
-                                                <input
-                                                    type="password"
-                                                    name="contrasena_nueva"
-                                                    value={formData.contrasena_nueva}
-                                                    onChange={handleChange}
-                                                    className="perfil-form-input"
-                                                    placeholder="Mínimo 6 caracteres"
-                                                />
-                                            </div>
+                                         <div className="perfil-form-grid">
+                                             <div className="perfil-form-group">
+                                                 <label className="perfil-form-label">Nueva Contraseña *</label>
+                                                 <div className="perfil-input-password-wrapper">
+                                                     <input
+                                                         type={mostrarPassNueva ? "text" : "password"}
+                                                         name="contrasena_nueva"
+                                                         value={formData.contrasena_nueva}
+                                                         onChange={handleChange}
+                                                         className="perfil-form-input"
+                                                         placeholder="Mínimo 7 dígitos"
+                                                     />
+                                                     <button
+                                                         type="button"
+                                                         className="perfil-btn-eye"
+                                                         onClick={() => setMostrarPassNueva(!mostrarPassNueva)}
+                                                         title={mostrarPassNueva ? "Ocultar contraseña" : "Ver contraseña"}
+                                                     >
+                                                         {mostrarPassNueva ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                     </button>
+                                                 </div>
+                                             </div>
 
-                                            <div className="perfil-form-group">
-                                                <label className="perfil-form-label">Confirmar Nueva Contraseña *</label>
-                                                <input
-                                                    type="password"
-                                                    name="confirmar_contrasena"
-                                                    value={formData.confirmar_contrasena}
-                                                    onChange={handleChange}
-                                                    className="perfil-form-input"
-                                                    placeholder="Repite la clave nueva"
-                                                />
-                                            </div>
-                                        </div>
+                                             <div className="perfil-form-group">
+                                                 <label className="perfil-form-label">Confirmar Nueva Contraseña *</label>
+                                                 <div className="perfil-input-password-wrapper">
+                                                     <input
+                                                         type={mostrarPassConfirmar ? "text" : "password"}
+                                                         name="confirmar_contrasena"
+                                                         value={formData.confirmar_contrasena}
+                                                         onChange={handleChange}
+                                                         className="perfil-form-input"
+                                                         placeholder="Repite la clave nueva"
+                                                     />
+                                                     <button
+                                                         type="button"
+                                                         className="perfil-btn-eye"
+                                                         onClick={() => setMostrarPassConfirmar(!mostrarPassConfirmar)}
+                                                         title={mostrarPassConfirmar ? "Ocultar contraseña" : "Ver contraseña"}
+                                                     >
+                                                         {mostrarPassConfirmar ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                     </button>
+                                                 </div>
+                                             </div>
+                                         </div>
 
-                                        {/* MEDIDOR DE FORTALEZA DE CONTRASEÑA */}
-                                        {formData.contrasena_nueva && (
-                                            <div className="perfil-strength-bar-wrapper">
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.3rem' }}>
-                                                    <span style={{ color: '#64748B' }}>Seguridad de Clave:</span>
-                                                    <span style={{ color: strength.color }}>{strength.label}</span>
-                                                </div>
-                                                <div style={{ height: '6px', width: '100%', background: '#e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
-                                                    <div style={{ height: '100%', width: `${strength.percent}%`, background: strength.color, transition: 'all 0.3s ease' }}></div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+                                         {/* INDICADOR EN VIVO DE COINCIDENCIA DE CONTRASEÑA */}
+                                         {(formData.contrasena_nueva || formData.confirmar_contrasena) && (
+                                             <div className="perfil-coincidencia-box">
+                                                 {lasContrasenasCoinciden && (
+                                                     <span className="perfil-coincidencia-badge perfil-coincidencia-badge--success">
+                                                         <CheckCircle2 size={16} /> Las contraseñas coinciden perfectamente
+                                                     </span>
+                                                 )}
+                                                 {noCoinciden && (
+                                                     <span className="perfil-coincidencia-badge perfil-coincidencia-badge--error">
+                                                         <XCircle size={16} /> Las contraseñas no coinciden
+                                                     </span>
+                                                 )}
+                                             </div>
+                                         )}
+
+                                         {/* CHECKLIST DE REQUISITOS DE CONTRASEÑA */}
+                                         <div className="perfil-req-card">
+                                             <span className="perfil-req-title">Requisitos para la nueva clave:</span>
+                                             <div className="perfil-req-grid">
+                                                 <div className={`perfil-req-item ${hasMinLength ? 'perfil-req-item--valid' : ''}`}>
+                                                     {hasMinLength ? <CheckCircle2 size={15} color="#10B981" /> : <div className="perfil-req-dot" />}
+                                                     <span>Mínimo 7 dígitos / caracteres</span>
+                                                 </div>
+
+                                                 <div className={`perfil-req-item ${hasUppercase ? 'perfil-req-item--valid' : ''}`}>
+                                                     {hasUppercase ? <CheckCircle2 size={15} color="#10B981" /> : <div className="perfil-req-dot" />}
+                                                     <span>Al menos 1 letra mayúscula (A-Z)</span>
+                                                 </div>
+
+                                                 <div className={`perfil-req-item ${hasNumber ? 'perfil-req-item--valid' : ''}`}>
+                                                     {hasNumber ? <CheckCircle2 size={15} color="#10B981" /> : <div className="perfil-req-dot" />}
+                                                     <span>Al menos 1 número (0-9)</span>
+                                                 </div>
+                                             </div>
+                                         </div>
+
+                                         {/* MEDIDOR DE FORTALEZA DE CONTRASEÑA */}
+                                         {formData.contrasena_nueva && (
+                                             <div className="perfil-strength-bar-wrapper">
+                                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.3rem' }}>
+                                                     <span style={{ color: '#64748B' }}>Seguridad de Clave:</span>
+                                                     <span style={{ color: strength.color }}>{strength.label}</span>
+                                                 </div>
+                                                 <div style={{ height: '6px', width: '100%', background: '#e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
+                                                     <div style={{ height: '100%', width: `${strength.percent}%`, background: strength.color, transition: 'all 0.3s ease' }}></div>
+                                                 </div>
+                                             </div>
+                                         )}
+                                     </div>
+                                 )}
                             </div>
 
                             {/* BOTONES ACCIÓN FORMULARIO */}
