@@ -37,7 +37,7 @@ export default function GridProductos({ productos, agregarAlCarrito, formatearPr
     return (
         <>
             {/* Buscador Píldora Flotante */}
-            <div ref={searchRef} className="autocompletado-contenedor" style={{ marginBottom: '2rem', zIndex: 100 }}>
+            <div ref={searchRef} className="autocompletado-contenedor" style={{ marginBottom: '2rem', position: 'relative', zIndex: 1 }}>
                 <div className="autocompletado-campo">
                     <Search
                         size={20}
