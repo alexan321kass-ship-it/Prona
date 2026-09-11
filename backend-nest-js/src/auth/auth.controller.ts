@@ -36,15 +36,16 @@ export class AuthController {
     );
 
     // Asignamos el token como cookie segura HttpOnly
+    const isProd = process.env.NODE_ENV === "production";
     res.cookie("token", data.token, {
-      httpOnly: true, // JavaScript del navegador NO puede leer esta cookie
-      secure: process.env.NODE_ENV === "production", // Solo HTTPS en producción
-      sameSite: "lax", // Protección contra CSRF
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
       path: "/",
     });
 
-    // Devolvemos la respuesta incluyendo el token para compatibilidad con el móvil
+    // Devolvemos la respuesta incluyendo el token
     return {
       message: data.message,
       user: data.user,
@@ -56,10 +57,11 @@ export class AuthController {
   @Public()
   @Post("logout")
   async logout(@Res({ passthrough: true }) res: Response) {
+    const isProd = process.env.NODE_ENV === "production";
     res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       path: "/",
     });
     return { message: "Sesión cerrada correctamente" };

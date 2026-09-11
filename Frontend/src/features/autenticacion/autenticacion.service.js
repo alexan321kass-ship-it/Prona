@@ -11,7 +11,9 @@ export const servicioAutenticacion = {
      */
     login: async (correo, contrasena) => {
         const data = await api.post("/auth/login", { correo, contrasena });
-        // Solo guardamos la info del usuario para la interfaz (NO el token)
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+        }
         if (data.user) {
             localStorage.setItem("usuario", JSON.stringify(data.user));
         }
@@ -37,6 +39,7 @@ export const servicioAutenticacion = {
             // Si el backend falla, igual limpiamos localmente
             console.warn("No se pudo contactar al backend para logout:", e);
         }
+        localStorage.removeItem("token");
         localStorage.removeItem("usuario");
         window.location.href = "/login";
     },

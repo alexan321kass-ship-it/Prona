@@ -17,11 +17,12 @@ export const UPLOAD_BASE = import.meta.env.VITE_UPLOAD_URL || "http://localhost:
 export const fetchAPI = async (endpoint, options = {}) => {
     const url = `${API_BASE}${endpoint}`;
 
-    // Si el body es FormData, el navegador pone el Content-Type automáticamente con el boundary
     const isFormData = options.body instanceof FormData;
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     const headers = {
         ...(isFormData ? {} : { "Content-Type": "application/json" }),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers
     };
 
