@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: pronavid-api
+    runtime: docker
+    dockerfilePath: ./backend-nest-js/Dockerfile
+    dockerContext: ./backend-nest-js
+    region: oregon
+    plan: free
+    healthCheckPath: /api/docs
+    envVars:
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        sync: false   # Lo pondrás manualmente en el dashboard de Render
+      - key: JWT_SECRET
+        sync: false   # Lo pondrás manualmente en el dashboard de Render
+      - key: CLOUDINARY_URL
+        sync: false   # Lo pondrás manualmente en el dashboard de Render
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_SECURE
+        value: false
+      - key: SMTP_USER
+        value: nue6689@gmail.com
+      - key: SMTP_PASS
+        sync: false   # Lo pondrás manualmente en el dashboard de Render

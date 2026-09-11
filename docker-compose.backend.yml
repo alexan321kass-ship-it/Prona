@@ -9,7 +9,7 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - DATABASE_URL=postgresql://root:rootpassword@pronavid-db:5432/pronavid?schema=public
+      - DATABASE_URL=postgresql://neondb_owner:npg_3IHLF0bQBqhv@ep-patient-mode-ae9h1hrk-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require
       - JWT_SECRET=${JWT_SECRET}
       - PORT=4000
       - SMTP_HOST=smtp.gmail.com

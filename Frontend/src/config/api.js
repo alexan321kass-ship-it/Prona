@@ -3,9 +3,9 @@
  * Centraliza la URL base para todas las llamadas al backend
  */
 
-// URL base del backend
-export const API_BASE = "http://localhost:4000/api";
-export const UPLOAD_BASE = "http://localhost:4000";
+// URL base del backend - usa variable de entorno en producción
+export const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+export const UPLOAD_BASE = import.meta.env.VITE_UPLOAD_URL || "http://localhost:4000";
 
 /**
  * Helper para hacer peticiones al backend

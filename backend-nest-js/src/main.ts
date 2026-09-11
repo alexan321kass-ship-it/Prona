@@ -53,7 +53,9 @@ async function bootstrap() {
         !origin ||
         isLocal ||
         allowedOrigins.includes(origin) ||
-        /\.pronavid\.com$/.test(origin)
+        /\.pronavid\.com$/.test(origin) ||
+        /\.vercel\.app$/.test(origin) ||
+        /\.onrender\.com$/.test(origin)
       ) {
         callback(null, true);
       } else {
