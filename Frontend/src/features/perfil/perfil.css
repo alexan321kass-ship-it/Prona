@@ -1,5 +1,5 @@
 /**
- * Rediseño Ultra-Premium Módulo Perfil de Usuario - Pronavid
+ * Rediseño Ultra-Premium Módulo Perfil de Usuario - Pronavid V2
  */
 
 .perfil-pagina-v2 {
@@ -15,7 +15,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.2rem 2.5rem;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -26,15 +26,15 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.6rem 1.2rem;
-    border-radius: 12px;
+    padding: 0.65rem 1.3rem;
+    border-radius: 14px;
     background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.08);
     color: #475569;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
@@ -53,7 +53,7 @@
 
 /* Contenedor Principal */
 .perfil-contenedor-principal {
-    max-width: 800px;
+    max-width: 840px;
     margin: 2.5rem auto 0;
     padding: 0 1.5rem;
 }
@@ -63,11 +63,11 @@
     position: relative;
     background: #FFFFFF;
     border-radius: 28px;
-    padding: 2.5rem 3rem;
+    padding: 2.5rem 3rem 1.8rem;
     border: 1px solid rgba(255, 255, 255, 0.8);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
     overflow: hidden;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .perfil-hero-card__bg-accent {
@@ -100,7 +100,7 @@
     background: linear-gradient(135deg, #C0392B, #E74C3C);
     border-radius: 50%;
     filter: blur(8px);
-    opacity: 0.4;
+    opacity: 0.35;
 }
 
 .perfil-avatar-circulo {
@@ -108,7 +108,6 @@
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
     color: #FFFFFF;
     display: flex;
     align-items: center;
@@ -117,6 +116,7 @@
     font-weight: 800;
     border: 4px solid #FFFFFF;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
 }
 
 .perfil-avatar-status {
@@ -169,6 +169,90 @@
     letter-spacing: 0.02em;
 }
 
+/* SELECTOR RÁPIDO DE PALETA */
+.perfil-palette-selector {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid #F1F5F9;
+}
+
+.perfil-palette-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.perfil-palette-options {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.perfil-palette-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.perfil-palette-btn:hover,
+.perfil-palette-btn.active {
+    transform: scale(1.3);
+    border-color: #0F172A;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* STATUS STRIP */
+.perfil-status-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.perfil-status-item {
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+.perfil-status-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.perfil-status-item__title {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 800;
+    color: #94A3B8;
+}
+
+.perfil-status-item__sub {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1E293B;
+}
+
 /* FEEDBACK ALERT */
 .perfil-alerta {
     display: flex;
@@ -176,7 +260,7 @@
     gap: 0.8rem;
     padding: 1rem 1.4rem;
     border-radius: 16px;
-    margin-bottom: 1.8rem;
+    margin-bottom: 1.5rem;
     font-size: 0.95rem;
     font-weight: 600;
     animation: deslizarArriba 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -380,6 +464,14 @@
     animation: deslizarArriba 0.3s ease;
 }
 
+.perfil-strength-bar-wrapper {
+    margin-top: 0.5rem;
+    padding: 0.8rem 1rem;
+    background: #FFFFFF;
+    border-radius: 12px;
+    border: 1px solid #E2E8F0;
+}
+
 /* BOTONES DE ACCIÓN FOOTER */
 .perfil-acciones-footer {
     display: flex;
@@ -442,6 +534,14 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
+    }
+
+    .perfil-status-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-palette-selector {
+        justify-content: center;
     }
 
     .perfil-form-grid {

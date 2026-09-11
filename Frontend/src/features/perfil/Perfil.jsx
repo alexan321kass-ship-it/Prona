@@ -13,13 +13,25 @@ import {
     KeyRound, 
     Sparkles, 
     BadgeCheck, 
-    IdCard 
+    IdCard,
+    ShieldCheck,
+    Server,
+    Activity,
+    Palette
 } from "lucide-react";
 import { usuariosService } from "../autenticacion/usuarios.service";
 import { servicioAutenticacion } from "../autenticacion/autenticacion.service";
 import "../../compartido/styles/seguimiento-compartido.css";
 import "./perfil.css";
 import logoPronavid from "../../images/Logopronavid.png";
+
+const AVATAR_PALETTES = [
+    { id: 'red', name: 'Carmesí', gradient: 'linear-gradient(135deg, #C0392B 0%, #962D22 100%)' },
+    { id: 'dark', name: 'Platino', gradient: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)' },
+    { id: 'gold', name: 'Ámbar', gradient: 'linear-gradient(135deg, #D97706 0%, #78350F 100%)' },
+    { id: 'blue', name: 'Zafiro', gradient: 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)' },
+    { id: 'emerald', name: 'Esmeralda', gradient: 'linear-gradient(135deg, #059669 0%, #064E3B 100%)' }
+];
 
 export default function Perfil() {
     const navigate = useNavigate();
@@ -32,6 +44,7 @@ export default function Perfil() {
         contrasena_nueva: "",
         confirmar_contrasena: ""
     });
+    const [avatarColor, setAvatarColor] = useState('red');
     const [cargando, setCargando] = useState(true);
     const [guardando, setGuardando] = useState(false);
     const [mensaje, setMensaje] = useState({ texto: "", tipo: "" });
@@ -53,6 +66,8 @@ export default function Perfil() {
                 primer_apellido: user.primer_apellido || "",
                 correo: user.correo || ""
             }));
+            const savedColor = localStorage.getItem("perfil_avatar_color");
+            if (savedColor) setAvatarColor(savedColor);
             setCargando(false);
         } catch {
             navigate("/login", { replace: true });
@@ -71,6 +86,27 @@ export default function Perfil() {
         }
     };
 
+    const seleccionarColorAvatar = (id) => {
+        setAvatarColor(id);
+        localStorage.setItem("perfil_avatar_color", id);
+    };
+
+    const getPasswordStrength = (pass) => {
+        if (!pass) return { label: "", color: "#e2e8f0", percent: 0 };
+        let score = 0;
+        if (pass.length >= 6) score += 1;
+        if (pass.length >= 8) score += 1;
+        if (/[A-Z]/.test(pass)) score += 1;
+        if (/[0-9]/.test(pass)) score += 1;
+        if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+
+        if (score <= 1) return { label: "Débil", color: "#ef4444", percent: 25 };
+        if (score <= 3) return { label: "Media", color: "#f59e0b", percent: 65 };
+        return { label: "Fuerte y Segura", color: "#10b981", percent: 100 };
+    };
+
+    const strength = getPasswordStrength(formData.contrasena_nueva);
+
     const guardarPerfil = async (e) => {
         e.preventDefault();
 
@@ -79,7 +115,6 @@ export default function Perfil() {
             return;
         }
 
-        // Verificación de credenciales para el cambio de clave
         if (cambiarPassword) {
             if (!formData.contrasena_actual) {
                 setMensaje({ texto: "Ingresa tu contraseña actual", tipo: "error" });
@@ -112,7 +147,6 @@ export default function Perfil() {
 
             await usuariosService.update(usuario.id_usuario, dataToSend);
 
-            // Sincronizar datos de sesión localmente
             const updatedUser = {
                 ...usuario,
                 primer_nombre: formData.primer_nombre,
@@ -122,7 +156,7 @@ export default function Perfil() {
             localStorage.setItem("usuario", JSON.stringify(updatedUser));
             setUsuario(updatedUser);
 
-            setMensaje({ texto: "¡Perfil actualizado con éxito!", tipo: "success" });
+            setMensaje({ texto: "¡Perfil actualizado correctamente!", tipo: "success" });
             setModoEdicion(false);
             setCambiarPassword(false);
             setFormData(prev => ({
@@ -147,13 +181,13 @@ export default function Perfil() {
     const getRolInfo = (id_rol) => {
         switch (id_rol) {
             case 3:
-                return { nombre: "Super Administrador", color: "#C0392B", bg: "rgba(192, 57, 43, 0.12)", badgeClass: "perfil-badge-super" };
+                return { nombre: "Super Administrador", color: "#C0392B", bg: "rgba(192, 57, 43, 0.12)" };
             case 1:
-                return { nombre: "Administrador", color: "#E67E22", bg: "rgba(230, 126, 34, 0.12)", badgeClass: "perfil-badge-admin" };
+                return { nombre: "Administrador", color: "#E67E22", bg: "rgba(230, 126, 34, 0.12)" };
             case 2:
-                return { nombre: "Asesor Comercial", color: "#2980B9", bg: "rgba(41, 128, 185, 0.12)", badgeClass: "perfil-badge-asesor" };
+                return { nombre: "Asesor Comercial", color: "#2980B9", bg: "rgba(41, 128, 185, 0.12)" };
             default:
-                return { nombre: "Usuario", color: "#7F8C8D", bg: "rgba(127, 140, 141, 0.12)", badgeClass: "perfil-badge-default" };
+                return { nombre: "Usuario", color: "#7F8C8D", bg: "rgba(127, 140, 141, 0.12)" };
         }
     };
 
@@ -164,6 +198,8 @@ export default function Perfil() {
         const a = usuario?.primer_apellido?.charAt(0) || "";
         return (n + a).toUpperCase();
     };
+
+    const paletteActual = AVATAR_PALETTES.find(p => p.id === avatarColor) || AVATAR_PALETTES[0];
 
     if (cargando) {
         return (
@@ -182,7 +218,7 @@ export default function Perfil() {
             <div className="perfil-topbar">
                 <button onClick={volverDashboard} className="perfil-topbar__btn-volver" title="Volver al Panel">
                     <ArrowLeft size={18} />
-                    <span>Volver</span>
+                    <span>Volver al Panel</span>
                 </button>
 
                 <img src={logoPronavid} alt="Pronavid" className="perfil-topbar__logo" />
@@ -194,10 +230,13 @@ export default function Perfil() {
                     <div className="perfil-hero-card__bg-accent"></div>
                     
                     <div className="perfil-hero-card__content">
-                        {/* Avatar con anillo luminoso */}
+                        {/* Avatar con selector de estilo */}
                         <div className="perfil-avatar-wrapper">
                             <div className="perfil-avatar-glow"></div>
-                            <div className="perfil-avatar-circulo">
+                            <div 
+                                className="perfil-avatar-circulo"
+                                style={{ background: paletteActual.gradient }}
+                            >
                                 {getIniciales()}
                             </div>
                             <div className="perfil-avatar-status" title="Cuenta Activa">
@@ -221,6 +260,25 @@ export default function Perfil() {
                             </span>
                         </div>
                     </div>
+
+                    {/* SELECTOR RÁPIDO DE PALETA DE AVATAR */}
+                    <div className="perfil-palette-selector">
+                        <span className="perfil-palette-label">
+                            <Palette size={14} /> Estilo de Avatar:
+                        </span>
+                        <div className="perfil-palette-options">
+                            {AVATAR_PALETTES.map(p => (
+                                <button
+                                    key={p.id}
+                                    type="button"
+                                    onClick={() => seleccionarColorAvatar(p.id)}
+                                    className={`perfil-palette-btn ${avatarColor === p.id ? 'active' : ''}`}
+                                    style={{ background: p.gradient }}
+                                    title={p.name}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* FEEDBACK TOAST */}
@@ -231,6 +289,33 @@ export default function Perfil() {
                     </div>
                 )}
 
+                {/* SECURITY STATUS STRIP */}
+                <div className="perfil-status-strip">
+                    <div className="perfil-status-item">
+                        <ShieldCheck size={18} className="text-emerald-500" />
+                        <div>
+                            <span className="perfil-status-item__title">Seguridad</span>
+                            <span className="perfil-status-item__sub">JWT Encriptado</span>
+                        </div>
+                    </div>
+
+                    <div className="perfil-status-item">
+                        <Server size={18} className="text-blue-500" />
+                        <div>
+                            <span className="perfil-status-item__title">Servidor Nube</span>
+                            <span className="perfil-status-item__sub">Render & Neon</span>
+                        </div>
+                    </div>
+
+                    <div className="perfil-status-item">
+                        <Activity size={18} className="text-rose-500" />
+                        <div>
+                            <span className="perfil-status-item__title">Estado Cuenta</span>
+                            <span className="perfil-status-item__sub">Activo / Conectado</span>
+                        </div>
+                    </div>
+                </div>
+
                 {/* MAIN CONTENT CARD */}
                 <div className="perfil-card-body">
                     {!modoEdicion ? (
@@ -240,7 +325,7 @@ export default function Perfil() {
                                 <h3 className="perfil-titulo-seccion">
                                     <IdCard size={20} className="text-red-600" /> Datos de la Cuenta
                                 </h3>
-                                <p className="perfil-subtitulo-seccion">Gestiona tus datos personales y credenciales de acceso</p>
+                                <p className="perfil-subtitulo-seccion">Información registrada en el sistema Pronavid</p>
                             </div>
 
                             <div className="perfil-grid-detalles">
@@ -269,7 +354,7 @@ export default function Perfil() {
                                         <Shield size={20} />
                                     </div>
                                     <div>
-                                        <span className="perfil-campo-card__etiqueta">Tipo de Rol asignado</span>
+                                        <span className="perfil-campo-card__etiqueta">Tipo de Rol Asignado</span>
                                         <p className="perfil-campo-card__valor" style={{ color: rolInfo.color }}>
                                             {rolInfo.nombre}
                                         </p>
@@ -298,9 +383,9 @@ export default function Perfil() {
                         <form onSubmit={guardarPerfil} className="perfil-form-edicion">
                             <div className="perfil-header-seccion">
                                 <h3 className="perfil-titulo-seccion">
-                                    <Pencil size={20} className="text-red-600" /> Modificar Perfil
+                                    <Pencil size={20} className="text-red-600" /> Modificar Datos
                                 </h3>
-                                <p className="perfil-subtitulo-seccion">Actualiza tus nombres o contraseña de acceso</p>
+                                <p className="perfil-subtitulo-seccion">Edita tus nombres o actualiza tu contraseña de acceso</p>
                             </div>
 
                             <div className="perfil-form-grid">
@@ -406,6 +491,19 @@ export default function Perfil() {
                                                 />
                                             </div>
                                         </div>
+
+                                        {/* MEDIDOR DE FORTALEZA DE CONTRASEÑA */}
+                                        {formData.contrasena_nueva && (
+                                            <div className="perfil-strength-bar-wrapper">
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.3rem' }}>
+                                                    <span style={{ color: '#64748B' }}>Seguridad de Clave:</span>
+                                                    <span style={{ color: strength.color }}>{strength.label}</span>
+                                                </div>
+                                                <div style={{ height: '6px', width: '100%', background: '#e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
+                                                    <div style={{ height: '100%', width: `${strength.percent}%`, background: strength.color, transition: 'all 0.3s ease' }}></div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
