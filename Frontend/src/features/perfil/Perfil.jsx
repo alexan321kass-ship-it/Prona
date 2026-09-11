@@ -14,9 +14,6 @@ import {
     Sparkles, 
     BadgeCheck, 
     IdCard,
-    ShieldCheck,
-    Server,
-    Activity,
     Palette
 } from "lucide-react";
 import { usuariosService } from "../autenticacion/usuarios.service";
@@ -249,15 +246,17 @@ export default function Perfil() {
                             <h1 className="perfil-user-info__nombre">
                                 {usuario?.primer_nombre} {usuario?.primer_apellido}
                             </h1>
-                            <p className="perfil-user-info__correo">
-                                <Mail size={15} /> {usuario?.correo}
-                            </p>
-                            <span 
-                                className="perfil-user-info__badge" 
-                                style={{ color: rolInfo.color, backgroundColor: rolInfo.bg, borderColor: rolInfo.color }}
-                            >
-                                <Shield size={14} /> {rolInfo.nombre}
-                            </span>
+                            <div className="perfil-user-info__meta">
+                                <span className="perfil-user-info__correo">
+                                    <Mail size={15} /> {usuario?.correo}
+                                </span>
+                                <span 
+                                    className="perfil-user-info__badge" 
+                                    style={{ color: rolInfo.color, backgroundColor: rolInfo.bg, borderColor: rolInfo.color }}
+                                >
+                                    <Shield size={13} /> {rolInfo.nombre}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
@@ -288,33 +287,6 @@ export default function Perfil() {
                         <span>{mensaje.texto}</span>
                     </div>
                 )}
-
-                {/* SECURITY STATUS STRIP */}
-                <div className="perfil-status-strip">
-                    <div className="perfil-status-item">
-                        <ShieldCheck size={18} className="text-emerald-500" />
-                        <div>
-                            <span className="perfil-status-item__title">Seguridad</span>
-                            <span className="perfil-status-item__sub">JWT Encriptado</span>
-                        </div>
-                    </div>
-
-                    <div className="perfil-status-item">
-                        <Server size={18} className="text-blue-500" />
-                        <div>
-                            <span className="perfil-status-item__title">Servidor Nube</span>
-                            <span className="perfil-status-item__sub">Render & Neon</span>
-                        </div>
-                    </div>
-
-                    <div className="perfil-status-item">
-                        <Activity size={18} className="text-rose-500" />
-                        <div>
-                            <span className="perfil-status-item__title">Estado Cuenta</span>
-                            <span className="perfil-status-item__sub">Activo / Conectado</span>
-                        </div>
-                    </div>
-                </div>
 
                 {/* MAIN CONTENT CARD */}
                 <div className="perfil-card-body">
