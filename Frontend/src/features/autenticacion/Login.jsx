@@ -66,13 +66,14 @@ export default function Login() {
 
     return (
         <div className="auth-page">
+            <header className="encabezado">
+                <img src={logoPronavid} alt="Logo Pronavid" className="logo" />
+            </header>
+
             <main className="contenedor">
                 <div className="glass-card fade-in">
                     <form onSubmit={handleSubmit} className="formulario">
                         <div className="auth-card-header">
-                            <div className="auth-logo-wrapper">
-                                <img src={logoPronavid} alt="Logo Pronavid" className="logo" />
-                            </div>
                             <h2>¡Bienvenido!</h2>
                             <p className="subtitulo">Ingresa tus credenciales para acceder al sistema</p>
                         </div>
