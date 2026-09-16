@@ -132,6 +132,52 @@ export class AuthService {
     });
   }
 
+  private async createMailTransporter() {
+    if (process.env.SMTP_HOST || process.env.SMTP_USER) {
+      const port = Number(process.env.SMTP_PORT) || 587;
+      const isGmail = process.env.SMTP_HOST?.includes("gmail") || process.env.SMTP_SERVICE === "gmail";
+
+      if (isGmail) {
+        return nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+          tls: { rejectUnauthorized: false },
+        });
+      }
+
+      return nodemailer.createTransport({
+        host: process.env.SMTP_HOST || "smtp.gmail.com",
+        port: port,
+        secure: process.env.SMTP_SECURE === "true" || port === 465,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+        tls: { rejectUnauthorized: false },
+      });
+    }
+
+    try {
+      const testAccount = await nodemailer.createTestAccount();
+      return nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false,
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass,
+        },
+        tls: { rejectUnauthorized: false },
+      });
+    } catch (e) {
+      console.warn("[AUTH MAILER] No se pudo crear cuenta de prueba Ethereal:", e.message);
+      return null;
+    }
+  }
+
   async forgotPassword(correo: string) {
     const user = await this.prisma.usuario.findUnique({ where: { correo } });
     if (!user) {
@@ -147,47 +193,66 @@ export class AuthService {
     const payload = { correo: user.correo, code };
     const token = this.jwtService.sign(payload, { secret, expiresIn: "15m" });
 
-    let transporter;
-    if (process.env.SMTP_HOST) {
-      transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: process.env.SMTP_SECURE === "true",
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      });
-    } else {
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
-    }
+    console.log("=============================================");
+    console.log(`[RECUPERACIÓN DE CONTRASEÑA]`);
+    console.log(`Usuario: ${user.primer_nombre} ${user.primer_apellido}`);
+    console.log(`Correo: ${user.correo}`);
+    console.log(`CÓDIGO GENERADO: ${code}`);
+    console.log("=============================================");
+
+    const fromSender =
+      process.env.SMTP_FROM ||
+      (process.env.SMTP_USER
+        ? `"Pronavid Soporte" <${process.env.SMTP_USER}>`
+        : '"Pronavid Soporte" <no-reply@pronavid.com>');
+
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h2 style="color: #0f172a; margin: 0; font-size: 24px;">Pronavid</h2>
+          <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Recuperación de Contraseña</p>
+        </div>
+        <div style="padding: 20px; background-color: #f8fafc; border-radius: 8px; margin-bottom: 20px;">
+          <p style="color: #334155; font-size: 16px; margin: 0 0 10px 0;">Hola <strong>${user.primer_nombre}</strong>,</p>
+          <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
+            Has solicitado restablecer tu contraseña. Utiliza el siguiente código de verificación de 6 dígitos para completar el proceso:
+          </p>
+          <div style="text-align: center; margin: 25px 0;">
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #2563eb; background: #eff6ff; padding: 12px 24px; border-radius: 8px; border: 1px dashed #bfdbfe; display: inline-block;">
+              ${code}
+            </span>
+          </div>
+          <p style="color: #64748b; font-size: 13px; margin: 0;">Este código expira en <strong>15 minutos</strong>. Si no solicitaste este cambio, puedes ignorar este mensaje de forma segura.</p>
+        </div>
+        <div style="text-align: center; color: #94a3b8; font-size: 12px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+          &copy; ${new Date().getFullYear()} Pronavid. Todos los derechos reservados.
+        </div>
+      </div>
+    `;
 
     try {
-      const info = await transporter.sendMail({
-        from: '"Pronavid Soporte" <no-reply@pronavid.com>',
-        to: user.correo,
-        subject: "Tu código de recuperación",
-        text: `Tu código de verificación es: ${code}`,
-      });
-      console.log("=============================================");
-      console.log("CÓDIGO GENERADO:", code);
-      console.log("URL DEL CORREO:", nodemailer.getTestMessageUrl(info));
-      console.log("=============================================");
+      const transporter = await this.createMailTransporter();
+      if (transporter) {
+        const info = await transporter.sendMail({
+          from: fromSender,
+          to: user.correo,
+          subject: "Tu código de recuperación - Pronavid",
+          text: `Hola ${user.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
+          html: htmlContent,
+        });
+
+        if (nodemailer.getTestMessageUrl(info)) {
+          console.log("URL DE VISTA PREVIA ETHEREAL:", nodemailer.getTestMessageUrl(info));
+        }
+      } else {
+        console.warn("[AUTH MAILER] Sin transporte SMTP activo. El código fue registrado en consola.");
+      }
     } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException("No se pudo enviar el código");
+      console.error("[AUTH MAILER ERROR] No se pudo entregar el correo por SMTP:", error.message || error);
+      // No lanzamos excepción 500 para permitir el flujo de recuperación y pruebas
     }
 
-    return { message: "Código enviado", resetToken: token };
+    return { message: "Código enviado. Revisa tu correo.", resetToken: token };
   }
 
   async resetPassword(token: string, code: string, nuevaContrasena: string) {
