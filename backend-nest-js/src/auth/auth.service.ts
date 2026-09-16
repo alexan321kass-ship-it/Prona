@@ -179,12 +179,25 @@ export class AuthService {
   }
 
   async forgotPassword(correo: string) {
-    const user = await this.prisma.usuario.findUnique({ where: { correo } });
+    if (!correo || !correo.trim()) {
+      throw new BadRequestException("Debe ingresar un correo electrónico válido");
+    }
+
+    const cleanCorreo = correo.trim().toLowerCase();
+
+    const user = await this.prisma.usuario.findFirst({
+      where: {
+        correo: {
+          equals: cleanCorreo,
+          mode: "insensitive",
+        },
+      },
+    });
+
     if (!user) {
-      return {
-        message:
-          "Si el correo está registrado, recibirás un código de recuperación.",
-      };
+      throw new BadRequestException(
+        "No se encontró ningún usuario registrado con el correo ingresado",
+      );
     }
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();

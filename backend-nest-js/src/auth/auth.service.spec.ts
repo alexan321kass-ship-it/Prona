@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { BadRequestException } from '@nestjs/common';
 
 describe('AuthService - forgotPassword', () => {
   let service: AuthService;
@@ -12,6 +13,7 @@ describe('AuthService - forgotPassword', () => {
     prismaService = {
       usuario: {
         findUnique: jest.fn(),
+        findFirst: jest.fn(),
       },
     };
 
@@ -30,17 +32,16 @@ describe('AuthService - forgotPassword', () => {
     service = module.get<AuthService>(AuthService);
   });
 
-  it('debe responder sin token si el correo no existe', async () => {
-    prismaService.usuario.findUnique.mockResolvedValue(null);
+  it('debe lanzar BadRequestException si el correo no existe', async () => {
+    prismaService.usuario.findFirst.mockResolvedValue(null);
 
-    const result = await service.forgotPassword('noexiste@mail.com');
-
-    expect(result.resetToken).toBeUndefined();
-    expect(result.message).toContain('Si el correo está registrado');
+    await expect(service.forgotPassword('noexiste@mail.com')).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('debe generar código y token si el usuario existe sin lanzar error aun si falla el transporte', async () => {
-    prismaService.usuario.findUnique.mockResolvedValue({
+    prismaService.usuario.findFirst.mockResolvedValue({
       id_usuario: 1,
       primer_nombre: 'Prueba',
       primer_apellido: 'Usuario',
@@ -48,9 +49,10 @@ describe('AuthService - forgotPassword', () => {
       contrasena: '$2b$10$hashedpassword',
     });
 
-    const result = await service.forgotPassword('prueba@mail.com');
+    const result = await service.forgotPassword('PRUEBA@MAIL.COM ');
 
     expect(result.resetToken).toBe('mocked-reset-token');
     expect(result.message).toContain('Código enviado');
   });
 });
+
