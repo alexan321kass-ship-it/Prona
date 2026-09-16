@@ -101,13 +101,43 @@ export default function Clientes() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const validarFormulario = () => {
+        const nombre = formData.nombre_cliente.trim();
+        const iden = formData.identificacion.trim();
+        const tel = formData.telefono.trim();
+        const mail = formData.correo.trim();
+
+        if (!nombre) {
+            setMensaje({ texto: "El nombre del cliente es requerido", tipo: "error" });
+            return false;
+        }
+        if (/\d/.test(nombre)) {
+            setMensaje({ texto: "El nombre del cliente no puede contener números", tipo: "error" });
+            return false;
+        }
+        if (!iden) {
+            setMensaje({ texto: "La identificación es requerida", tipo: "error" });
+            return false;
+        }
+        if (!/^[0-9-]+$/.test(iden)) {
+            setMensaje({ texto: "La identificación solo puede contener números", tipo: "error" });
+            return false;
+        }
+        if (tel && !/^\d{7,10}$/.test(tel)) {
+            setMensaje({ texto: "El teléfono solo puede contener entre 7 y 10 números", tipo: "error" });
+            return false;
+        }
+        if (mail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
+            setMensaje({ texto: "El correo electrónico no tiene un formato válido", tipo: "error" });
+            return false;
+        }
+        return true;
+    };
+
     const guardarCliente = async (e) => {
         e.preventDefault();
 
-        if (!formData.nombre_cliente.trim() || !formData.identificacion.trim()) {
-            setMensaje({ texto: "Nombre e identificación son requeridos", tipo: "error" });
-            return;
-        }
+        if (!validarFormulario()) return;
 
         setGuardando(true);
         setMensaje({ texto: "", tipo: "" });
@@ -120,14 +150,14 @@ export default function Clientes() {
             }
 
             setMensaje({
-                texto: modalForm.tipo === "editar" ? "Cliente actualizado" : "Cliente creado",
+                texto: modalForm.tipo === "editar" ? "Cliente actualizado exitosamente" : "Cliente creado exitosamente",
                 tipo: "success"
             });
             setModalForm(null);
             cargarClientes();
 
         } catch (error) {
-            setMensaje({ texto: "Error de conexión", tipo: "error" });
+            setMensaje({ texto: error.message || "Error al guardar el cliente", tipo: "error" });
         } finally {
             setGuardando(false);
         }
@@ -301,10 +331,17 @@ export default function Clientes() {
                                                 onChange={handleChange}
                                                 className="input-enterprise"
                                                 placeholder="Nombre del cliente"
+                                                pattern="^[^0-9]+$"
+                                                title="No se permiten números en el nombre"
                                                 required
                                             />
                                             <User size={18} className="input-icon" />
                                         </div>
+                                        {formData.nombre_cliente && /\d/.test(formData.nombre_cliente) && (
+                                            <span style={{ color: "#dc2626", fontSize: "0.8rem", marginTop: "0.25rem", display: "block" }}>
+                                                ⚠️ El nombre no puede contener números
+                                            </span>
+                                        )}
                                     </div>
 
                                     <div className="form-group-enterprise">
@@ -316,11 +353,18 @@ export default function Clientes() {
                                                 value={formData.identificacion}
                                                 onChange={handleChange}
                                                 className="input-enterprise"
-                                                placeholder="Número de documento"
+                                                placeholder="Número de documento (solo números)"
+                                                pattern="^[0-9-]+$"
+                                                title="Solo se permiten números"
                                                 required
                                             />
                                             <CreditCard size={18} className="input-icon" />
                                         </div>
+                                        {formData.identificacion && !/^[0-9-]+$/.test(formData.identificacion) && (
+                                            <span style={{ color: "#dc2626", fontSize: "0.8rem", marginTop: "0.25rem", display: "block" }}>
+                                                ⚠️ La identificación solo puede contener números
+                                            </span>
+                                        )}
                                     </div>
 
                                     <div className="form-row">
@@ -328,15 +372,22 @@ export default function Clientes() {
                                             <label>Teléfono</label>
                                             <div className="input-with-icon">
                                                 <input
-                                                    type="text"
+                                                    type="tel"
                                                     name="telefono"
                                                     value={formData.telefono}
                                                     onChange={handleChange}
                                                     className="input-enterprise"
-                                                    placeholder="Teléfono"
+                                                    placeholder="7 a 10 dígitos numéricos"
+                                                    pattern="^[0-9]{7,10}$"
+                                                    title="Entre 7 y 10 números"
                                                 />
                                                 <Phone size={18} className="input-icon" />
                                             </div>
+                                            {formData.telefono && !/^\d{7,10}$/.test(formData.telefono) && (
+                                                <span style={{ color: "#dc2626", fontSize: "0.8rem", marginTop: "0.25rem", display: "block" }}>
+                                                    ⚠️ Debe ser numérico (7-10 dígitos)
+                                                </span>
+                                            )}
                                         </div>
 
                                         <div className="form-group-enterprise">
@@ -352,6 +403,11 @@ export default function Clientes() {
                                                 />
                                                 <Mail size={18} className="input-icon" />
                                             </div>
+                                            {formData.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo) && (
+                                                <span style={{ color: "#dc2626", fontSize: "0.8rem", marginTop: "0.25rem", display: "block" }}>
+                                                    ⚠️ Correo electrónico inválido
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 

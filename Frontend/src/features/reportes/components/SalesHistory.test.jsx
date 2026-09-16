@@ -82,14 +82,14 @@ describe('Matriz de Casos de Prueba - Anulación de Ventas (CP-RF007.4)', () => 
         fireEvent.click(botonDevolver);
 
         // Verificamos que el modal se abre
-        expect(screen.getByText(/Anular Venta #1/i)).toBeInTheDocument();
+        expect(screen.getByText(/Venta #1/i)).toBeInTheDocument();
 
         // Ingresamos un motivo válido
-        const textarea = screen.getByPlaceholderText(/Justifique el motivo/i);
+        const textarea = screen.getByPlaceholderText(/Describe el motivo/i);
         fireEvent.change(textarea, { target: { value: 'El cliente devolvió el producto' } });
 
         // Confirmamos anulación
-        fireEvent.click(screen.getByText('Confirmar Anulación'));
+        fireEvent.click(screen.getByText(/Confirmar Anulación/i));
 
         await waitFor(() => {
             expect(ventasService.crearDevolucion).toHaveBeenCalledWith(1, 'El cliente devolvió el producto');
@@ -105,10 +105,10 @@ describe('Matriz de Casos de Prueba - Anulación de Ventas (CP-RF007.4)', () => 
         fireEvent.click(botonDevolver);
 
         // Dejar el motivo en blanco e intentar anular
-        const textarea = screen.getByPlaceholderText(/Justifique el motivo/i);
+        const textarea = screen.getByPlaceholderText(/Describe el motivo/i);
         expect(textarea.value).toBe('');
         
-        fireEvent.click(screen.getByText('Confirmar Anulación'));
+        fireEvent.click(screen.getByText(/Confirmar Anulación/i));
 
         // Esperar el error FE-02 en pantalla y que NO se llame al servicio
         await waitFor(() => {
@@ -160,9 +160,9 @@ describe('Matriz de Casos de Prueba - Anulación de Ventas (CP-RF007.4)', () => 
         const botonVentaMultiple = within(rowPedro).getByRole('button', { name: /Devolver/i });
         fireEvent.click(botonVentaMultiple);
         
-        const textarea = screen.getByPlaceholderText(/Justifique el motivo/i);
+        const textarea = screen.getByPlaceholderText(/Describe el motivo/i);
         fireEvent.change(textarea, { target: { value: 'Devolución múltiple' } });
-        fireEvent.click(screen.getByText('Confirmar Anulación'));
+        fireEvent.click(screen.getByText(/Confirmar Anulación/i));
 
         // Backend reingresa, front solo confirma envío con ID = 3
         await waitFor(() => {

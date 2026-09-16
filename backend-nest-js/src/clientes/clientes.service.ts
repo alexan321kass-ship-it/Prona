@@ -47,13 +47,43 @@ export class ClientesService {
     return cliente;
   }
 
+  private validarDatosCliente(nombre?: string, iden?: string, tel?: string, correo?: string) {
+    if (nombre !== undefined) {
+      if (!nombre.trim()) {
+        throw new BadRequestException("El nombre del cliente es requerido");
+      }
+      if (/\d/.test(nombre)) {
+        throw new BadRequestException("El nombre del cliente no puede contener números");
+      }
+    }
+
+    if (iden !== undefined) {
+      if (!iden.trim()) {
+        throw new BadRequestException("La identificación es requerida");
+      }
+      if (!/^[0-9-]+$/.test(iden.trim())) {
+        throw new BadRequestException("La identificación solo puede contener números");
+      }
+    }
+
+    if (tel && tel.trim() && !/^\d{7,10}$/.test(tel.trim())) {
+      throw new BadRequestException("El teléfono solo puede contener entre 7 y 10 números");
+    }
+
+    if (correo && correo.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())) {
+      throw new BadRequestException("El correo electrónico no tiene un formato válido");
+    }
+  }
+
   // Registrar un nuevo cliente con validación de identificación única
   async create(data: CreateClienteDto) {
     const { nombre_cliente, identificacion, telefono, direccion, correo } =
       data;
 
+    this.validarDatosCliente(nombre_cliente, identificacion, telefono, correo);
+
     const exists = await this.prisma.cliente.findUnique({
-      where: { identificacion },
+      where: { identificacion: identificacion.trim() },
     });
 
     if (exists) {
@@ -66,9 +96,9 @@ export class ClientesService {
       data: {
         nombre_cliente: nombre_cliente.trim(),
         identificacion: identificacion.trim(),
-        telefono_cliente: telefono || null,
-        direccion_cliente: direccion || null,
-        correo_cliente: correo || null,
+        telefono_cliente: telefono ? telefono.trim() : null,
+        direccion_cliente: direccion ? direccion.trim() : null,
+        correo_cliente: correo ? correo.trim() : null,
       },
     });
   }
@@ -77,12 +107,19 @@ export class ClientesService {
   async update(id: number, data: UpdateClienteDto) {
     const existing = await this.getById(id);
 
+    this.validarDatosCliente(
+      data.nombre_cliente,
+      data.identificacion,
+      data.telefono,
+      data.correo,
+    );
+
     if (
       data.identificacion &&
-      data.identificacion !== existing.identificacion
+      data.identificacion.trim() !== existing.identificacion
     ) {
       const exists = await this.prisma.cliente.findUnique({
-        where: { identificacion: data.identificacion },
+        where: { identificacion: data.identificacion.trim() },
       });
       if (exists) {
         throw new BadRequestException(
@@ -96,9 +133,9 @@ export class ClientesService {
       data: {
         nombre_cliente: data.nombre_cliente?.trim(),
         identificacion: data.identificacion?.trim(),
-        telefono_cliente: data.telefono,
-        direccion_cliente: data.direccion,
-        correo_cliente: data.correo,
+        telefono_cliente: data.telefono !== undefined ? data.telefono?.trim() : undefined,
+        direccion_cliente: data.direccion !== undefined ? data.direccion?.trim() : undefined,
+        correo_cliente: data.correo !== undefined ? data.correo?.trim() : undefined,
       },
     });
   }

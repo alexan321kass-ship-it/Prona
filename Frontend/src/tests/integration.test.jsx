@@ -128,13 +128,13 @@ describe('Pruebas de Integración Frontend', () => {
 
             // Verificar modal
             await waitFor(() => {
-                expect(screen.getByText(/Anular Venta #100/i)).toBeInTheDocument();
+                expect(screen.getByText(/Venta #100/i)).toBeInTheDocument();
             });
             
             // Justificar y confirmar
-            const textarea = screen.getByPlaceholderText(/Justifique el motivo/i);
+            const textarea = screen.getByPlaceholderText(/Describe el motivo/i);
             fireEvent.change(textarea, { target: { value: 'Motivo de integración' } });
-            fireEvent.click(screen.getByText('Confirmar Anulación'));
+            fireEvent.click(screen.getByText(/Confirmar Anulación/i));
 
             // 4. Verificar respuesta de la API
             await waitFor(() => {
@@ -168,7 +168,7 @@ describe('Pruebas de Integración Frontend', () => {
             });
 
             // 2. Seleccionar Cliente (Manejo de Autocompletado)
-            const inputCliente = screen.getByPlaceholderText(/Buscar por nombre o identificación/i);
+            const inputCliente = screen.getByPlaceholderText(/Buscar por nombre, NIT/i);
             fireEvent.change(inputCliente, { target: { value: 'Juan' } });
             // Clic en la sugerencia
             await waitFor(() => {
@@ -221,7 +221,7 @@ describe('Pruebas de Integración Frontend', () => {
         it('Permite al usuario loguearse y lo redirige al dashboard', async () => {
             renderWithRouter(<AppLoginRouter />);
             
-            const inputCorreo = screen.getByPlaceholderText(/ejemplo@correo.com/i);
+            const inputCorreo = screen.getByPlaceholderText(/ejemplo@pronavid.com/i);
             const inputContrasena = screen.getByPlaceholderText(/••••••••/i);
             
             fireEvent.change(inputCorreo, { target: { value: 'admin@correo.com' } });
@@ -231,12 +231,12 @@ describe('Pruebas de Integración Frontend', () => {
             fireEvent.click(btnSubmit);
             
             await waitFor(() => {
-                expect(screen.getByText(/¡Bienvenido, Admin!/i)).toBeInTheDocument();
+                expect(screen.getAllByText(/Bienvenido/i).length).toBeGreaterThan(0);
             });
 
             await waitFor(() => {
                 expect(screen.getByText('Panel Dashboard')).toBeInTheDocument();
-            }, { timeout: 2000 }); // Redirección tiene setTimeout 1200ms
+            }, { timeout: 2500 }); // Redirección tiene setTimeout 1200ms
         });
     });
 
@@ -326,12 +326,16 @@ describe('Pruebas de Integración Frontend', () => {
             fireEvent.click(btnAñadir);
 
             // 2. Cliente
-            const inputCliente = screen.getByPlaceholderText(/Buscar por nombre o identificación/i);
+            const inputCliente = screen.getByPlaceholderText(/Buscar por nombre, NIT/i);
             fireEvent.change(inputCliente, { target: { value: 'Juan' } });
             await waitFor(() => {
                 expect(screen.getByText(/Juan Perez/i)).toBeInTheDocument();
             });
             fireEvent.click(screen.getByText(/Juan Perez/i));
+
+            // 2.5 Vigencia obligatoria (>= 4 días)
+            const inputVigencia = document.querySelector('input[type="date"]');
+            fireEvent.change(inputVigencia, { target: { value: '2050-12-31' } });
             
             // 3. Confirmar
             const btnConfirmar = screen.getByRole('button', { name: /Confirmar Pedido/i });

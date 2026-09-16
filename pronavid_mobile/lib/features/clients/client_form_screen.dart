@@ -84,25 +84,45 @@ class _ClientFormScreenState extends State<ClientFormScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Nombre Completo *', prefixIcon: Icon(Icons.person)),
-                validator: (val) => val!.isEmpty ? 'Requerido' : null,
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty) return 'Requerido';
+                  if (RegExp(r'\d').hasMatch(val)) return 'El nombre no puede contener números';
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _idController,
                 decoration: const InputDecoration(labelText: 'Identificación / NIT *', prefixIcon: Icon(Icons.badge)),
-                validator: (val) => val!.isEmpty ? 'Requerido' : null,
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty) return 'Requerido';
+                  if (!RegExp(r'^[0-9-]+$').hasMatch(val.trim())) return 'La identificación solo puede contener números';
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(labelText: 'Teléfono', prefixIcon: Icon(Icons.phone)),
+                validator: (val) {
+                  if (val != null && val.trim().isNotEmpty && !RegExp(r'^\d{7,10}$').hasMatch(val.trim())) {
+                    return 'Entre 7 y 10 dígitos numéricos';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(labelText: 'Correo Electrónico', prefixIcon: Icon(Icons.email)),
+                validator: (val) {
+                  if (val != null && val.trim().isNotEmpty && !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(val.trim())) {
+                    return 'Correo electrónico inválido';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
