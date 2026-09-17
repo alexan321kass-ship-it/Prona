@@ -137,17 +137,22 @@ export class AuthService {
     const smtpPass = process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/["'\s]/g, "") : "";
 
     if (smtpUser && smtpPass) {
+      const port = Number(process.env.SMTP_PORT) || 587;
+      const secure = process.env.SMTP_SECURE !== undefined 
+        ? process.env.SMTP_SECURE === "true" 
+        : port === 465;
+
       return nodemailer.createTransport({
         host: process.env.SMTP_HOST || "smtp.gmail.com",
-        port: Number(process.env.SMTP_PORT) || 465,
-        secure: process.env.SMTP_SECURE === "false" ? false : true,
+        port,
+        secure,
         auth: {
           user: smtpUser,
           pass: smtpPass,
         },
-        connectionTimeout: 5000,
-        greetingTimeout: 5000,
-        socketTimeout: 5000,
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 10000,
         tls: { rejectUnauthorized: false },
       });
     }
@@ -171,26 +176,20 @@ export class AuthService {
       },
     });
 
-    // Si no se encuentra usuario registrado con ese correo exacto, usamos un objeto objetivo
-    // para no bloquear la experiencia y enviar el código al correo digitado.
-    const targetUser = user || {
-      id_usuario: 0,
-      primer_nombre: "Usuario",
-      primer_apellido: "",
-      correo: cleanCorreo,
-      contrasena: "$2b$10$fallbackhashpasswordfordummyuser",
-    };
+    if (!user) {
+      throw new BadRequestException("No existe un usuario registrado con este correo electrónico");
+    }
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const secret =
-      (process.env.JWT_SECRET || "fallback_secret") + targetUser.contrasena;
-    const payload = { correo: targetUser.correo, code };
+      (process.env.JWT_SECRET || "fallback_secret") + user.contrasena;
+    const payload = { correo: user.correo, code };
     const token = this.jwtService.sign(payload, { secret, expiresIn: "15m" });
 
     console.log("=============================================");
     console.log(`[RECUPERACIÓN DE CONTRASEÑA]`);
     console.log(`Correo Ingresado: ${cleanCorreo}`);
-    console.log(`Usuario en BD: ${user ? `${user.primer_nombre} (ID: ${user.id_usuario})` : "No en BD (se envía al correo ingresado)"}`);
+    console.log(`Usuario en BD: ${user.primer_nombre} (ID: ${user.id_usuario})`);
     console.log(`CÓDIGO GENERADO: ${code}`);
     console.log("=============================================");
 
@@ -207,7 +206,7 @@ export class AuthService {
           <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Recuperación de Contraseña</p>
         </div>
         <div style="padding: 20px; background-color: #f8fafc; border-radius: 8px; margin-bottom: 20px;">
-          <p style="color: #334155; font-size: 16px; margin: 0 0 10px 0;">Hola <strong>${targetUser.primer_nombre}</strong>,</p>
+          <p style="color: #334155; font-size: 16px; margin: 0 0 10px 0;">Hola <strong>${user.primer_nombre}</strong>,</p>
           <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
             Has solicitado restablecer tu contraseña. Utiliza el siguiente código de verificación de 6 dígitos para completar el proceso:
           </p>
@@ -226,7 +225,7 @@ export class AuthService {
 
     // Recolectar destinatarios
     const recipientSet = new Set<string>();
-    if (!/@(pronavid\.com|example\.com|test\.com|localhost|invalid)$/i.test(cleanCorreo)) {
+    if (!/@(example\.com|test\.com|localhost|invalid)$/i.test(cleanCorreo)) {
       recipientSet.add(cleanCorreo);
     }
     if (process.env.SMTP_USER) {
@@ -244,7 +243,7 @@ export class AuthService {
           from: fromSender,
           to: destinationEmail,
           subject: `Código de verificación Pronavid: ${code}`,
-          text: `Hola ${targetUser.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
+          text: `Hola ${user.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
           html: htmlContent,
         }).then((info) => {
           console.log(`[AUTH MAILER ÉXITO] Correo entregado exitosamente a [${destinationEmail}]. MessageId: ${info.messageId}`);
