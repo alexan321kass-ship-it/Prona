@@ -136,13 +136,14 @@ export class AuthService {
     if (process.env.SMTP_HOST || process.env.SMTP_USER) {
       const port = Number(process.env.SMTP_PORT) || 587;
       const isGmail = process.env.SMTP_HOST?.includes("gmail") || process.env.SMTP_SERVICE === "gmail";
+      const smtpPass = process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/["'\s]/g, "") : "";
 
       if (isGmail) {
         return nodemailer.createTransport({
           service: "gmail",
           auth: {
             user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
+            pass: smtpPass,
           },
           tls: { rejectUnauthorized: false },
         });
@@ -154,7 +155,7 @@ export class AuthService {
         secure: process.env.SMTP_SECURE === "true" || port === 465,
         auth: {
           user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
+          pass: smtpPass,
         },
         tls: { rejectUnauthorized: false },
       });
@@ -243,27 +244,28 @@ export class AuthService {
       </div>
     `;
 
-    try {
-      const transporter = await this.createMailTransporter();
+    // Enviar correo en segundo plano para no bloquear la respuesta HTTP
+    this.createMailTransporter().then((transporter) => {
       if (transporter) {
-        const info = await transporter.sendMail({
+        transporter.sendMail({
           from: fromSender,
           to: user.correo,
           subject: "Tu código de recuperación - Pronavid",
           text: `Hola ${user.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
           html: htmlContent,
+        }).then((info) => {
+          if (nodemailer.getTestMessageUrl(info)) {
+            console.log("URL DE VISTA PREVIA ETHEREAL:", nodemailer.getTestMessageUrl(info));
+          }
+        }).catch((error) => {
+          console.error("[AUTH MAILER ERROR] No se pudo entregar el correo por SMTP:", error.message || error);
         });
-
-        if (nodemailer.getTestMessageUrl(info)) {
-          console.log("URL DE VISTA PREVIA ETHEREAL:", nodemailer.getTestMessageUrl(info));
-        }
       } else {
         console.warn("[AUTH MAILER] Sin transporte SMTP activo. El código fue registrado en consola.");
       }
-    } catch (error) {
-      console.error("[AUTH MAILER ERROR] No se pudo entregar el correo por SMTP:", error.message || error);
-      // No lanzamos excepción 500 para permitir el flujo de recuperación y pruebas
-    }
+    }).catch((err) => {
+      console.error("[AUTH MAILER ERROR] Error iniciando transportador:", err.message || err);
+    });
 
     return { message: "Código enviado. Revisa tu correo.", resetToken: token };
   }
