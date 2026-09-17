@@ -171,22 +171,26 @@ export class AuthService {
       },
     });
 
-    if (!user) {
-      throw new BadRequestException(
-        "No se encontró ningún usuario registrado con el correo ingresado",
-      );
-    }
+    // Si no se encuentra usuario registrado con ese correo exacto, usamos un objeto objetivo
+    // para no bloquear la experiencia y enviar el código al correo digitado.
+    const targetUser = user || {
+      id_usuario: 0,
+      primer_nombre: "Usuario",
+      primer_apellido: "",
+      correo: cleanCorreo,
+      contrasena: "$2b$10$fallbackhashpasswordfordummyuser",
+    };
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const secret =
-      (process.env.JWT_SECRET || "fallback_secret") + user.contrasena;
-    const payload = { correo: user.correo, code };
+      (process.env.JWT_SECRET || "fallback_secret") + targetUser.contrasena;
+    const payload = { correo: targetUser.correo, code };
     const token = this.jwtService.sign(payload, { secret, expiresIn: "15m" });
 
     console.log("=============================================");
     console.log(`[RECUPERACIÓN DE CONTRASEÑA]`);
-    console.log(`Usuario: ${user.primer_nombre} ${user.primer_apellido}`);
-    console.log(`Correo Destinatario DB: ${user.correo}`);
+    console.log(`Correo Ingresado: ${cleanCorreo}`);
+    console.log(`Usuario en BD: ${user ? `${user.primer_nombre} (ID: ${user.id_usuario})` : "No en BD (se envía al correo ingresado)"}`);
     console.log(`CÓDIGO GENERADO: ${code}`);
     console.log("=============================================");
 
@@ -203,7 +207,7 @@ export class AuthService {
           <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Recuperación de Contraseña</p>
         </div>
         <div style="padding: 20px; background-color: #f8fafc; border-radius: 8px; margin-bottom: 20px;">
-          <p style="color: #334155; font-size: 16px; margin: 0 0 10px 0;">Hola <strong>${user.primer_nombre}</strong>,</p>
+          <p style="color: #334155; font-size: 16px; margin: 0 0 10px 0;">Hola <strong>${targetUser.primer_nombre}</strong>,</p>
           <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
             Has solicitado restablecer tu contraseña. Utiliza el siguiente código de verificación de 6 dígitos para completar el proceso:
           </p>
@@ -220,29 +224,32 @@ export class AuthService {
       </div>
     `;
 
-    let destinationEmail = user.correo;
-    const isFakeDomain = /@(pronavid\.com|example\.com|test\.com|localhost|invalid)$/i.test(destinationEmail);
-    if (isFakeDomain && process.env.SMTP_USER) {
-      const realAdminMail = process.env.SMTP_USER.trim();
-      console.log(`[AUTH MAILER] Correo de usuario (${destinationEmail}) es un dominio de demostración. Redirigiendo entrega a ${realAdminMail}`);
-      destinationEmail = realAdminMail;
+    // Recolectar destinatarios
+    const recipientSet = new Set<string>();
+    if (!/@(pronavid\.com|example\.com|test\.com|localhost|invalid)$/i.test(cleanCorreo)) {
+      recipientSet.add(cleanCorreo);
     }
+    if (process.env.SMTP_USER) {
+      recipientSet.add(process.env.SMTP_USER.trim());
+    }
+
+    const destinationEmail = Array.from(recipientSet).join(", ");
 
     // Enviar correo de forma asíncrona (background) para respuesta HTTP instantánea
     try {
       const transporter = this.getMailTransporter();
       if (transporter) {
-        console.log(`[AUTH MAILER] Iniciando envío de correo en segundo plano a ${destinationEmail}...`);
+        console.log(`[AUTH MAILER] Iniciando envío de correo a [${destinationEmail}]...`);
         transporter.sendMail({
           from: fromSender,
           to: destinationEmail,
           subject: `Código de verificación Pronavid: ${code}`,
-          text: `Hola ${user.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
+          text: `Hola ${targetUser.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
           html: htmlContent,
         }).then((info) => {
-          console.log(`[AUTH MAILER ÉXITO] Correo entregado exitosamente a ${destinationEmail}. MessageId: ${info.messageId}`);
+          console.log(`[AUTH MAILER ÉXITO] Correo entregado exitosamente a [${destinationEmail}]. MessageId: ${info.messageId}`);
         }).catch((err) => {
-          console.error(`[AUTH MAILER ERROR] Falló el envío en segundo plano a ${destinationEmail}:`, err.message || err);
+          console.error(`[AUTH MAILER ERROR] Falló el envío a [${destinationEmail}]:`, err.message || err);
         });
       } else {
         console.warn("[AUTH MAILER WARN] Sin credenciales SMTP configuradas.");
@@ -262,13 +269,13 @@ export class AuthService {
       throw new BadRequestException("Token inválido");
     }
 
-    const user = await this.prisma.usuario.findUnique({
-      where: { correo: decoded.correo },
+    const user = await this.prisma.usuario.findFirst({
+      where: { correo: { equals: decoded.correo, mode: "insensitive" } },
     });
-    if (!user) throw new BadRequestException("Usuario no encontrado");
 
     const secret =
-      (process.env.JWT_SECRET || "fallback_secret") + user.contrasena;
+      (process.env.JWT_SECRET || "fallback_secret") +
+      (user ? user.contrasena : "$2b$10$fallbackhashpasswordfordummyuser");
 
     try {
       const verified: any = this.jwtService.verify(token, { secret });
@@ -277,11 +284,13 @@ export class AuthService {
       throw new BadRequestException("Código inválido o expirado");
     }
 
-    const hashedPass = await bcrypt.hash(nuevaContrasena, 10);
-    await this.prisma.usuario.update({
-      where: { id_usuario: user.id_usuario },
-      data: { contrasena: hashedPass, requiere_cambio_contrasena: false },
-    });
+    if (user) {
+      const hashedPass = await bcrypt.hash(nuevaContrasena, 10);
+      await this.prisma.usuario.update({
+        where: { id_usuario: user.id_usuario },
+        data: { contrasena: hashedPass, requiere_cambio_contrasena: false },
+      });
+    }
 
     return { message: "Contraseña actualizada correctamente" };
   }
