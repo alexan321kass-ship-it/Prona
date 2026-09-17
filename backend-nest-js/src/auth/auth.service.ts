@@ -250,7 +250,7 @@ export class AuthService {
         transporter.sendMail({
           from: fromSender,
           to: user.correo,
-          subject: "Tu código de recuperación - Pronavid",
+          subject: `Código de verificación Pronavid: ${code}`,
           text: `Hola ${user.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
           html: htmlContent,
         }).then((info) => {
