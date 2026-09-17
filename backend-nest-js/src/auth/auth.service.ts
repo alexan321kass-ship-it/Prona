@@ -135,18 +135,19 @@ export class AuthService {
   private getMailTransporter() {
     const smtpUser = process.env.SMTP_USER;
     const smtpPass = process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/["'\s]/g, "") : "";
-    const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
 
     if (smtpUser && smtpPass) {
       return nodemailer.createTransport({
-        service: "gmail",
-        host: smtpHost,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: process.env.SMTP_SECURE === "true",
+        host: process.env.SMTP_HOST || "smtp.gmail.com",
+        port: Number(process.env.SMTP_PORT) || 465,
+        secure: process.env.SMTP_SECURE === "false" ? false : true,
         auth: {
           user: smtpUser,
           pass: smtpPass,
         },
+        connectionTimeout: 5000,
+        greetingTimeout: 5000,
+        socketTimeout: 5000,
         tls: { rejectUnauthorized: false },
       });
     }
@@ -185,7 +186,7 @@ export class AuthService {
     console.log("=============================================");
     console.log(`[RECUPERACIÓN DE CONTRASEÑA]`);
     console.log(`Usuario: ${user.primer_nombre} ${user.primer_apellido}`);
-    console.log(`Correo Destinatario: ${user.correo}`);
+    console.log(`Correo Destinatario DB: ${user.correo}`);
     console.log(`CÓDIGO GENERADO: ${code}`);
     console.log("=============================================");
 
@@ -227,23 +228,27 @@ export class AuthService {
       destinationEmail = realAdminMail;
     }
 
+    // Enviar correo de forma asíncrona (background) para respuesta HTTP instantánea
     try {
       const transporter = this.getMailTransporter();
       if (transporter) {
-        console.log(`[AUTH MAILER] Enviando correo a ${destinationEmail} (Usuario DB: ${user.correo})...`);
-        const info = await transporter.sendMail({
+        console.log(`[AUTH MAILER] Iniciando envío de correo en segundo plano a ${destinationEmail}...`);
+        transporter.sendMail({
           from: fromSender,
           to: destinationEmail,
           subject: `Código de verificación Pronavid: ${code}`,
           text: `Hola ${user.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
           html: htmlContent,
+        }).then((info) => {
+          console.log(`[AUTH MAILER ÉXITO] Correo entregado exitosamente a ${destinationEmail}. MessageId: ${info.messageId}`);
+        }).catch((err) => {
+          console.error(`[AUTH MAILER ERROR] Falló el envío en segundo plano a ${destinationEmail}:`, err.message || err);
         });
-        console.log(`[AUTH MAILER ÉXITO] Correo entregado exitosamente a ${destinationEmail}. ID: ${info.messageId}`);
       } else {
-        console.warn("[AUTH MAILER WARN] Sin credenciales SMTP activas.");
+        console.warn("[AUTH MAILER WARN] Sin credenciales SMTP configuradas.");
       }
-    } catch (error) {
-      console.error("[AUTH MAILER ERROR] Falló la entrega del correo por SMTP:", error.message || error);
+    } catch (e) {
+      console.error("[AUTH MAILER ERROR] Excepción al configurar transporter:", e.message || e);
     }
 
     return { message: "Código enviado. Revisa tu correo.", resetToken: token };
