@@ -132,51 +132,26 @@ export class AuthService {
     });
   }
 
-  private async createMailTransporter() {
-    if (process.env.SMTP_HOST || process.env.SMTP_USER) {
-      const port = Number(process.env.SMTP_PORT) || 587;
-      const isGmail = process.env.SMTP_HOST?.includes("gmail") || process.env.SMTP_SERVICE === "gmail";
-      const smtpPass = process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/["'\s]/g, "") : "";
+  private getMailTransporter() {
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/["'\s]/g, "") : "";
+    const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
 
-      if (isGmail) {
-        return nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.SMTP_USER,
-            pass: smtpPass,
-          },
-          tls: { rejectUnauthorized: false },
-        });
-      }
-
+    if (smtpUser && smtpPass) {
       return nodemailer.createTransport({
-        host: process.env.SMTP_HOST || "smtp.gmail.com",
-        port: port,
-        secure: process.env.SMTP_SECURE === "true" || port === 465,
+        service: "gmail",
+        host: smtpHost,
+        port: Number(process.env.SMTP_PORT) || 587,
+        secure: process.env.SMTP_SECURE === "true",
         auth: {
-          user: process.env.SMTP_USER,
+          user: smtpUser,
           pass: smtpPass,
         },
         tls: { rejectUnauthorized: false },
       });
     }
 
-    try {
-      const testAccount = await nodemailer.createTestAccount();
-      return nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-        tls: { rejectUnauthorized: false },
-      });
-    } catch (e) {
-      console.warn("[AUTH MAILER] No se pudo crear cuenta de prueba Ethereal:", e.message);
-      return null;
-    }
+    return null;
   }
 
   async forgotPassword(correo: string) {
@@ -210,7 +185,7 @@ export class AuthService {
     console.log("=============================================");
     console.log(`[RECUPERACIÓN DE CONTRASEÑA]`);
     console.log(`Usuario: ${user.primer_nombre} ${user.primer_apellido}`);
-    console.log(`Correo: ${user.correo}`);
+    console.log(`Correo Destinatario: ${user.correo}`);
     console.log(`CÓDIGO GENERADO: ${code}`);
     console.log("=============================================");
 
@@ -244,28 +219,32 @@ export class AuthService {
       </div>
     `;
 
-    // Enviar correo en segundo plano para no bloquear la respuesta HTTP
-    this.createMailTransporter().then((transporter) => {
+    let destinationEmail = user.correo;
+    const isFakeDomain = /@(pronavid\.com|example\.com|test\.com|localhost|invalid)$/i.test(destinationEmail);
+    if (isFakeDomain && process.env.SMTP_USER) {
+      const realAdminMail = process.env.SMTP_USER.trim();
+      console.log(`[AUTH MAILER] Correo de usuario (${destinationEmail}) es un dominio de demostración. Redirigiendo entrega a ${realAdminMail}`);
+      destinationEmail = realAdminMail;
+    }
+
+    try {
+      const transporter = this.getMailTransporter();
       if (transporter) {
-        transporter.sendMail({
+        console.log(`[AUTH MAILER] Enviando correo a ${destinationEmail} (Usuario DB: ${user.correo})...`);
+        const info = await transporter.sendMail({
           from: fromSender,
-          to: user.correo,
+          to: destinationEmail,
           subject: `Código de verificación Pronavid: ${code}`,
           text: `Hola ${user.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
           html: htmlContent,
-        }).then((info) => {
-          if (nodemailer.getTestMessageUrl(info)) {
-            console.log("URL DE VISTA PREVIA ETHEREAL:", nodemailer.getTestMessageUrl(info));
-          }
-        }).catch((error) => {
-          console.error("[AUTH MAILER ERROR] No se pudo entregar el correo por SMTP:", error.message || error);
         });
+        console.log(`[AUTH MAILER ÉXITO] Correo entregado exitosamente a ${destinationEmail}. ID: ${info.messageId}`);
       } else {
-        console.warn("[AUTH MAILER] Sin transporte SMTP activo. El código fue registrado en consola.");
+        console.warn("[AUTH MAILER WARN] Sin credenciales SMTP activas.");
       }
-    }).catch((err) => {
-      console.error("[AUTH MAILER ERROR] Error iniciando transportador:", err.message || err);
-    });
+    } catch (error) {
+      console.error("[AUTH MAILER ERROR] Falló la entrega del correo por SMTP:", error.message || error);
+    }
 
     return { message: "Código enviado. Revisa tu correo.", resetToken: token };
   }
