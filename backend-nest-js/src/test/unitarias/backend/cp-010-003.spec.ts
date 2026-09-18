@@ -1,8 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { VentasService } from "../../ventas/ventas.service";
-import { PrismaService } from "../../prisma.service";
+import { VentasService } from "../../../ventas/ventas.service";
+import { PrismaService } from "../../../prisma.service";
 
-// Mock local de Prisma: cada archivo de esta suite es autónomo.
 const createMockPrisma = () => ({
   venta: {
     findMany: jest.fn(),
@@ -21,10 +20,6 @@ const clienteFake = {
   identificacion: "900123456",
 };
 
-// CP-010-003: Buscar un cliente o producto específico.
-// Nota: la búsqueda por nombre de cliente/producto se resuelve en el frontend
-// (SalesHistory.jsx filtra por cliente/producto); el backend filtra por
-// id_cliente (getByCliente) y por rango de fechas (getAll).
 describe("CP-010-003: Buscar un cliente o producto específico", () => {
   let ventasService: VentasService;
   let prismaService: PrismaService;
@@ -47,7 +42,6 @@ describe("CP-010-003: Buscar un cliente o producto específico", () => {
   });
 
   it("Debe filtrar el historial por cliente usando pedido.id_cliente", async () => {
-    // Arrange
     (prismaService.venta.findMany as jest.Mock).mockResolvedValue([
       {
         id_venta: 101,
@@ -57,10 +51,8 @@ describe("CP-010-003: Buscar un cliente o producto específico", () => {
       },
     ]);
 
-    // Act
     const resultado = await ventasService.getByCliente(7);
 
-    // Assert
     expect(prismaService.venta.findMany).toHaveBeenCalledWith({
       where: { pedido: { id_cliente: 7 } },
       include: { pedido: { select: { estado_pedido: true } } },
@@ -70,13 +62,10 @@ describe("CP-010-003: Buscar un cliente o producto específico", () => {
   });
 
   it("Debe construir el filtro por rango de fechas en el listado general", async () => {
-    // Arrange
     (prismaService.venta.findMany as jest.Mock).mockResolvedValue([]);
 
-    // Act
     await ventasService.getAll(50, 0, "2026-03-01", "2026-03-31");
 
-    // Assert
     expect(prismaService.venta.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: {

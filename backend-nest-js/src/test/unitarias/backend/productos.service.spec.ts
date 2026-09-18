@@ -1,14 +1,14 @@
 // Unit tests for ProductosService (Mocks)
 
 class ForbiddenException extends Error {
-  constructor(message) {
+  constructor(message?: string) {
     super(message);
     this.name = 'ForbiddenException';
   }
 }
 
 class BadRequestException extends Error {
-  constructor(message) {
+  constructor(message?: string) {
     super(message);
     this.name = 'BadRequestException';
   }
@@ -28,13 +28,17 @@ const mockStockService = {
 };
 
 class ProductosService {
-  constructor(db, auditoria, stock) {
+  db: any;
+  auditoria: any;
+  stock: any;
+
+  constructor(db: any, auditoria: any, stock: any) {
     this.db = db;
     this.auditoria = auditoria;
     this.stock = stock;
   }
 
-  async crearProducto(dto, userRole) {
+  async crearProducto(dto: any, userRole: string) {
     if (userRole !== 'Admin') {
       throw new ForbiddenException('No tienes permisos para crear productos');
     }
@@ -49,7 +53,7 @@ class ProductosService {
     return newProduct;
   }
 
-  validateDto(dto) {
+  validateDto(dto: any) {
     if (!dto.codigo_interno || String(dto.codigo_interno).trim() === '') throw new BadRequestException('Código inválido');
     if (dto.codigo_interno.length > 20) throw new BadRequestException('Código excede longitud');
     if (/[!@#$%^&*(),.?":{}|<>]/.test(dto.codigo_interno)) throw new BadRequestException('Caracteres especiales');
@@ -68,7 +72,7 @@ class ProductosService {
 }
 
 describe('ProductosService - Unit Tests', () => {
-  let service;
+  let service: ProductosService;
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -1,9 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { VentasService } from "../../ventas/ventas.service";
-import { VentasController } from "../../ventas/ventas.controller";
-import { PrismaService } from "../../prisma.service";
+import { VentasService } from "../../../ventas/ventas.service";
+import { VentasController } from "../../../ventas/ventas.controller";
+import { PrismaService } from "../../../prisma.service";
 
-// Mock local de Prisma: cada archivo de esta suite es autónomo.
 const createMockPrisma = () => ({
   venta: {
     findMany: jest.fn(),
@@ -16,9 +15,7 @@ const createMockPrisma = () => ({
   },
 });
 
-// CP-010-007: Validar límite de filas visibles (Paginación)
 describe("CP-010-007: Validar límite de filas visibles (Paginación)", () => {
-  // ---- Nivel de servicio ----
   describe("VentasService", () => {
     let ventasService: VentasService;
     let prismaService: PrismaService;
@@ -41,33 +38,26 @@ describe("CP-010-007: Validar límite de filas visibles (Paginación)", () => {
     });
 
     it("Debe limitar la consulta a 50 registros por defecto (take: 50, skip: 0)", async () => {
-      // Arrange
       (prismaService.venta.findMany as jest.Mock).mockResolvedValue([]);
 
-      // Act
       await ventasService.getAll();
 
-      // Assert
       expect(prismaService.venta.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ take: 50, skip: 0 }),
       );
     });
 
     it("Debe aplicar take/skip cuando se pasa una página específica", async () => {
-      // Arrange
       (prismaService.venta.findMany as jest.Mock).mockResolvedValue([]);
 
-      // Act: página 3 de 20 registros => offset = (3 - 1) * 20 = 40
       await ventasService.getAll(20, 40);
 
-      // Assert
       expect(prismaService.venta.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ take: 20, skip: 40 }),
       );
     });
   });
 
-  // ---- Nivel de controlador ----
   describe("VentasController", () => {
     const ventasServiceMock = {
       getAll: jest.fn(),
@@ -81,12 +71,10 @@ describe("CP-010-007: Validar límite de filas visibles (Paginación)", () => {
     });
 
     it("Debe usar limite=50 y pagina=1 por defecto cuando no se pasan query params", async () => {
-      // Arrange
       const controller = new VentasController(
         ventasServiceMock as unknown as VentasService,
       );
 
-      // Act
       const resultado = await controller.findAll(
         undefined,
         undefined,
@@ -94,7 +82,6 @@ describe("CP-010-007: Validar límite de filas visibles (Paginación)", () => {
         undefined,
       );
 
-      // Assert
       expect(ventasServiceMock.getAll).toHaveBeenCalledWith(
         50,
         0,
@@ -114,15 +101,12 @@ describe("CP-010-007: Validar límite de filas visibles (Paginación)", () => {
     });
 
     it("Debe respetar los query params limite y pagina enviados", async () => {
-      // Arrange
       const controller = new VentasController(
         ventasServiceMock as unknown as VentasService,
       );
 
-      // Act: limite=20, pagina=3 => offset = (3 - 1) * 20 = 40
       await controller.findAll("20", "3", undefined, undefined);
 
-      // Assert
       expect(ventasServiceMock.getAll).toHaveBeenCalledWith(
         20,
         40,

@@ -1,8 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { VentasService } from "../../ventas/ventas.service";
-import { PrismaService } from "../../prisma.service";
+import { VentasService } from "../../../ventas/ventas.service";
+import { PrismaService } from "../../../prisma.service";
 
-// Mock local de Prisma: cada archivo de esta suite es autónomo.
 const createMockPrisma = () => ({
   venta: {
     findMany: jest.fn(),
@@ -15,7 +14,6 @@ const createMockPrisma = () => ({
   },
 });
 
-// CP-010-005: Consultar un cliente recién creado sin ventas
 describe("CP-010-005: Consultar un cliente recién creado sin ventas", () => {
   let ventasService: VentasService;
   let prismaService: PrismaService;
@@ -38,13 +36,10 @@ describe("CP-010-005: Consultar un cliente recién creado sin ventas", () => {
   });
 
   it("Debe cargar sin errores y retornar un arreglo vacío", async () => {
-    // Arrange: el cliente nuevo no tiene transacciones en la BD
     (prismaService.venta.findMany as jest.Mock).mockResolvedValue([]);
 
-    // Act
     const resultado = await ventasService.getByCliente(999);
 
-    // Assert
     expect(resultado).toEqual([]);
     expect(prismaService.venta.findMany).toHaveBeenCalledTimes(1);
     expect(prismaService.venta.findMany).toHaveBeenCalledWith({

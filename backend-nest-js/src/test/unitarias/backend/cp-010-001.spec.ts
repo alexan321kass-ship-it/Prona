@@ -1,8 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { VentasService } from "../../ventas/ventas.service";
-import { PrismaService } from "../../prisma.service";
+import { VentasService } from "../../../ventas/ventas.service";
+import { PrismaService } from "../../../prisma.service";
 
-// Mock local de Prisma: cada archivo de esta suite es autónomo.
 const createMockPrisma = () => ({
   venta: {
     findMany: jest.fn(),
@@ -15,7 +14,6 @@ const createMockPrisma = () => ({
   },
 });
 
-// CP-010-001: Consultar historial de un cliente con ventas existentes
 describe("CP-010-001: Consultar historial de un cliente con ventas existentes", () => {
   let ventasService: VentasService;
   let prismaService: PrismaService;
@@ -38,7 +36,6 @@ describe("CP-010-001: Consultar historial de un cliente con ventas existentes", 
   });
 
   it("El sistema debe cargar correctamente el listado de ventas del cliente (Historial)", async () => {
-    // Arrange: Preparamos los datos simulados que devolvería la base de datos
     const idCliente = 1;
     const mockVentas = [
       {
@@ -63,17 +60,11 @@ describe("CP-010-001: Consultar historial de un cliente con ventas existentes", 
       },
     ];
 
-    // Configuramos el mock para devolver las ventas simuladas
     (prismaService.venta.findMany as jest.Mock).mockResolvedValue(mockVentas);
 
-    // Act: Llamamos al método que consulta el historial del cliente
     const resultado = await ventasService.getByCliente(idCliente);
 
-    // Assert: Verificamos que los datos devueltos son los correctos
-    // 1. Verificamos que se haya llamado a findMany de la BD
     expect(prismaService.venta.findMany).toHaveBeenCalledTimes(1);
-
-    // 2. Verificamos que se haya consultado con el filtro correcto (id_cliente)
     expect(prismaService.venta.findMany).toHaveBeenCalledWith({
       where: {
         pedido: { id_cliente: idCliente },
@@ -86,7 +77,6 @@ describe("CP-010-001: Consultar historial de un cliente con ventas existentes", 
       orderBy: { fecha_venta: "desc" },
     });
 
-    // 3. Verificamos que el listado de ventas (historial) tenga los datos principales
     expect(resultado).toHaveLength(2);
     expect(resultado[0].id_venta).toBe(101);
     expect(resultado[0].total).toBe(119.0);

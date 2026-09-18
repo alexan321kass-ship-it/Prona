@@ -1,8 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { VentasService } from "../../ventas/ventas.service";
-import { PrismaService } from "../../prisma.service";
+import { VentasService } from "../../../ventas/ventas.service";
+import { PrismaService } from "../../../prisma.service";
 
-// Mock local de Prisma: cada archivo de esta suite es autónomo.
 const createMockPrisma = () => ({
   detalle_venta: {
     findMany: jest.fn(),
@@ -19,7 +18,6 @@ const createMockPrisma = () => ({
   },
 });
 
-// CP-RF010.1-0010: Validar inmutabilidad de precios en el historial
 describe("CP-RF010.1-0010: Validar inmutabilidad de precios en el historial", () => {
   let ventasService: VentasService;
   let prismaService: PrismaService;
@@ -42,8 +40,6 @@ describe("CP-RF010.1-0010: Validar inmutabilidad de precios en el historial", ()
   });
 
   it("Debe conservar el precio unitario del momento de la compra aunque el precio actual cambie", async () => {
-    // Arrange: el producto hoy cuesta 1500, pero se vendió a 1200.5
-    // (snapshot guardado en detalle_venta.precio_unitario)
     (prismaService.detalle_venta.findMany as jest.Mock).mockResolvedValue([
       {
         id_detalle_venta: 1,
@@ -58,10 +54,8 @@ describe("CP-RF010.1-0010: Validar inmutabilidad de precios en el historial", ()
       },
     ]);
 
-    // Act
     const detalles = await ventasService.getDetalles(5);
 
-    // Assert
     expect(prismaService.detalle_venta.findMany).toHaveBeenCalledWith({
       where: { id_venta: 5 },
       include: {

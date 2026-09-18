@@ -1,9 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { BadRequestException } from "@nestjs/common";
-import { VentasService } from "../../ventas/ventas.service";
-import { PrismaService } from "../../prisma.service";
+import { VentasService } from "../../../ventas/ventas.service";
+import { PrismaService } from "../../../prisma.service";
 
-// Mock local de Prisma: cada archivo de esta suite es autónomo.
 const createMockPrisma = () => ({
   venta: {
     findMany: jest.fn(),
@@ -34,14 +33,12 @@ const createMockPrisma = () => ({
   $transaction: jest.fn(),
 });
 
-// Hace que la transacción se ejecute contra el mock ya configurado (tx === prisma)
 const correrTransaccionConMock = (prisma: PrismaService): void => {
   (prisma.$transaction as jest.Mock).mockImplementation(
     (callback: (tx: PrismaService) => unknown) => callback(prisma),
   );
 };
 
-// CP-RF010.1-009: Validar inhabilitación de devolución sobre venta cancelada
 describe("CP-RF010.1-009: Validar inhabilitación de devolución sobre venta cancelada", () => {
   let ventasService: VentasService;
   let prismaService: PrismaService;
@@ -64,7 +61,6 @@ describe("CP-RF010.1-009: Validar inhabilitación de devolución sobre venta can
   });
 
   it("Debe lanzar BadRequestException al intentar devolver una venta Cancelada", async () => {
-    // Arrange: la transacción recibe el mismo mock configurado (tx === prisma)
     correrTransaccionConMock(prismaService);
     (prismaService.venta.findUnique as jest.Mock).mockResolvedValue({
       id_venta: 302,
@@ -73,17 +69,14 @@ describe("CP-RF010.1-009: Validar inhabilitación de devolución sobre venta can
       devolucion: [],
     });
 
-    // Act & Assert
     await expect(
       ventasService.crearDevolucion(302, "Mercancía vencida", 1),
     ).rejects.toThrow(BadRequestException);
-    // La devolución no se registra ni se modifica nada
     expect(prismaService.devolucion.create).not.toHaveBeenCalled();
     expect(prismaService.venta.update).not.toHaveBeenCalled();
   });
 
   it("Debe lanzar BadRequestException si la venta ya fue devuelta", async () => {
-    // Arrange
     correrTransaccionConMock(prismaService);
     (prismaService.venta.findUnique as jest.Mock).mockResolvedValue({
       id_venta: 304,
@@ -92,7 +85,6 @@ describe("CP-RF010.1-009: Validar inhabilitación de devolución sobre venta can
       devolucion: [{ id_devolucion: 1 }],
     });
 
-    // Act & Assert
     await expect(
       ventasService.crearDevolucion(304, "Devolución duplicada", 1),
     ).rejects.toThrow(BadRequestException);

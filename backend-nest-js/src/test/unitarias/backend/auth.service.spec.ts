@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
-import { PrismaService } from '../prisma.service';
+import { AuthService } from '../../../auth/auth.service';
+import { PrismaService } from '../../../prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { BadRequestException } from '@nestjs/common';
 
@@ -55,4 +55,3 @@ describe('AuthService - forgotPassword', () => {
     expect(result.message).toContain('Código enviado');
   });
 });
-

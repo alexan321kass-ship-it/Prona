@@ -1,8 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { VentasService } from "../../ventas/ventas.service";
-import { PrismaService } from "../../prisma.service";
+import { VentasService } from "../../../ventas/ventas.service";
+import { PrismaService } from "../../../prisma.service";
 
-// Mock local de Prisma: cada archivo de esta suite es autónomo.
 const createMockPrisma = () => ({
   venta: {
     findMany: jest.fn(),
@@ -15,7 +14,6 @@ const createMockPrisma = () => ({
   },
 });
 
-// CP-010-002: Validar orden cronológico inverso del historial
 describe("CP-010-002: Validar orden cronológico inverso del historial", () => {
   let ventasService: VentasService;
   let prismaService: PrismaService;
@@ -38,7 +36,6 @@ describe("CP-010-002: Validar orden cronológico inverso del historial", () => {
   });
 
   it("Debe solicitar a la BD el historial ordenado de la más reciente a la más antigua (getByCliente)", async () => {
-    // Arrange
     const masAntigua = {
       id_venta: 201,
       fecha_venta: new Date("2026-03-01T10:00:00Z"),
@@ -56,10 +53,8 @@ describe("CP-010-002: Validar orden cronológico inverso del historial", () => {
       masAntigua,
     ]);
 
-    // Act
     const resultado = await ventasService.getByCliente(1);
 
-    // Assert
     expect(prismaService.venta.findMany).toHaveBeenCalledWith(
       expect.objectContaining({ orderBy: { fecha_venta: "desc" } }),
     );
@@ -71,13 +66,10 @@ describe("CP-010-002: Validar orden cronológico inverso del historial", () => {
   });
 
   it("Debe solicitar a la BD el historial ordenado descendente por fecha (getAll)", async () => {
-    // Arrange
     (prismaService.venta.findMany as jest.Mock).mockResolvedValue([]);
 
-    // Act
     await ventasService.getAll(50, 0);
 
-    // Assert
     expect(prismaService.venta.findMany).toHaveBeenCalledWith(
       expect.objectContaining({ orderBy: { fecha_venta: "desc" } }),
     );

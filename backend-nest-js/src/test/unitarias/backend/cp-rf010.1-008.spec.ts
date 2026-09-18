@@ -1,8 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { VentasService } from "../../ventas/ventas.service";
-import { PrismaService } from "../../prisma.service";
+import { VentasService } from "../../../ventas/ventas.service";
+import { PrismaService } from "../../../prisma.service";
 
-// Mock local de Prisma: cada archivo de esta suite es autónomo.
 const createMockPrisma = () => ({
   venta: {
     findMany: jest.fn(),
@@ -15,7 +14,6 @@ const createMockPrisma = () => ({
   },
 });
 
-// CP-RF010.1-008: Validar visualización de venta anulada/cancelada
 describe("CP-RF010.1-008: Validar visualización de venta anulada/cancelada", () => {
   let ventasService: VentasService;
   let prismaService: PrismaService;
@@ -38,7 +36,6 @@ describe("CP-RF010.1-008: Validar visualización de venta anulada/cancelada", ()
   });
 
   it("Debe incluir la venta cancelada en el historial con su estado explícito 'Cancelada'", async () => {
-    // Arrange
     (prismaService.venta.findMany as jest.Mock).mockResolvedValue([
       {
         id_venta: 302,
@@ -54,10 +51,8 @@ describe("CP-RF010.1-008: Validar visualización de venta anulada/cancelada", ()
       },
     ]);
 
-    // Act
     const resultado = await ventasService.getAll(50, 0);
 
-    // Assert
     expect(resultado).toHaveLength(2);
     expect(resultado).toEqual(
       expect.arrayContaining([
@@ -67,7 +62,6 @@ describe("CP-RF010.1-008: Validar visualización de venta anulada/cancelada", ()
   });
 
   it("Debe conservar el estado 'Cancelada' en el historial por cliente", async () => {
-    // Arrange
     (prismaService.venta.findMany as jest.Mock).mockResolvedValue([
       {
         id_venta: 303,
@@ -77,10 +71,8 @@ describe("CP-RF010.1-008: Validar visualización de venta anulada/cancelada", ()
       },
     ]);
 
-    // Act
     const resultado = await ventasService.getByCliente(1);
 
-    // Assert
     expect(resultado[0].estado_venta).toBe("Cancelada");
   });
 });

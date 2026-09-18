@@ -1,4 +1,8 @@
 import "dotenv/config";
+import * as dns from "dns";
+try {
+  dns.setDefaultResultOrder("ipv4first");
+} catch {}
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";

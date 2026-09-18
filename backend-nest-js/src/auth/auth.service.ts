@@ -137,7 +137,7 @@ export class AuthService {
     const smtpPass = process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/["'\s]/g, "") : "";
 
     if (smtpUser && smtpPass) {
-      const port = Number(process.env.SMTP_PORT) || 587;
+      const port = Number(process.env.SMTP_PORT) || 465;
       const secure = process.env.SMTP_SECURE !== undefined 
         ? process.env.SMTP_SECURE === "true" 
         : port === 465;
@@ -146,13 +146,14 @@ export class AuthService {
         host: process.env.SMTP_HOST || "smtp.gmail.com",
         port,
         secure,
+        family: 4,
         auth: {
           user: smtpUser,
           pass: smtpPass,
         },
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 10000,
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        socketTimeout: 15000,
         tls: { rejectUnauthorized: false },
       });
     }
