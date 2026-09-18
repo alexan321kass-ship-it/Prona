@@ -7,6 +7,7 @@ import { PrismaService } from "../prisma.service";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import * as nodemailer from "nodemailer";
+import * as dns from "dns";
 import { RegisterDto } from "./dto/auth.dto";
 import { usuario_tipo_documento } from "@prisma/client";
 
@@ -147,6 +148,10 @@ export class AuthService {
         port,
         secure,
         family: 4,
+        lookup: (hostname: string, options: any, callback: any) => {
+          const cb = typeof options === "function" ? options : callback;
+          dns.lookup(hostname, { family: 4 }, cb);
+        },
         auth: {
           user: smtpUser,
           pass: smtpPass,
