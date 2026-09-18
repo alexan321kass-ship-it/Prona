@@ -155,7 +155,7 @@ export class AuthService {
         greetingTimeout: 15000,
         socketTimeout: 15000,
         tls: { rejectUnauthorized: false },
-      });
+      } as any);
     }
 
     return null;
