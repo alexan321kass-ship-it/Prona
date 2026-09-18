@@ -256,29 +256,104 @@ export class AuthService {
     const destinationEmail = Array.from(recipientSet).join(", ");
 
     // Enviar correo de forma asíncrona (background) para respuesta HTTP instantánea
+    this.sendEmailAsync(
+      destinationEmail,
+      fromSender,
+      `Código de verificación Pronavid: ${code}`,
+      htmlContent,
+      user.primer_nombre,
+      code,
+    );
+
+    return { message: "Código enviado. Revisa tu correo.", resetToken: token };
+  }
+
+  private async sendEmailAsync(
+    destinationEmail: string,
+    fromSender: string,
+    subject: string,
+    htmlContent: string,
+    nombreUsuario: string,
+    code: string,
+  ) {
+    console.log(`[AUTH MAILER] Iniciando envío de correo a [${destinationEmail}]...`);
+
+    // Opción 1: Resend HTTP API (Puerto 443 HTTPS - Funciona 100% en Render sin bloqueos de puerto)
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const recipients = destinationEmail.split(",").map((e) => e.trim());
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.RESEND_API_KEY.trim()}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "Pronavid Soporte <onboarding@resend.dev>",
+            to: recipients,
+            subject,
+            html: htmlContent,
+          }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          console.log(`[AUTH MAILER ÉXITO (Resend HTTP)] Correo entregado a [${destinationEmail}]. ID: ${data.id}`);
+          return;
+        } else {
+          console.error(`[AUTH MAILER ERROR (Resend HTTP)] Error de Resend:`, data);
+        }
+      } catch (e) {
+        console.error(`[AUTH MAILER ERROR (Resend HTTP)] Excepción:`, e.message || e);
+      }
+    }
+
+    // Opción 2: Brevo HTTP API (Puerto 443 HTTPS - Funciona 100% en Render)
+    if (process.env.BREVO_API_KEY) {
+      try {
+        const recipients = destinationEmail.split(",").map((e) => ({ email: e.trim() }));
+        const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+          method: "POST",
+          headers: {
+            "api-key": process.env.BREVO_API_KEY.trim(),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sender: { name: "Pronavid Soporte", email: process.env.SMTP_USER || "no-reply@pronavid.com" },
+            to: recipients,
+            subject,
+            htmlContent,
+          }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          console.log(`[AUTH MAILER ÉXITO (Brevo HTTP)] Correo entregado a [${destinationEmail}]. MessageId: ${data.messageId}`);
+          return;
+        } else {
+          console.error(`[AUTH MAILER ERROR (Brevo HTTP)] Error de Brevo:`, data);
+        }
+      } catch (e) {
+        console.error(`[AUTH MAILER ERROR (Brevo HTTP)] Excepción:`, e.message || e);
+      }
+    }
+
+    // Opción 3: Nodemailer SMTP (Fallback)
     try {
       const transporter = this.getMailTransporter();
       if (transporter) {
-        console.log(`[AUTH MAILER] Iniciando envío de correo a [${destinationEmail}]...`);
-        transporter.sendMail({
+        const info = await transporter.sendMail({
           from: fromSender,
           to: destinationEmail,
-          subject: `Código de verificación Pronavid: ${code}`,
-          text: `Hola ${user.primer_nombre}, tu código de verificación de recuperación de contraseña es: ${code}`,
+          subject,
+          text: `Hola ${nombreUsuario}, tu código de verificación de recuperación de contraseña es: ${code}`,
           html: htmlContent,
-        }).then((info) => {
-          console.log(`[AUTH MAILER ÉXITO] Correo entregado exitosamente a [${destinationEmail}]. MessageId: ${info.messageId}`);
-        }).catch((err) => {
-          console.error(`[AUTH MAILER ERROR] Falló el envío a [${destinationEmail}]:`, err.message || err);
         });
+        console.log(`[AUTH MAILER ÉXITO (SMTP)] Correo entregado a [${destinationEmail}]. MessageId: ${info.messageId}`);
       } else {
-        console.warn("[AUTH MAILER WARN] Sin credenciales SMTP configuradas.");
+        console.warn("[AUTH MAILER WARN] Sin credenciales SMTP ni API Key de correo configuradas.");
       }
-    } catch (e) {
-      console.error("[AUTH MAILER ERROR] Excepción al configurar transporter:", e.message || e);
+    } catch (err) {
+      console.error(`[AUTH MAILER ERROR (SMTP)] Falló el envío a [${destinationEmail}]:`, err.message || err);
     }
-
-    return { message: "Código enviado. Revisa tu correo.", resetToken: token };
   }
 
   async resetPassword(token: string, code: string, nuevaContrasena: string) {
