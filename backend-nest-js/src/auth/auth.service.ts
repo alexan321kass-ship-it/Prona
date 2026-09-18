@@ -284,27 +284,35 @@ export class AuthService {
       try {
         const cleanApiKey = rawResendKey.replace(/["'\s]/g, "").trim();
         const recipients = destinationEmail.split(",").map((e) => e.trim()).filter((e) => e.length > 0);
+        let sendSuccess = false;
 
-        const res = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${cleanApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "Pronavid Soporte <onboarding@resend.dev>",
-            to: recipients,
-            subject,
-            html: htmlContent,
-          }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-          console.log(`[AUTH MAILER ÉXITO (Resend HTTP)] Correo entregado a [${destinationEmail}]. ID: ${data.id}`);
-          return;
-        } else {
-          console.error(`[AUTH MAILER ERROR (Resend HTTP)] Respuesta de Resend (Status ${res.status}):`, data);
+        for (const recipient of recipients) {
+          try {
+            const res = await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${cleanApiKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                from: "Pronavid Soporte <onboarding@resend.dev>",
+                to: [recipient],
+                subject,
+                html: htmlContent,
+              }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+              console.log(`[AUTH MAILER ÉXITO (Resend HTTP)] Correo entregado a [${recipient}]. ID: ${data.id}`);
+              sendSuccess = true;
+            } else {
+              console.error(`[AUTH MAILER ERROR (Resend HTTP)] Respuesta de Resend para [${recipient}] (Status ${res.status}):`, data);
+            }
+          } catch (err) {
+            console.error(`[AUTH MAILER ERROR (Resend HTTP)] Excepción para [${recipient}]:`, err.message || err);
+          }
         }
+        if (sendSuccess) return;
       } catch (e) {
         console.error(`[AUTH MAILER ERROR (Resend HTTP)] Excepción:`, e.message || e);
       }
