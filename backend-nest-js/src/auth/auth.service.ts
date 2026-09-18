@@ -244,16 +244,8 @@ export class AuthService {
       </div>
     `;
 
-    // Recolectar destinatarios
-    const recipientSet = new Set<string>();
-    if (!/@(example\.com|test\.com|localhost|invalid)$/i.test(cleanCorreo)) {
-      recipientSet.add(cleanCorreo);
-    }
-    if (process.env.SMTP_USER) {
-      recipientSet.add(process.env.SMTP_USER.trim());
-    }
-
-    const destinationEmail = Array.from(recipientSet).join(", ");
+    // Recolectar destinatarios (únicamente el correo ingresado en el formulario)
+    const destinationEmail = cleanCorreo;
 
     // Enviar correo de forma asíncrona (background) para respuesta HTTP instantánea
     this.sendEmailAsync(
