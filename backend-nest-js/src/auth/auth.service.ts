@@ -279,13 +279,16 @@ export class AuthService {
     console.log(`[AUTH MAILER] Iniciando envío de correo a [${destinationEmail}]...`);
 
     // Opción 1: Resend HTTP API (Puerto 443 HTTPS - Funciona 100% en Render sin bloqueos de puerto)
-    if (process.env.RESEND_API_KEY) {
+    const rawResendKey = process.env.RESEND_API_KEY;
+    if (rawResendKey && rawResendKey.trim() !== "") {
       try {
-        const recipients = destinationEmail.split(",").map((e) => e.trim());
+        const cleanApiKey = rawResendKey.replace(/["'\s]/g, "").trim();
+        const recipients = destinationEmail.split(",").map((e) => e.trim()).filter((e) => e.length > 0);
+
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY.trim()}`,
+            Authorization: `Bearer ${cleanApiKey}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -300,7 +303,7 @@ export class AuthService {
           console.log(`[AUTH MAILER ÉXITO (Resend HTTP)] Correo entregado a [${destinationEmail}]. ID: ${data.id}`);
           return;
         } else {
-          console.error(`[AUTH MAILER ERROR (Resend HTTP)] Error de Resend:`, data);
+          console.error(`[AUTH MAILER ERROR (Resend HTTP)] Respuesta de Resend (Status ${res.status}):`, data);
         }
       } catch (e) {
         console.error(`[AUTH MAILER ERROR (Resend HTTP)] Excepción:`, e.message || e);
