@@ -138,7 +138,25 @@ export class AuthService {
     const smtpPass = process.env.SMTP_PASS ? process.env.SMTP_PASS.replace(/["'\s]/g, "") : "";
 
     if (smtpUser && smtpPass) {
-      const port = Number(process.env.SMTP_PORT) || 465;
+      const isGmail = (process.env.SMTP_HOST || "smtp.gmail.com").includes("gmail") || smtpUser.endsWith("@gmail.com");
+
+      if (isGmail) {
+        return nodemailer.createTransport({
+          service: "gmail",
+          family: 4,
+          lookup: (hostname: string, options: any, callback: any) => {
+            const cb = typeof options === "function" ? options : callback;
+            dns.lookup(hostname, { family: 4 }, cb);
+          },
+          auth: {
+            user: smtpUser,
+            pass: smtpPass,
+          },
+          tls: { rejectUnauthorized: false },
+        } as any);
+      }
+
+      const port = Number(process.env.SMTP_PORT) || 587;
       const secure = process.env.SMTP_SECURE !== undefined 
         ? process.env.SMTP_SECURE === "true" 
         : port === 465;
@@ -156,9 +174,6 @@ export class AuthService {
           user: smtpUser,
           pass: smtpPass,
         },
-        connectionTimeout: 15000,
-        greetingTimeout: 15000,
-        socketTimeout: 15000,
         tls: { rejectUnauthorized: false },
       } as any);
     }
