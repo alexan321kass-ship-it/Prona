@@ -15,12 +15,14 @@ export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
     const [mensaje, setMensaje] = useState("");
     const [tipoMensaje, setTipoMensaje] = useState("");
     const [cargando, setCargando] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [currentUserRol, setCurrentUserRol] = useState(null);
 
     useEffect(() => {
         try {
             const usuario = JSON.parse(localStorage.getItem("usuario"));
             if (usuario) {
+                setCurrentUserId(usuario.id_usuario);
                 setCurrentUserRol(usuario.id_rol);
             }
         } catch (e) {}
@@ -127,10 +129,19 @@ export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
             </div>
 
             <div className="form-group">
-                <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Tipo de cuenta</label>
-                <select name="rol" className="form-control" value={formData.rol} onChange={handleChange} disabled={cargando || currentUserRol === 1}>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
+                    Tipo de cuenta {String(currentUserId) === String(empleado?.id_usuario) && <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 500 }}>(No puedes modificar tu propio rol)</span>}
+                </label>
+                <select 
+                    name="rol" 
+                    className="form-control" 
+                    value={formData.rol} 
+                    onChange={handleChange} 
+                    disabled={cargando || currentUserRol === 1 || String(currentUserId) === String(empleado?.id_usuario)}
+                    title={String(currentUserId) === String(empleado?.id_usuario) ? "No puedes modificar tu propio rol" : ""}
+                >
                     <option value="Asesor">Asesor</option>
-                    {currentUserRol === 3 && (
+                    {(currentUserRol === 3 || formData.rol === "Administrador" || formData.rol === "Super Administrador") && (
                         <>
                             <option value="Administrador">Administrador</option>
                             <option value="Super Administrador">Super Administrador</option>
