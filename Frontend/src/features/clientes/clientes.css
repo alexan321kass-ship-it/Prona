@@ -282,3 +282,31 @@
 .input-with-icon .input-enterprise:focus ~ .input-icon {
     color: var(--color-primary);
 }
+
+/* ============================================
+   RESPONSIVO CLIENTES
+   ============================================ */
+@media (max-width: 768px) {
+    .clientes-search-container {
+        max-width: 100%;
+    }
+
+    .clientes-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .cliente-datos-contacto {
+        max-height: 200px;
+        opacity: 1;
+        transform: none;
+        margin-top: 0.5rem;
+        pointer-events: auto;
+    }
+
+    .cliente-acciones-flotantes {
+        opacity: 1;
+        transform: none;
+    }
+}
+

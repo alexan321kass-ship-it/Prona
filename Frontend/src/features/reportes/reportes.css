@@ -577,6 +577,23 @@
    RESPONSIVE
    ============================================ */
 @media (max-width: 768px) {
+    .reporte-contenedor {
+        padding: 1rem;
+        border-radius: 16px;
+    }
+
+    .reporte-pestanas {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .reporte-pestanas button {
+        flex: 1;
+        justify-content: center;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
     .rendimiento-grid {
         grid-template-columns: 1fr;
     }
@@ -584,4 +601,20 @@
     .metricas-grid-graficos {
         grid-template-columns: 1fr;
     }
+
+    .kpi-extras-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .podio-contenedor {
+        height: auto;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .podio-item {
+        width: 100%;
+        max-width: 220px;
+    }
 }
+

@@ -311,13 +311,15 @@ export class AuthService {
     }
 
     // Opción 2: Brevo HTTP API (Puerto 443 HTTPS - Funciona 100% en Render)
-    if (process.env.BREVO_API_KEY) {
+    const rawBrevoKey = process.env.BREVO_API_KEY;
+    if (rawBrevoKey && rawBrevoKey.trim() !== "") {
       try {
+        const cleanBrevoKey = rawBrevoKey.replace(/["'\s]/g, "").trim();
         const recipients = destinationEmail.split(",").map((e) => ({ email: e.trim() }));
         const res = await fetch("https://api.brevo.com/v3/smtp/email", {
           method: "POST",
           headers: {
-            "api-key": process.env.BREVO_API_KEY.trim(),
+            "api-key": cleanBrevoKey,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({

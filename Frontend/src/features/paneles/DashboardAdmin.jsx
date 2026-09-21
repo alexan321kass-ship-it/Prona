@@ -110,66 +110,32 @@ export default function DashboardAdmin() {
     if (!usuario) return null;
 
     return (
-            <div className="fade-in max-w-[1400px] mx-auto pb-10">
-                {/* Banner de Bienvenida Premium */}
-                <div style={{
-                    padding: "2.5rem 3rem",
-                    marginBottom: "3rem",
-                    background: "linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 100%)",
-                    backdropFilter: "blur(20px)",
-                    WebkitBackdropFilter: "blur(20px)",
-                    borderRadius: "24px",
-                    border: "1px solid rgba(255, 255, 255, 0.8)",
-                    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1)",
-                    position: "relative",
-                    overflow: "hidden",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    gap: "2rem"
-                }}>
+            <div className="fade-in max-w-[1400px] mx-auto pb-10">                {/* Banner de Bienvenida Premium */}
+                <div className="p-5 sm:p-10 mb-6 sm:mb-12 bg-white/90 backdrop-blur-xl rounded-3xl border border-white/80 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden relative">
                     {/* Decoración sutil de fondo para profundidad */}
                     <div style={{ position: "absolute", top: "-50%", right: "-10%", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(192, 57, 43, 0.03) 0%, transparent 70%)", borderRadius: "50%", zIndex: 0 }}></div>
                     
-                    <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", position: "relative", zIndex: 1 }}>
-                        <div style={{ 
-                            background: "linear-gradient(135deg, rgba(192, 57, 43, 0.1) 0%, rgba(192, 57, 43, 0.02) 100%)", 
-                            padding: "1.2rem", 
-                            borderRadius: "20px",
-                            border: "1px solid rgba(192, 57, 43, 0.1)",
-                            boxShadow: "0 10px 20px rgba(192, 57, 43, 0.05)"
-                        }}>
-                            <LineChart size={36} color="#C0392B" />
+                    <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+                        <div className="bg-red-500/10 p-3 sm:p-5 rounded-2xl border border-red-500/10 shadow-xs flex-shrink-0">
+                            <LineChart size={32} color="#C0392B" />
                         </div>
                         <div>
-                            <p style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700, color: "#C0392B", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                            <p className="m-0 text-sm sm:text-base font-bold text-[var(--color-primary)] uppercase tracking-wider">
                                 Hola, {usuario.primer_nombre}
                             </p>
-                            <h1 style={{ margin: "0.2rem 0 0", fontSize: "2.8rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+                            <h1 className="m-0 text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
                                 Dashboard de Métricas
                             </h1>
-                            <p style={{ margin: "0.8rem 0 0", fontSize: "1.1rem", color: "#64748b", maxWidth: "600px", fontWeight: 500 }}>
+                            <p className="mt-2 text-sm sm:text-base text-slate-500 max-w-xl font-medium">
                                 Aquí tienes el análisis de rendimiento y ventas en tiempo real de Pronavid.
                             </p>
                         </div>
                     </div>
 
                     {/* Widget de Fecha Elegante */}
-                    <div style={{ 
-                        background: "rgba(255, 255, 255, 0.8)", 
-                        padding: "1rem 1.5rem", 
-                        borderRadius: "16px",
-                        border: "1px solid rgba(255, 255, 255, 0.9)",
-                        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.03)",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-end",
-                        position: "relative",
-                        zIndex: 1
-                    }}>
-                        <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.2rem" }}>Hoy es</span>
-                        <span style={{ fontSize: "1.2rem", fontWeight: 800, color: "#1e293b" }}>
+                    <div className="bg-white/80 px-4 py-2 sm:px-6 sm:py-3 rounded-xl border border-white/90 shadow-xs flex flex-col items-start md:items-end relative z-10 w-full md:w-auto">
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hoy es</span>
+                        <span className="text-sm sm:text-base font-extrabold text-slate-800">
                             {new Date().toLocaleDateString("es-ES", { weekday: 'long', day: 'numeric', month: 'long' })}
                         </span>
                     </div>
