@@ -149,7 +149,20 @@ export default function Catalogo() {
     };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        if (name === "stock") {
+            // Solo digitos enteros no negativos
+            if (value !== "" && !/^\d*$/.test(value)) {
+                return;
+            }
+        }
+        if (name === "precio") {
+            // Solo números positivos y un único punto decimal
+            if (value !== "" && !/^\d*\.?\d*$/.test(value)) {
+                return;
+            }
+        }
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleFileChange = (e) => {
@@ -173,8 +186,8 @@ export default function Catalogo() {
     const guardarProducto = async (e) => {
         e.preventDefault();
         
-        // 1. Validaciones Código Interno
-        const codigo = formData.codigo_interno ? formData.codigo_interno.trim() : "";
+        // 1. Validaciones Código Interno (SKU - String)
+        const codigo = formData.codigo_interno ? String(formData.codigo_interno).trim() : "";
         if (!codigo) {
             setMensaje({ texto: "El código interno es obligatorio", tipo: "error" });
             return;
@@ -188,10 +201,14 @@ export default function Catalogo() {
             return;
         }
 
-        // 2. Validaciones Nombre
-        const nombre = formData.nombre_producto ? formData.nombre_producto.trim() : "";
+        // 2. Validaciones Nombre del Producto (String obligatorio, debe contener texto)
+        const nombre = formData.nombre_producto ? String(formData.nombre_producto).trim() : "";
         if (!nombre) {
             setMensaje({ texto: "El nombre es requerido", tipo: "error" });
+            return;
+        }
+        if (/^\d+$/.test(nombre)) {
+            setMensaje({ texto: "El nombre del producto debe ser texto y no solo números", tipo: "error" });
             return;
         }
         if (nombre.length > 100) {
@@ -199,40 +216,50 @@ export default function Catalogo() {
             return;
         }
 
-        // 3. Validaciones Descripción
-        const desc = formData.descripcion ? formData.descripcion.trim() : "";
+        // 3. Validaciones Descripción (String opcional)
+        const desc = formData.descripcion ? String(formData.descripcion).trim() : "";
         if (desc.length > 500) {
             setMensaje({ texto: "Se superó el número máximo de caracteres permitidos", tipo: "error" });
             return;
         }
 
-        // 4. Validaciones Precio
-        const precio = formData.precio;
-        if (precio === "" || precio === null || precio === undefined) {
+        // 4. Validaciones Precio (Number positivo > 0)
+        const precioVal = formData.precio;
+        if (precioVal === "" || precioVal === null || precioVal === undefined) {
             setMensaje({ texto: "El precio es requerido", tipo: "error" });
             return;
         }
-        if (Number(precio) < 0) {
+        const precioNum = Number(precioVal);
+        if (isNaN(precioNum)) {
+            setMensaje({ texto: "El precio debe ser un número válido", tipo: "error" });
+            return;
+        }
+        if (precioNum < 0) {
             setMensaje({ texto: "El sistema rechaza el registro (precio negativo)", tipo: "error" });
             return;
         }
-        if (Number(precio) === 0) {
+        if (precioNum === 0) {
             setMensaje({ texto: "El precio debe ser mayor a cero", tipo: "error" });
             return;
         }
 
-        // 5. Validaciones Stock
-        const stock = formData.stock;
-        if (stock === "" || stock === null || stock === undefined) {
+        // 5. Validaciones Stock (Number entero >= 0)
+        const stockVal = formData.stock;
+        if (stockVal === "" || stockVal === null || stockVal === undefined) {
             setMensaje({ texto: "El stock es obligatorio", tipo: "error" });
             return;
         }
-        if (Number(stock) < 0) {
+        const stockNum = Number(stockVal);
+        if (isNaN(stockNum)) {
+            setMensaje({ texto: "El sistema rechaza el registro (stock no numérico)", tipo: "error" });
+            return;
+        }
+        if (stockNum < 0) {
             setMensaje({ texto: "El stock no puede ser negativo", tipo: "error" });
             return;
         }
-        if (isNaN(Number(stock))) {
-            setMensaje({ texto: "El sistema rechaza el registro (stock no numérico)", tipo: "error" });
+        if (!Number.isInteger(stockNum)) {
+            setMensaje({ texto: "El stock debe ser un número entero (sin decimales)", tipo: "error" });
             return;
         }
 

@@ -1,6 +1,7 @@
 import {
   IsString,
   IsNumber,
+  IsInt,
   IsOptional,
   IsNotEmpty,
   Min,
@@ -38,15 +39,15 @@ export class CreateProductoDto {
 
   @ApiProperty({ description: "Precio unitario", example: 150000.0 })
   @Type(() => Number)
-  @IsNumber()
-  @Min(0)
+  @IsNumber({}, { message: "El precio debe ser un número válido" })
+  @Min(0.01, { message: "El precio debe ser mayor a cero" })
   precio: number;
 
   @ApiProperty({ description: "Stock inicial", example: 10, required: false })
   @Type(() => Number)
-  @IsNumber()
+  @IsInt({ message: "El stock debe ser un número entero" })
   @IsOptional()
-  @Min(0)
+  @Min(0, { message: "El stock no puede ser negativo" })
   stock?: number;
 
   @ApiProperty({ description: "ID de la categoría", example: 1 })
