@@ -144,10 +144,6 @@ export default function Clientes() {
             setMensaje({ texto: "El nombre del cliente no permite caracteres especiales", tipo: "error" });
             return false;
         }
-        if (formData.direccion && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(formData.direccion)) {
-            setMensaje({ texto: "La dirección no permite caracteres especiales", tipo: "error" });
-            return false;
-        }
         if (!iden) {
             setMensaje({ texto: "La identificación es requerida", tipo: "error" });
             return false;
@@ -485,11 +481,6 @@ export default function Clientes() {
                                             />
                                             <MapPin size={18} className="input-icon" />
                                         </div>
-                                        {formData.direccion && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(formData.direccion) && (
-                                            <span style={{ color: "#dc2626", fontSize: "0.8rem", marginTop: "0.25rem", display: "block" }}>
-                                                ⚠️ La dirección no permite caracteres especiales
-                                            </span>
-                                        )}
                                     </div>
 
                                     <div className="form-group-enterprise" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>

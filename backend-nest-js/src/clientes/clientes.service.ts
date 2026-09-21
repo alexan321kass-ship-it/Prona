@@ -92,10 +92,6 @@ export class ClientesService {
     if (correo && correo.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())) {
       throw new BadRequestException("El correo electrónico no tiene un formato válido");
     }
-
-    if (direccion && direccion.trim() && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(direccion.trim())) {
-      throw new BadRequestException("La dirección no permite caracteres especiales");
-    }
   }
 
   // Registrar un nuevo cliente con validación de identificación única
