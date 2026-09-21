@@ -188,7 +188,9 @@ describe('Pruebas de Integración Frontend', () => {
             
             // 5. Configurar Cotización y Emitir
             const inputVigencia = screen.getByLabelText(/Vigencia/i);
-            fireEvent.change(inputVigencia, { target: { value: '2050-12-31' } });
+            const fechaValida = new Date();
+            fechaValida.setDate(fechaValida.getDate() + 5);
+            fireEvent.change(inputVigencia, { target: { value: fechaValida.toISOString().split('T')[0] } });
 
             const btnCotizar = screen.getByText(/Generar Cotización/i);
             fireEvent.click(btnCotizar);
@@ -333,9 +335,11 @@ describe('Pruebas de Integración Frontend', () => {
             });
             fireEvent.click(screen.getByText(/Juan Perez/i));
 
-            // 2.5 Vigencia obligatoria (>= 4 días)
+            // 2.5 Vigencia obligatoria (>= 4 días y <= 3 meses)
             const inputVigencia = document.querySelector('input[type="date"]');
-            fireEvent.change(inputVigencia, { target: { value: '2050-12-31' } });
+            const fechaValida = new Date();
+            fechaValida.setDate(fechaValida.getDate() + 5);
+            fireEvent.change(inputVigencia, { target: { value: fechaValida.toISOString().split('T')[0] } });
             
             // 3. Confirmar
             const btnConfirmar = screen.getByRole('button', { name: /Confirmar Pedido/i });

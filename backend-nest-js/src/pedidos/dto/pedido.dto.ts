@@ -31,6 +31,14 @@ export class CreatePedidoDto {
   @IsOptional()
   estado_pedido?: string;
 
+  @IsString()
+  @IsOptional()
+  fecha_pedido?: string;
+
+  @IsString()
+  @IsOptional()
+  fecha_vigencia?: string;
+
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })

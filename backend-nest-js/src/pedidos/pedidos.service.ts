@@ -119,6 +119,18 @@ export class PedidosService {
   async create(data: CreatePedidoDto) {
     const { id_cliente, id_usuario, estado_pedido, productos } = data;
 
+    const fechaRef = data.fecha_vigencia || data.fecha_pedido;
+    if (fechaRef) {
+      const fecha = new Date(fechaRef);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const maxFecha = new Date(hoy);
+      maxFecha.setMonth(hoy.getMonth() + 3);
+      if (fecha > maxFecha) {
+        throw new BadRequestException("El sistema no acepta pedidos mayores a 3 meses");
+      }
+    }
+
     const result = await this.prisma.$transaction(
       async (tx) => {
         const pedido = await tx.pedido.create({

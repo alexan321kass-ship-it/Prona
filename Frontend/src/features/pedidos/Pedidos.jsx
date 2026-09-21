@@ -144,10 +144,16 @@ export default function Pedidos() {
     hoy.setHours(0, 0, 0, 0);
     const fechaMinima = new Date(hoy);
     fechaMinima.setDate(hoy.getDate() + 4);
+    const fechaMaxima = new Date(hoy);
+    fechaMaxima.setMonth(hoy.getMonth() + 3);
 
     const fechaVigencia = new Date(vigencia + "T00:00:00");
     if (fechaVigencia < fechaMinima) {
       setMensaje({ texto: "La cotización no se procesó porque la vigencia debe tener 4 días mínimo desde la fecha actual", tipo: "error" });
+      return;
+    }
+    if (fechaVigencia > fechaMaxima) {
+      setMensaje({ texto: "El sistema no acepta fechas o vigencias mayores a 3 meses", tipo: "error" });
       return;
     }
 
@@ -289,10 +295,16 @@ export default function Pedidos() {
     hoy.setHours(0, 0, 0, 0);
     const fechaMinima = new Date(hoy);
     fechaMinima.setDate(hoy.getDate() + 4);
+    const fechaMaxima = new Date(hoy);
+    fechaMaxima.setMonth(hoy.getMonth() + 3);
 
     const fechaVigencia = new Date(vigencia + "T00:00:00");
     if (fechaVigencia < fechaMinima) {
       setMensaje({ texto: "El pedido no se procesó porque debe tener 4 días mínimo desde la fecha actual", tipo: "error" });
+      return;
+    }
+    if (fechaVigencia > fechaMaxima) {
+      setMensaje({ texto: "El pedido no se procesó porque el sistema no acepta pedidos mayores a 3 meses", tipo: "error" });
       return;
     }
 
@@ -303,6 +315,7 @@ export default function Pedidos() {
       const pedidoData = {
         id_cliente: parseInt(clienteSeleccionado.id_cliente),
         id_usuario: user?.id_usuario || 1,
+        fecha_vigencia: vigencia,
         productos: carrito.map(item => ({
           id_producto: item.id_producto,
           cantidad: item.cantidad,

@@ -36,6 +36,15 @@ export default function PanelCarrito({
     const subtotal = carrito.reduce((sum, item) => sum + (item.precio * (item.cantidad || 1)), 0);
     const totalItems = carrito.reduce((sum, item) => sum + (item.cantidad || 1), 0);
 
+    const hoy = new Date();
+    const minFecha = new Date(hoy);
+    minFecha.setDate(hoy.getDate() + 4);
+    const maxFecha = new Date(hoy);
+    maxFecha.setMonth(hoy.getMonth() + 3);
+
+    const minDateStr = minFecha.toISOString().split('T')[0];
+    const maxDateStr = maxFecha.toISOString().split('T')[0];
+
     return (
         <div className={`carrito-sidebar ${isOpen ? "carrito-sidebar--abierto" : ""}`}>
             {/* HEADER */}
@@ -207,6 +216,8 @@ const imageUrl = resolveImageUrl(item.imagen_url);
                             <input 
                                 id="vigenciaInput"
                                 type="date" 
+                                min={minDateStr}
+                                max={maxDateStr}
                                 value={vigencia} 
                                 onChange={e => setVigencia(e.target.value)}
                                 style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', outline: 'none', transition: 'border 0.2s', color: '#111827', fontWeight: 600 }}
