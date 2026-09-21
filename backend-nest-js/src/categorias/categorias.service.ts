@@ -36,14 +36,27 @@ export class CategoriasService {
 
   // Crear una nueva categoría
   async createCategoria(data: CreateCategoriaDto) {
+    const nombre = data.nombre_categoria ? String(data.nombre_categoria).trim() : "";
+    if (!nombre) {
+      throw new BadRequestException("El nombre de la categoría es obligatorio");
+    }
+    if (/^\d+$/.test(nombre)) {
+      throw new BadRequestException("El nombre de la categoría debe ser texto y no solo números");
+    }
+
     const existe = await (this.prisma as any).categoria.findFirst({
-      where: { nombre_categoria: { contains: data.nombre_categoria } },
+      where: { nombre_categoria: { contains: nombre } },
     });
     if (existe)
       throw new BadRequestException(
-        `Ya existe una categoría con el nombre "${data.nombre_categoria}"`,
+        `Ya existe una categoría con el nombre "${nombre}"`,
       );
-    return (this.prisma as any).categoria.create({ data });
+    return (this.prisma as any).categoria.create({
+      data: {
+        ...data,
+        nombre_categoria: nombre,
+      },
+    });
   }
 
   // Actualizar una categoría existente
@@ -52,21 +65,30 @@ export class CategoriasService {
       where: { id_categoria: id },
     });
     if (!cat) throw new NotFoundException(`Categoría #${id} no encontrada`);
-    if (
-      data.nombre_categoria &&
-      data.nombre_categoria !== cat.nombre_categoria
-    ) {
-      const existe = await (this.prisma as any).categoria.findFirst({
-        where: { nombre_categoria: { contains: data.nombre_categoria } },
-      });
-      if (existe)
-        throw new BadRequestException(
-          `Ya existe una categoría con el nombre "${data.nombre_categoria}"`,
-        );
+    if (data.nombre_categoria) {
+      const nombre = String(data.nombre_categoria).trim();
+      if (!nombre) {
+        throw new BadRequestException("El nombre de la categoría no puede estar vacío");
+      }
+      if (/^\d+$/.test(nombre)) {
+        throw new BadRequestException("El nombre de la categoría debe ser texto y no solo números");
+      }
+      if (nombre !== cat.nombre_categoria) {
+        const existe = await (this.prisma as any).categoria.findFirst({
+          where: { nombre_categoria: { contains: nombre } },
+        });
+        if (existe)
+          throw new BadRequestException(
+            `Ya existe una categoría con el nombre "${nombre}"`,
+          );
+      }
     }
     return (this.prisma as any).categoria.update({
       where: { id_categoria: id },
-      data,
+      data: {
+        ...data,
+        nombre_categoria: data.nombre_categoria ? String(data.nombre_categoria).trim() : undefined,
+      },
     });
   }
 

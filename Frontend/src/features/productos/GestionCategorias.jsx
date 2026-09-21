@@ -59,23 +59,44 @@ export default function GestionCategorias() {
     const cerrarModal = () => { setModal(null); };
 
     const guardar = async () => {
-        if (!form.nombre_categoria.trim()) {
-            mostrarMensaje("El nombre es obligatorio", "error");
+        const nombre = form.nombre_categoria ? String(form.nombre_categoria).trim() : "";
+        if (!nombre) {
+            mostrarMensaje("El nombre de la categoría es obligatorio", "error");
             return;
         }
+        if (/^\d+$/.test(nombre)) {
+            mostrarMensaje("El nombre de la categoría debe ser texto y no solo números", "error");
+            return;
+        }
+        if (nombre.length > 100) {
+            mostrarMensaje("El nombre de la categoría es demasiado largo (máximo 100 caracteres)", "error");
+            return;
+        }
+
+        const desc = form.descripcion ? String(form.descripcion).trim() : "";
+        if (desc.length > 500) {
+            mostrarMensaje("La descripción supera el máximo permitidos (máximo 500 caracteres)", "error");
+            return;
+        }
+
         setGuardando(true);
         try {
+            const payload = {
+                nombre_categoria: nombre,
+                descripcion: desc,
+                estado: Boolean(form.estado)
+            };
             if (modal.tipo === "crear") {
-                await productosService.createCategory(form);
+                await productosService.createCategory(payload);
                 mostrarMensaje("Categoría creada exitosamente");
             } else {
-                await productosService.updateCategory(modal.id, form);
+                await productosService.updateCategory(modal.id, payload);
                 mostrarMensaje("Categoría actualizada exitosamente");
             }
             cerrarModal();
             cargar();
         } catch (err) {
-            mostrarMensaje(err?.message || "Error al guardar", "error");
+            mostrarMensaje(err?.message || "Error al guardar categoría", "error");
         } finally {
             setGuardando(false);
         }
