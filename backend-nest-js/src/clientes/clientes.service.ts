@@ -84,8 +84,15 @@ export class ClientesService {
 
   // Registrar un nuevo cliente con validación de identificación única
   async create(data: CreateClienteDto) {
-    const { nombre_cliente, identificacion, telefono, direccion, correo } =
-      data;
+    const nombre_cliente = data.nombre_cliente;
+    const identificacion = data.identificacion;
+    const telefono = data.telefono !== undefined ? data.telefono : data.telefono_cliente;
+    const direccion = data.direccion !== undefined ? data.direccion : data.direccion_cliente;
+    const correo = data.correo !== undefined ? data.correo : data.correo_cliente;
+    let estado = data.estado;
+    if (estado === undefined && data.estado_cliente !== undefined) {
+      estado = data.estado_cliente === true || data.estado_cliente === "Activo";
+    }
 
     this.validarDatosCliente(nombre_cliente, identificacion, telefono, correo, direccion);
 
@@ -106,7 +113,7 @@ export class ClientesService {
         telefono_cliente: telefono ? telefono.trim() : null,
         direccion_cliente: direccion ? direccion.trim() : null,
         correo_cliente: correo ? correo.trim() : null,
-        estado: data.estado !== undefined ? Boolean(data.estado) : true,
+        estado: estado !== undefined ? Boolean(estado) : true,
       },
     });
   }
@@ -115,20 +122,30 @@ export class ClientesService {
   async update(id: number, data: UpdateClienteDto) {
     const existing = await this.getById(id);
 
+    const nombre_cliente = data.nombre_cliente;
+    const identificacion = data.identificacion;
+    const telefono = data.telefono !== undefined ? data.telefono : data.telefono_cliente;
+    const direccion = data.direccion !== undefined ? data.direccion : data.direccion_cliente;
+    const correo = data.correo !== undefined ? data.correo : data.correo_cliente;
+    let estado = data.estado;
+    if (estado === undefined && data.estado_cliente !== undefined) {
+      estado = data.estado_cliente === true || data.estado_cliente === "Activo";
+    }
+
     this.validarDatosCliente(
-      data.nombre_cliente,
-      data.identificacion,
-      data.telefono,
-      data.correo,
-      data.direccion,
+      nombre_cliente,
+      identificacion,
+      telefono,
+      correo,
+      direccion,
     );
 
     if (
-      data.identificacion &&
-      data.identificacion.trim() !== existing.identificacion
+      identificacion &&
+      identificacion.trim() !== existing.identificacion
     ) {
       const exists = await (this.prisma.cliente as any).findUnique({
-        where: { identificacion: data.identificacion.trim() },
+        where: { identificacion: identificacion.trim() },
       });
       if (exists) {
         throw new BadRequestException(
@@ -140,12 +157,12 @@ export class ClientesService {
     return (this.prisma.cliente as any).update({
       where: { id_cliente: id },
       data: {
-        nombre_cliente: data.nombre_cliente?.trim(),
-        identificacion: data.identificacion?.trim(),
-        telefono_cliente: data.telefono !== undefined ? data.telefono?.trim() : undefined,
-        direccion_cliente: data.direccion !== undefined ? data.direccion?.trim() : undefined,
-        correo_cliente: data.correo !== undefined ? data.correo?.trim() : undefined,
-        estado: data.estado !== undefined ? Boolean(data.estado) : undefined,
+        nombre_cliente: nombre_cliente?.trim(),
+        identificacion: identificacion?.trim(),
+        telefono_cliente: telefono !== undefined ? telefono?.trim() : undefined,
+        direccion_cliente: direccion !== undefined ? direccion?.trim() : undefined,
+        correo_cliente: correo !== undefined ? correo?.trim() : undefined,
+        estado: estado !== undefined ? Boolean(estado) : undefined,
       },
     });
   }

@@ -1,4 +1,5 @@
 import { IsString, IsEmail, IsOptional, IsNotEmpty, Matches, IsBoolean } from "class-validator";
+import { Type } from "class-transformer";
 
 // DTO para registrar un cliente nuevo
 export class CreateClienteDto {
@@ -21,18 +22,37 @@ export class CreateClienteDto {
 
   @IsString()
   @IsOptional()
+  telefono_cliente?: string;
+
+  @IsString()
+  @IsOptional()
   direccion?: string;
+
+  @IsString()
+  @IsOptional()
+  direccion_cliente?: string;
 
   @IsEmail({}, { message: 'El correo electrónico no tiene un formato válido' })
   @IsOptional()
   correo?: string;
 
+  @IsString()
+  @IsOptional()
+  correo_cliente?: string;
+
+  @Type(() => Boolean)
   @IsBoolean()
   @IsOptional()
   estado?: boolean;
+
+  @IsOptional()
+  estado_cliente?: any;
 }
 
 export class UpdateClienteDto {
+  @IsOptional()
+  id_cliente?: any;
+
   @IsString()
   @IsOptional()
   @Matches(/^[^0-9]+$/, { message: 'El nombre del cliente no puede contener números' })
@@ -50,14 +70,36 @@ export class UpdateClienteDto {
 
   @IsString()
   @IsOptional()
+  telefono_cliente?: string;
+
+  @IsString()
+  @IsOptional()
   direccion?: string;
+
+  @IsString()
+  @IsOptional()
+  direccion_cliente?: string;
 
   @IsEmail({}, { message: 'El correo electrónico no tiene un formato válido' })
   @IsOptional()
   correo?: string;
 
+  @IsString()
+  @IsOptional()
+  correo_cliente?: string;
+
+  @Type(() => Boolean)
   @IsBoolean()
   @IsOptional()
   estado?: boolean;
+
+  @IsOptional()
+  estado_cliente?: any;
+
+  @IsOptional()
+  fecha_creacion?: any;
+
+  @IsOptional()
+  fecha_actualizacion?: any;
 }
 
