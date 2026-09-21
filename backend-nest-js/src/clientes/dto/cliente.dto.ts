@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsOptional, IsNotEmpty, Matches } from "class-validator";
+import { IsString, IsEmail, IsOptional, IsNotEmpty, Matches, IsBoolean } from "class-validator";
 
 // DTO para registrar un cliente nuevo
 export class CreateClienteDto {
@@ -26,6 +26,10 @@ export class CreateClienteDto {
   @IsEmail({}, { message: 'El correo electrónico no tiene un formato válido' })
   @IsOptional()
   correo?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  estado?: boolean;
 }
 
 export class UpdateClienteDto {
@@ -51,5 +55,9 @@ export class UpdateClienteDto {
   @IsEmail({}, { message: 'El correo electrónico no tiene un formato válido' })
   @IsOptional()
   correo?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  estado?: boolean;
 }
 

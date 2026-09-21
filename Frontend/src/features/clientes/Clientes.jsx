@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Pencil, Trash2, Users, Plus, Phone, Mail, ChevronLeft, Search, X, User, CreditCard, MapPin } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Users, Plus, Phone, Mail, ChevronLeft, Search, X, User, CreditCard, MapPin, ToggleLeft, ToggleRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { clientesService } from "./clientes.service";
@@ -29,7 +29,8 @@ export default function Clientes() {
         identificacion: "",
         telefono: "",
         direccion: "",
-        correo: ""
+        correo: "",
+        estado: true
     });
     const [guardando, setGuardando] = useState(false);
     const [mensaje, setMensaje] = useState({ texto: "", tipo: "" });
@@ -82,7 +83,8 @@ export default function Clientes() {
                 identificacion: cliente.identificacion || "",
                 telefono: cliente.telefono_cliente || "",
                 direccion: cliente.direccion_cliente || "",
-                correo: cliente.correo_cliente || ""
+                correo: cliente.correo_cliente || "",
+                estado: cliente.estado ?? (cliente.estado_cliente !== 'Inactivo')
             });
             setModalForm({ tipo: "editar", id: cliente.id_cliente });
         } else {
@@ -91,9 +93,32 @@ export default function Clientes() {
                 identificacion: "",
                 telefono: "",
                 direccion: "",
-                correo: ""
+                correo: "",
+                estado: true
             });
             setModalForm({ tipo: "crear" });
+        }
+    };
+
+    const toggleEstadoCliente = async (cliente) => {
+        try {
+            const esActivo = cliente.estado !== false && cliente.estado_cliente !== 'Inactivo';
+            const nuevoEstado = !esActivo;
+            await clientesService.update(cliente.id_cliente, {
+                nombre_cliente: cliente.nombre_cliente,
+                identificacion: cliente.identificacion,
+                telefono: cliente.telefono_cliente,
+                direccion: cliente.direccion_cliente,
+                correo: cliente.correo_cliente,
+                estado: nuevoEstado
+            });
+            setMensaje({
+                texto: `Cliente ${nuevoEstado ? 'activado' : 'inactivado'} exitosamente`,
+                tipo: "success"
+            });
+            cargarClientes();
+        } catch (error) {
+            setMensaje({ texto: error.message || "Error al cambiar estado del cliente", tipo: "error" });
         }
     };
 
@@ -258,47 +283,70 @@ export default function Clientes() {
                         </div>
                     ) : (
                         <div className="clientes-grid">
-                            {clientes.map((cliente) => (
-                                <div key={cliente.id_cliente} className="cliente-card-enterprise">
-                                    <div className="cliente-acciones-flotantes">
-                                        <button 
-                                            onClick={() => abrirFormulario(cliente)} 
-                                            className="btn-cliente-accion edit" 
-                                            title="Editar"
-                                        >
-                                            <Pencil size={14} />
-                                        </button>
-                                        <button 
-                                            onClick={() => eliminarCliente(cliente.id_cliente)} 
-                                            className="btn-cliente-accion delete" 
-                                            title="Eliminar"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    </div>
+                            {clientes.map((cliente) => {
+                                const esActivo = cliente.estado !== false && cliente.estado_cliente !== 'Inactivo';
+                                return (
+                                    <div key={cliente.id_cliente} className="cliente-card-enterprise" style={{ opacity: esActivo ? 1 : 0.75 }}>
+                                        <div className="cliente-acciones-flotantes">
+                                            <button 
+                                                onClick={() => toggleEstadoCliente(cliente)} 
+                                                className="btn-cliente-accion" 
+                                                style={{
+                                                    background: esActivo ? "rgba(22, 163, 74, 0.1)" : "rgba(220, 38, 38, 0.1)",
+                                                    color: esActivo ? "#16a34a" : "#dc2626"
+                                                }}
+                                                title={esActivo ? "Inactivar cliente" : "Activar cliente"}
+                                            >
+                                                {esActivo ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                                            </button>
+                                            <button 
+                                                onClick={() => abrirFormulario(cliente)} 
+                                                className="btn-cliente-accion edit" 
+                                                title="Editar"
+                                            >
+                                                <Pencil size={14} />
+                                            </button>
+                                            <button 
+                                                onClick={() => eliminarCliente(cliente.id_cliente)} 
+                                                className="btn-cliente-accion delete" 
+                                                title="Eliminar"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
 
-                                    <div className="cliente-card-header">
-                                        <div className="cliente-avatar">
-                                            {getInitials(cliente.nombre_cliente)}
+                                        <div className="cliente-card-header">
+                                            <div className="cliente-avatar" style={{ background: esActivo ? undefined : '#9ca3af' }}>
+                                                {getInitials(cliente.nombre_cliente)}
+                                            </div>
+                                            <div className="cliente-info-basica">
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                                    <h4 title={cliente.nombre_cliente} style={{ margin: 0 }}>{cliente.nombre_cliente}</h4>
+                                                    <span style={{
+                                                        fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 20,
+                                                        background: esActivo ? "#dcfce7" : "#fee2e2",
+                                                        color: esActivo ? "#166534" : "#991b1b",
+                                                    }}>
+                                                        {esActivo ? "Activo" : "Inactivo"}
+                                                    </span>
+                                                </div>
+                                                <p className="cliente-identificacion">ID: {cliente.identificacion}</p>
+                                            </div>
                                         </div>
-                                        <div className="cliente-info-basica">
-                                            <h4 title={cliente.nombre_cliente}>{cliente.nombre_cliente}</h4>
-                                            <p className="cliente-identificacion">ID: {cliente.identificacion}</p>
+                                        
+                                        <div className="cliente-datos-contacto">
+                                            <div className="cliente-dato-item">
+                                                <Phone size={16} className="cliente-dato-icono" />
+                                                <span>{cliente.telefono_cliente || "Sin teléfono"}</span>
+                                            </div>
+                                            <div className="cliente-dato-item">
+                                                <Mail size={16} className="cliente-dato-icono" />
+                                                <span style={{ wordBreak: 'break-all' }}>{cliente.correo_cliente || "Sin correo"}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    
-                                    <div className="cliente-datos-contacto">
-                                        <div className="cliente-dato-item">
-                                            <Phone size={16} className="cliente-dato-icono" />
-                                            <span>{cliente.telefono_cliente || "Sin teléfono"}</span>
-                                        </div>
-                                        <div className="cliente-dato-item">
-                                            <Mail size={16} className="cliente-dato-icono" />
-                                            <span style={{ wordBreak: 'break-all' }}>{cliente.correo_cliente || "Sin correo"}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </motion.div>
@@ -442,6 +490,18 @@ export default function Clientes() {
                                                 ⚠️ La dirección no permite caracteres especiales
                                             </span>
                                         )}
+                                    </div>
+
+                                    <div className="form-group-enterprise" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                                        <label style={{ margin: 0, fontWeight: 600, fontSize: '0.9rem', color: '#374151' }}>Estado del Cliente</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(f => ({ ...f, estado: !f.estado }))}
+                                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: formData.estado ? '#16a34a' : '#6b7280' }}
+                                        >
+                                            {formData.estado ? <ToggleRight size={28} color="#16a34a" /> : <ToggleLeft size={28} color="#9ca3af" />}
+                                            <span style={{ fontWeight: 600, fontSize: 13 }}>{formData.estado ? "Activo" : "Inactivo"}</span>
+                                        </button>
                                     </div>
 
                                     <div className="modal-actions">

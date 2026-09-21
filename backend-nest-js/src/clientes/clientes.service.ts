@@ -99,13 +99,14 @@ export class ClientesService {
       );
     }
 
-    return this.prisma.cliente.create({
+    return (this.prisma.cliente as any).create({
       data: {
         nombre_cliente: nombre_cliente.trim(),
         identificacion: identificacion.trim(),
         telefono_cliente: telefono ? telefono.trim() : null,
         direccion_cliente: direccion ? direccion.trim() : null,
         correo_cliente: correo ? correo.trim() : null,
+        estado: data.estado !== undefined ? Boolean(data.estado) : true,
       },
     });
   }
@@ -126,7 +127,7 @@ export class ClientesService {
       data.identificacion &&
       data.identificacion.trim() !== existing.identificacion
     ) {
-      const exists = await this.prisma.cliente.findUnique({
+      const exists = await (this.prisma.cliente as any).findUnique({
         where: { identificacion: data.identificacion.trim() },
       });
       if (exists) {
@@ -136,7 +137,7 @@ export class ClientesService {
       }
     }
 
-    return this.prisma.cliente.update({
+    return (this.prisma.cliente as any).update({
       where: { id_cliente: id },
       data: {
         nombre_cliente: data.nombre_cliente?.trim(),
@@ -144,6 +145,7 @@ export class ClientesService {
         telefono_cliente: data.telefono !== undefined ? data.telefono?.trim() : undefined,
         direccion_cliente: data.direccion !== undefined ? data.direccion?.trim() : undefined,
         correo_cliente: data.correo !== undefined ? data.correo?.trim() : undefined,
+        estado: data.estado !== undefined ? Boolean(data.estado) : undefined,
       },
     });
   }

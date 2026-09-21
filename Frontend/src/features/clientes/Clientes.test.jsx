@@ -152,8 +152,26 @@ describe('Clientes - Validaciones de Formato y Tipos de Datos', () => {
                 identificacion: '987654321',
                 telefono: '3151234567',
                 correo: 'valido@correo.com',
-                direccion: ''
+                direccion: '',
+                estado: true
             });
+        });
+    });
+
+    it('Permite inactivar un cliente existente al hacer clic en el botón de estado', async () => {
+        clientesService.update.mockResolvedValue({ message: "Cliente actualizado exitosamente" });
+
+        renderWithRouter(<Clientes />);
+
+        await waitFor(() => expect(screen.getByText('Empresa Los Alpes')).toBeInTheDocument());
+
+        const btnInactivar = screen.getByTitle('Inactivar cliente');
+        fireEvent.click(btnInactivar);
+
+        await waitFor(() => {
+            expect(clientesService.update).toHaveBeenCalledWith(1, expect.objectContaining({
+                estado: false
+            }));
         });
     });
 });

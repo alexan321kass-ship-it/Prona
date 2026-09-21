@@ -63,6 +63,7 @@ model cliente {
   correo_cliente    String?      
   telefono_cliente  String?      
   direccion_cliente String?      
+  estado            Boolean?     @default(true)
   cotizacion        cotizacion[]
   pedido            pedido[]
   venta             venta[]
