@@ -6,7 +6,7 @@ export class CreateClienteDto {
   // El nombre es obligatorio y no puede contener números
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[^0-9]+$/, { message: 'El nombre del cliente no puede contener números' })
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, { message: 'El nombre del cliente no permite números ni caracteres especiales' })
   nombre_cliente: string;
 
   // La cédula o identificación sólo puede contener números y guiones
@@ -55,7 +55,7 @@ export class UpdateClienteDto {
 
   @IsString()
   @IsOptional()
-  @Matches(/^[^0-9]+$/, { message: 'El nombre del cliente no puede contener números' })
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, { message: 'El nombre del cliente no permite números ni caracteres especiales' })
   nombre_cliente?: string;
 
   @IsString()

@@ -71,7 +71,7 @@ export class ClientesService {
       if (/\d/.test(nombre)) {
         throw new BadRequestException("El nombre del cliente no puede contener números");
       }
-      if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre.trim())) {
         throw new BadRequestException("El nombre del cliente no permite caracteres especiales");
       }
     }

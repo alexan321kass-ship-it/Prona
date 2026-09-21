@@ -140,7 +140,7 @@ export default function Clientes() {
             setMensaje({ texto: "El nombre del cliente no puede contener números", tipo: "error" });
             return false;
         }
-        if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
             setMensaje({ texto: "El nombre del cliente no permite caracteres especiales", tipo: "error" });
             return false;
         }
@@ -383,8 +383,8 @@ export default function Clientes() {
                                                 onChange={handleChange}
                                                 className="input-enterprise"
                                                 placeholder="Nombre del cliente"
-                                                pattern="^[^0-9]+$"
-                                                title="No se permiten números en el nombre"
+                                                pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+                                                title="Solo se permiten letras en el nombre"
                                                 required
                                             />
                                             <User size={18} className="input-icon" />
@@ -394,7 +394,7 @@ export default function Clientes() {
                                                 ⚠️ El nombre no puede contener números
                                             </span>
                                         )}
-                                        {formData.nombre_cliente && /[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(formData.nombre_cliente) && (
+                                        {formData.nombre_cliente && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombre_cliente) && !/\d/.test(formData.nombre_cliente) && (
                                             <span style={{ color: "#dc2626", fontSize: "0.8rem", marginTop: "0.25rem", display: "block" }}>
                                                 ⚠️ El nombre no permite caracteres especiales
                                             </span>
