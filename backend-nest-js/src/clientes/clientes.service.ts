@@ -47,13 +47,16 @@ export class ClientesService {
     return cliente;
   }
 
-  private validarDatosCliente(nombre?: string, iden?: string, tel?: string, correo?: string) {
+  private validarDatosCliente(nombre?: string, iden?: string, tel?: string, correo?: string, direccion?: string) {
     if (nombre !== undefined) {
       if (!nombre.trim()) {
         throw new BadRequestException("El nombre del cliente es requerido");
       }
       if (/\d/.test(nombre)) {
         throw new BadRequestException("El nombre del cliente no puede contener números");
+      }
+      if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+        throw new BadRequestException("El nombre del cliente no permite caracteres especiales");
       }
     }
 
@@ -73,6 +76,10 @@ export class ClientesService {
     if (correo && correo.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())) {
       throw new BadRequestException("El correo electrónico no tiene un formato válido");
     }
+
+    if (direccion && direccion.trim() && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(direccion.trim())) {
+      throw new BadRequestException("La dirección no permite caracteres especiales");
+    }
   }
 
   // Registrar un nuevo cliente con validación de identificación única
@@ -80,7 +87,7 @@ export class ClientesService {
     const { nombre_cliente, identificacion, telefono, direccion, correo } =
       data;
 
-    this.validarDatosCliente(nombre_cliente, identificacion, telefono, correo);
+    this.validarDatosCliente(nombre_cliente, identificacion, telefono, correo, direccion);
 
     const exists = await this.prisma.cliente.findUnique({
       where: { identificacion: identificacion.trim() },
@@ -112,6 +119,7 @@ export class ClientesService {
       data.identificacion,
       data.telefono,
       data.correo,
+      data.direccion,
     );
 
     if (

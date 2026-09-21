@@ -56,6 +56,30 @@ describe('Clientes - Validaciones de Formato y Tipos de Datos', () => {
         expect(clientesService.create).not.toHaveBeenCalled();
     });
 
+    it('Rechaza el registro si el nombre del cliente contiene caracteres especiales', async () => {
+        renderWithRouter(<Clientes />);
+
+        await waitFor(() => expect(screen.getByText('Empresa Los Alpes')).toBeInTheDocument());
+
+        fireEvent.click(screen.getByText(/Nuevo Cliente/i));
+
+        const inputNombre = screen.getByPlaceholderText('Nombre del cliente');
+        fireEvent.change(inputNombre, { target: { value: 'Cliente <script>' } });
+        fireEvent.change(screen.getByPlaceholderText(/Número de documento/i), { target: { value: '999888777' } });
+
+        // Verifica aviso en tiempo real
+        expect(screen.getByText(/El nombre no permite caracteres especiales/i)).toBeInTheDocument();
+
+        const form = screen.getByRole('button', { name: /Guardar Cliente/i }).closest('form');
+        fireEvent.submit(form);
+
+        await waitFor(() => {
+            expect(screen.getAllByText(/El nombre del cliente no permite caracteres especiales/i).length).toBeGreaterThan(0);
+        });
+
+        expect(clientesService.create).not.toHaveBeenCalled();
+    });
+
     it('Rechaza el registro si la identificación contiene letras', async () => {
         renderWithRouter(<Clientes />);
 
