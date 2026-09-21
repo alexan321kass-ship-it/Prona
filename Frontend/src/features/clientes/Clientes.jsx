@@ -35,6 +35,15 @@ export default function Clientes() {
     const [guardando, setGuardando] = useState(false);
     const [mensaje, setMensaje] = useState({ texto: "", tipo: "" });
 
+    const usuario = (() => {
+        try {
+            return JSON.parse(localStorage.getItem("usuario")) || {};
+        } catch {
+            return {};
+        }
+    })();
+    const esAdmin = usuario.id_rol === 1 || usuario.id_rol === 3;
+
     // Sugerencias de busqueda
     const sugerencias = [
         ...new Set([
@@ -193,6 +202,10 @@ export default function Clientes() {
     };
 
     const eliminarCliente = async (id) => {
+        if (!esAdmin) {
+            setMensaje({ texto: "Los asesores no tienen permisos para eliminar clientes", tipo: "error" });
+            return;
+        }
         if (!confirm("¿Estás seguro de eliminar este cliente?")) return;
 
         try {
@@ -201,7 +214,7 @@ export default function Clientes() {
             setMensaje({ texto: "Cliente eliminado", tipo: "success" });
             cargarClientes();
         } catch (error) {
-            setMensaje({ texto: "Error de conexión", tipo: "error" });
+            setMensaje({ texto: error.message || "Error de conexión", tipo: "error" });
         }
     };
 
@@ -302,13 +315,15 @@ export default function Clientes() {
                                             >
                                                 <Pencil size={14} />
                                             </button>
-                                            <button 
-                                                onClick={() => eliminarCliente(cliente.id_cliente)} 
-                                                className="btn-cliente-accion delete" 
-                                                title="Eliminar"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
+                                             {esAdmin && (
+                                                <button 
+                                                    onClick={() => eliminarCliente(cliente.id_cliente)} 
+                                                    className="btn-cliente-accion delete" 
+                                                    title="Eliminar"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                             )}
                                         </div>
 
                                         <div className="cliente-card-header">

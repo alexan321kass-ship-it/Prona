@@ -9,6 +9,8 @@ import {
   Query,
   UseGuards,
   ParseIntPipe,
+  Req,
+  ForbiddenException,
 } from "@nestjs/common";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { ClientesService } from "./clientes.service";
@@ -62,9 +64,14 @@ export class ClientesController {
     return { message: "Cliente actualizado exitosamente" };
   }
 
-  // Eliminar un cliente por su ID
+  // Eliminar un cliente por su ID (solo Administradores / Super Administradores)
   @Delete(":id")
-  async remove(@Param("id", ParseIntPipe) id: number) {
+  async remove(@Req() req: any, @Param("id", ParseIntPipe) id: number) {
+    if (req.user?.id_rol === 2) {
+      throw new ForbiddenException(
+        "Los asesores no tienen permisos para eliminar clientes. Solo pueden inactivarlos.",
+      );
+    }
     await this.clientesService.delete(id);
     return { message: "Cliente eliminado exitosamente" };
   }
