@@ -43,6 +43,12 @@ export class CategoriasService {
     if (/^\d+$/.test(nombre)) {
       throw new BadRequestException("El nombre de la categoría debe ser texto y no solo números");
     }
+    if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+      throw new BadRequestException("El nombre de la categoría no permite caracteres especiales");
+    }
+    if (data.descripcion && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(data.descripcion)) {
+      throw new BadRequestException("La descripción no permite caracteres especiales");
+    }
 
     const existe = await (this.prisma as any).categoria.findFirst({
       where: { nombre_categoria: { contains: nombre } },
@@ -73,6 +79,9 @@ export class CategoriasService {
       if (/^\d+$/.test(nombre)) {
         throw new BadRequestException("El nombre de la categoría debe ser texto y no solo números");
       }
+      if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+        throw new BadRequestException("El nombre de la categoría no permite caracteres especiales");
+      }
       if (nombre !== cat.nombre_categoria) {
         const existe = await (this.prisma as any).categoria.findFirst({
           where: { nombre_categoria: { contains: nombre } },
@@ -82,6 +91,9 @@ export class CategoriasService {
             `Ya existe una categoría con el nombre "${nombre}"`,
           );
       }
+    }
+    if (data.descripcion && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(data.descripcion)) {
+      throw new BadRequestException("La descripción no permite caracteres especiales");
     }
     return (this.prisma as any).categoria.update({
       where: { id_categoria: id },

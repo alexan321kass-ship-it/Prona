@@ -76,6 +76,22 @@ export class ProductosService {
 
   // Registrar un nuevo producto incluyendo su imagen
   async create(data: CreateProductoDto, file?: Express.Multer.File) {
+    if (data.nombre_producto) {
+      const nombre = String(data.nombre_producto).trim();
+      if (/^\d+$/.test(nombre)) {
+        throw new BadRequestException("El nombre del producto debe ser texto y no solo números");
+      }
+      if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+        throw new BadRequestException("El nombre del producto no permite caracteres especiales");
+      }
+    }
+    if (data.descripcion && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(data.descripcion)) {
+      throw new BadRequestException("La descripción no permite caracteres especiales");
+    }
+    if (data.codigo_interno && !/^[a-zA-Z0-9-_]+$/.test(data.codigo_interno.trim())) {
+      throw new BadRequestException("El formato del código es inválido");
+    }
+
     if (data.id_categoria) {
       const catExists = await this.categoriasService.exists(
         Number(data.id_categoria),
@@ -131,6 +147,22 @@ export class ProductosService {
     file?: Express.Multer.File,
   ) {
     const productoActual = await this.getById(id);
+
+    if (data.nombre_producto) {
+      const nombre = String(data.nombre_producto).trim();
+      if (/^\d+$/.test(nombre)) {
+        throw new BadRequestException("El nombre del producto debe ser texto y no solo números");
+      }
+      if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+        throw new BadRequestException("El nombre del producto no permite caracteres especiales");
+      }
+    }
+    if (data.descripcion && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(data.descripcion)) {
+      throw new BadRequestException("La descripción no permite caracteres especiales");
+    }
+    if (data.codigo_interno && !/^[a-zA-Z0-9-_]+$/.test(data.codigo_interno.trim())) {
+      throw new BadRequestException("El formato del código es inválido");
+    }
 
     if (data.id_categoria) {
       const catExists = await this.categoriasService.exists(

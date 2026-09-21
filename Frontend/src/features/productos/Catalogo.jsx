@@ -201,7 +201,7 @@ export default function Catalogo() {
             return;
         }
 
-        // 2. Validaciones Nombre del Producto (String obligatorio, debe contener texto)
+        // 2. Validaciones Nombre del Producto (String obligatorio, debe contener texto, sin caracteres especiales)
         const nombre = formData.nombre_producto ? String(formData.nombre_producto).trim() : "";
         if (!nombre) {
             setMensaje({ texto: "El nombre es requerido", tipo: "error" });
@@ -211,13 +211,21 @@ export default function Catalogo() {
             setMensaje({ texto: "El nombre del producto debe ser texto y no solo números", tipo: "error" });
             return;
         }
+        if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+            setMensaje({ texto: "El nombre del producto no permite caracteres especiales", tipo: "error" });
+            return;
+        }
         if (nombre.length > 100) {
             setMensaje({ texto: "Exceso de longitud en el nombre", tipo: "error" });
             return;
         }
 
-        // 3. Validaciones Descripción (String opcional)
+        // 3. Validaciones Descripción (String opcional, sin caracteres especiales peligrosos)
         const desc = formData.descripcion ? String(formData.descripcion).trim() : "";
+        if (desc && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(desc)) {
+            setMensaje({ texto: "La descripción no permite caracteres especiales", tipo: "error" });
+            return;
+        }
         if (desc.length > 500) {
             setMensaje({ texto: "Se superó el número máximo de caracteres permitidos", tipo: "error" });
             return;

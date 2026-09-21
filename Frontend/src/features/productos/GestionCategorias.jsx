@@ -68,12 +68,20 @@ export default function GestionCategorias() {
             mostrarMensaje("El nombre de la categoría debe ser texto y no solo números", "error");
             return;
         }
+        if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+            mostrarMensaje("El nombre de la categoría no permite caracteres especiales", "error");
+            return;
+        }
         if (nombre.length > 100) {
             mostrarMensaje("El nombre de la categoría es demasiado largo (máximo 100 caracteres)", "error");
             return;
         }
 
         const desc = form.descripcion ? String(form.descripcion).trim() : "";
+        if (desc && /[<>{}\[\]\\^~*|=#$%@!?\"'`+]/g.test(desc)) {
+            mostrarMensaje("La descripción no permite caracteres especiales", "error");
+            return;
+        }
         if (desc.length > 500) {
             mostrarMensaje("La descripción supera el máximo permitidos (máximo 500 caracteres)", "error");
             return;
