@@ -33,6 +33,9 @@ export class RegisterDto {
   @ApiProperty({ description: "Número de documento", example: "123456789" })
   @IsString()
   @IsNotEmpty()
+  @Matches(/^\d+$/, {
+    message: "El número de documento solo puede contener números",
+  })
   numero_documento: string;
 
   @ApiProperty({

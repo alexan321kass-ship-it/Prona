@@ -178,7 +178,7 @@ export default function Registro({ isModal = false, onSuccess = null }) {
                     </div>
                     <div className="form-group">
                         <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Número de documento</label>
-                        <input type="text" name="numDoc" className="form-control" value={formData.numDoc} onChange={handleChange} placeholder="1234567890" disabled={cargando} />
+                        <input type="text" name="numDoc" className="form-control" value={formData.numDoc} onChange={handleChange} placeholder="1234567890" disabled={cargando} pattern="^\d+$" title="Solo se permiten números" />
                     </div>
                 </div>
 

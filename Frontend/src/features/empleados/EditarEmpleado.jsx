@@ -121,7 +121,7 @@ export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
                 </div>
                 <div className="form-group">
                     <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Número de documento</label>
-                    <input type="text" name="numDoc" className="form-control" value={formData.numDoc} onChange={handleChange} disabled={cargando} />
+                    <input type="text" name="numDoc" className="form-control" value={formData.numDoc} onChange={handleChange} disabled={cargando} pattern="^\d+$" title="Solo se permiten números" />
                 </div>
             </div>
 

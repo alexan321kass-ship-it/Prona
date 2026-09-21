@@ -29,6 +29,9 @@ export class UpdateUserDto {
 
   @IsString()
   @IsOptional()
+  @Matches(/^\d+$/, {
+    message: "El número de documento solo puede contener números",
+  })
   numero_documento?: string;
 
   @IsEmail()
