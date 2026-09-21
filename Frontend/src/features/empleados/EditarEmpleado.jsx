@@ -129,25 +129,41 @@ export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
             </div>
 
             <div className="form-group">
-                <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
-                    Tipo de cuenta {String(currentUserId) === String(empleado?.id_usuario) && <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 500 }}>(No puedes modificar tu propio rol)</span>}
-                </label>
-                <select 
-                    name="rol" 
-                    className="form-control" 
-                    value={formData.rol} 
-                    onChange={handleChange} 
-                    disabled={cargando || currentUserRol === 1 || String(currentUserId) === String(empleado?.id_usuario)}
-                    title={String(currentUserId) === String(empleado?.id_usuario) ? "No puedes modificar tu propio rol" : ""}
-                >
-                    <option value="Asesor">Asesor</option>
-                    {(currentUserRol === 3 || formData.rol === "Administrador" || formData.rol === "Super Administrador") && (
+                {(() => {
+                    const esMismoUsuario = String(currentUserId) === String(empleado?.id_usuario);
+                    const esSuperAdminTarget = empleado?.id_rol === 3 || empleado?.rol?.nombre_rol?.toLowerCase() === 'super administrador' || formData.rol === "Super Administrador";
+                    const deshabilitarRol = cargando || currentUserRol === 1 || esMismoUsuario || esSuperAdminTarget;
+                    
+                    const textoHelperRol = esMismoUsuario
+                        ? "(No puedes modificar tu propio rol)"
+                        : esSuperAdminTarget
+                        ? "(No se puede modificar el rol de un Super Administrador)"
+                        : "";
+
+                    return (
                         <>
-                            <option value="Administrador">Administrador</option>
-                            <option value="Super Administrador">Super Administrador</option>
+                            <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
+                                Tipo de cuenta {textoHelperRol && <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 500 }}>{textoHelperRol}</span>}
+                            </label>
+                            <select 
+                                name="rol" 
+                                className="form-control" 
+                                value={formData.rol} 
+                                onChange={handleChange} 
+                                disabled={deshabilitarRol}
+                                title={textoHelperRol}
+                            >
+                                <option value="Asesor">Asesor</option>
+                                {(currentUserRol === 3 || formData.rol === "Administrador" || formData.rol === "Super Administrador") && (
+                                    <>
+                                        <option value="Administrador">Administrador</option>
+                                        <option value="Super Administrador">Super Administrador</option>
+                                    </>
+                                )}
+                            </select>
                         </>
-                    )}
-                </select>
+                    );
+                })()}
             </div>
 
             {mensaje && (

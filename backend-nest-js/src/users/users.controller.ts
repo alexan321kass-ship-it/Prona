@@ -96,6 +96,15 @@ export class UsersController {
       throw new ForbiddenException("No puedes cambiar tu propio rol");
     }
 
+    // Prevención: No se puede cambiar el rol de ningún Super Administrador
+    if (
+      (targetUser.id_rol === 3 || targetUser.rol?.nombre_rol === "Super Administrador") &&
+      updateUserDto.id_rol &&
+      updateUserDto.id_rol !== 3
+    ) {
+      throw new ForbiddenException("No se puede cambiar el rol de un Super Administrador");
+    }
+
     await this.usersService.update(id, updateUserDto);
     return { message: "Usuario actualizado correctamente" };
   }
