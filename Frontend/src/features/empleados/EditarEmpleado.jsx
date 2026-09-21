@@ -54,7 +54,9 @@ export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
 
     const validarFormulario = () => {
         if (!formData.nombre.trim()) { setMensaje("El nombre es requerido"); setTipoMensaje("error"); return false; }
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombre.trim())) { setMensaje("El nombre no puede contener números ni caracteres especiales"); setTipoMensaje("error"); return false; }
         if (!formData.apellido.trim()) { setMensaje("El apellido es requerido"); setTipoMensaje("error"); return false; }
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.apellido.trim())) { setMensaje("El apellido no puede contener números ni caracteres especiales"); setTipoMensaje("error"); return false; }
         if (!formData.numDoc.trim()) { setMensaje("El documento es requerido"); setTipoMensaje("error"); return false; }
         if (!/^\d+$/.test(formData.numDoc.trim())) { setMensaje("El documento solo puede contener números"); setTipoMensaje("error"); return false; }
         if (!formData.correo.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
@@ -100,11 +102,11 @@ export default function EditarEmpleado({ empleado, onCancel, onSuccess }) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div className="form-group">
                     <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Nombre</label>
-                    <input type="text" name="nombre" className="form-control" value={formData.nombre} onChange={handleChange} disabled={cargando} />
+                    <input type="text" name="nombre" className="form-control" value={formData.nombre} onChange={handleChange} disabled={cargando} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" title="Solo se permiten letras" />
                 </div>
                 <div className="form-group">
                     <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Apellido</label>
-                    <input type="text" name="apellido" className="form-control" value={formData.apellido} onChange={handleChange} disabled={cargando} />
+                    <input type="text" name="apellido" className="form-control" value={formData.apellido} onChange={handleChange} disabled={cargando} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" title="Solo se permiten letras" />
                 </div>
             </div>
 

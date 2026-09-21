@@ -4,16 +4,23 @@ import {
   IsOptional,
   IsNumber,
   MinLength,
+  Matches,
 } from "class-validator";
 
 // DTO para actualizar los datos de un usuario
 export class UpdateUserDto {
   @IsString()
   @IsOptional()
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, {
+    message: "El primer nombre no puede contener números ni caracteres especiales",
+  })
   primer_nombre?: string;
 
   @IsString()
   @IsOptional()
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, {
+    message: "El primer apellido no puede contener números ni caracteres especiales",
+  })
   primer_apellido?: string;
 
   @IsString()

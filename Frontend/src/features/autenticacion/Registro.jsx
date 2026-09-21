@@ -54,8 +54,8 @@ export default function Registro({ isModal = false, onSuccess = null }) {
             setTipoMensaje("error");
             return false;
         }
-        if (/\d/.test(formData.nombre)) {
-            setMensaje("El nombre no puede contener números");
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.nombre.trim())) {
+            setMensaje("El nombre no puede contener números ni caracteres especiales");
             setTipoMensaje("error");
             return false;
         }
@@ -64,8 +64,8 @@ export default function Registro({ isModal = false, onSuccess = null }) {
             setTipoMensaje("error");
             return false;
         }
-        if (/\d/.test(formData.apellido)) {
-            setMensaje("El apellido no puede contener números");
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.apellido.trim())) {
+            setMensaje("El apellido no puede contener números ni caracteres especiales");
             setTipoMensaje("error");
             return false;
         }
@@ -159,11 +159,11 @@ export default function Registro({ isModal = false, onSuccess = null }) {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div className="form-group">
                         <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Nombre</label>
-                        <input type="text" name="nombre" className="form-control" value={formData.nombre} onChange={handleChange} placeholder="Tu nombre" disabled={cargando} pattern="^[^0-9]*$" title="No se permiten números" />
+                        <input type="text" name="nombre" className="form-control" value={formData.nombre} onChange={handleChange} placeholder="Tu nombre" disabled={cargando} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" title="Solo se permiten letras" />
                     </div>
                     <div className="form-group">
                         <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Apellido</label>
-                        <input type="text" name="apellido" className="form-control" value={formData.apellido} onChange={handleChange} placeholder="Tu apellido" disabled={cargando} pattern="^[^0-9]*$" title="No se permiten números" />
+                        <input type="text" name="apellido" className="form-control" value={formData.apellido} onChange={handleChange} placeholder="Tu apellido" disabled={cargando} pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" title="Solo se permiten letras" />
                     </div>
                 </div>
 

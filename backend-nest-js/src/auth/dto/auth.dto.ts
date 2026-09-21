@@ -12,16 +12,16 @@ export class RegisterDto {
   @ApiProperty({ description: "Primer nombre del usuario", example: "Juan" })
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[^0-9]*$/, {
-    message: "El primer nombre no puede contener números",
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, {
+    message: "El primer nombre no puede contener números ni caracteres especiales",
   })
   primer_nombre: string;
 
   @ApiProperty({ description: "Primer apellido del usuario", example: "Pérez" })
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[^0-9]*$/, {
-    message: "El primer apellido no puede contener números",
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, {
+    message: "El primer apellido no puede contener números ni caracteres especiales",
   })
   primer_apellido: string;
 
