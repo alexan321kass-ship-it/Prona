@@ -36,11 +36,23 @@ export default function GestionEmpleados() {
 
     const handleToggleEstado = async (id, estadoActual) => {
         try {
-            await servicioEmpleados.cambiarEstado(id, !estadoActual);
+            const nuevoEstado = !estadoActual;
+            await servicioEmpleados.cambiarEstado(id, nuevoEstado);
+
+            // Si el usuario inactivado es el usuario actual en sesión, cerrar sesión inmediatamente
+            const usuarioActual = JSON.parse(localStorage.getItem("usuario") || "{}");
+            if (String(usuarioActual.id_usuario) === String(id) && !nuevoEstado) {
+                alert("Has inactivado tu propia cuenta. Tu sesión ha sido cerrada.");
+                localStorage.removeItem("usuario");
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+                return;
+            }
+
             setMensajeFlash({ tipo: "success", texto: "Estado actualizado correctamente" });
             cargarEmpleados();
         } catch (err) {
-            setMensajeFlash({ tipo: "error", texto: "Error al actualizar estado" });
+            setMensajeFlash({ tipo: "error", texto: err.message || "Error al actualizar estado" });
         }
         setTimeout(() => setMensajeFlash(null), 3000);
     };

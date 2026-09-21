@@ -36,6 +36,13 @@ export const fetchAPI = async (endpoint, options = {}) => {
         const data = await response.json();
 
         if (!response.ok) {
+            if (response.status === 401 && typeof window !== "undefined") {
+                localStorage.removeItem("usuario");
+                localStorage.removeItem("token");
+                if (window.location.pathname !== "/login") {
+                    window.location.href = "/login";
+                }
+            }
             let errorMessage = data.message;
             if (Array.isArray(errorMessage)) {
                 errorMessage = errorMessage.join(", ");

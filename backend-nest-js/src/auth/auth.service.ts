@@ -88,6 +88,10 @@ export class AuthService {
         throw new BadRequestException("Correo o contraseña incorrectos");
       }
 
+      if (user.estado === false) {
+        throw new BadRequestException("Tu cuenta se encuentra inactiva. Contacta al administrador.");
+      }
+
       // Validación de credenciales
       const valid = await bcrypt.compare(contrasena, user.contrasena);
 
@@ -126,6 +130,7 @@ export class AuthService {
         primer_nombre: true,
         primer_apellido: true,
         correo: true,
+        estado: true,
         id_rol: true,
         requiere_cambio_contrasena: true,
         rol: true,

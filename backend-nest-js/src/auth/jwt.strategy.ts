@@ -27,13 +27,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     console.log("--- JWT Validation Debug ---");
     console.log("Payload:", JSON.stringify(payload));
 
-    // Buscamos si el usuario del token todavía existe en la DB
+    // Buscamos si el usuario del token todavía existe en la DB y está activo
     const user = await this.authService.findById(payload.id_usuario);
 
-    if (!user) {
-      console.warn(`User with ID ${payload.id_usuario} not found in database.`);
-      // Si ya no existe, pues pa' fuera
-      throw new UnauthorizedException("Usuario no válido o inexistente");
+    if (!user || user.estado === false) {
+      console.warn(`User with ID ${payload.id_usuario} not found or inactive.`);
+      // Si ya no existe o está inactivo, pues pa' fuera
+      throw new UnauthorizedException("Usuario inactivo, no válido o inexistente");
     }
 
     console.log(`User ${user.correo} validated successfully.`);
