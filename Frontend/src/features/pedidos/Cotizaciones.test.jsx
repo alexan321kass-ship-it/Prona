@@ -136,6 +136,19 @@ describe('Matriz de Casos de Prueba - Cotizaciones (01-10)', () => {
         });
     });
 
+    it('Verificar que el sistema rechace o corrija descuentos con números negativos', async () => {
+        await setupCarrito();
+        await seleccionarCliente();
+        
+        // Intentar poner descuento negativo en el input
+        const spinbuttons = screen.getAllByRole('spinbutton');
+        const inputDescuento = spinbuttons[spinbuttons.length - 1];
+        fireEvent.change(inputDescuento, { target: { value: '-10' } });
+        
+        // El input automáticamente convierte/bloquea valores negativos a 0
+        expect(inputDescuento.value).toBe('0');
+    });
+
     it('CP-05: Verificar que la vigencia de la cotización sea válida', async () => {
         await setupCarrito();
         await seleccionarCliente();

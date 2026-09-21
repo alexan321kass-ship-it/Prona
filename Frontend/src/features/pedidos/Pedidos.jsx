@@ -131,7 +131,11 @@ export default function Pedidos() {
       setMensaje({ texto: "El sistema informa que debe agregar al menos un producto", tipo: "error" });
       return;
     }
-    if (descuento > 20) {
+    if (Number(descuento) < 0) {
+      setMensaje({ texto: "El descuento no puede ser un número negativo", tipo: "error" });
+      return;
+    }
+    if (Number(descuento) > 20) {
       setMensaje({ texto: "El descuento excede el límite permitido", tipo: "error" });
       return;
     }
@@ -284,6 +288,15 @@ export default function Pedidos() {
         texto: `El pedido no se procesó: La cantidad solicitada de "${itemSinStock.nombre_producto}" (${itemSinStock.cantidad}) supera el stock disponible (${itemSinStock.stock}).`, 
         tipo: "error" 
       });
+      return;
+    }
+    
+    if (Number(descuento) < 0) {
+      setMensaje({ texto: "El descuento no puede ser un número negativo", tipo: "error" });
+      return;
+    }
+    if (Number(descuento) > 20) {
+      setMensaje({ texto: "El descuento excede el límite permitido", tipo: "error" });
       return;
     }
     

@@ -205,10 +205,21 @@ const imageUrl = resolveImageUrl(item.imagen_url);
                                 type="number" 
                                 min="0" max="100" 
                                 value={descuento} 
-                                onChange={e => setDescuento(e.target.value)}
+                                onChange={e => {
+                                    const val = e.target.value;
+                                    if (val === '') {
+                                        setDescuento('');
+                                    } else {
+                                        const num = Number(val);
+                                        setDescuento(num < 0 ? 0 : val);
+                                    }
+                                }}
                                 style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(0,0,0,0.08)', background: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', outline: 'none', transition: 'border 0.2s', color: '#111827', fontWeight: 600 }}
                                 onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'}
-                                onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.08)'}
+                                onBlur={(e) => {
+                                    e.target.style.borderColor = 'rgba(0,0,0,0.08)';
+                                    if (Number(descuento) < 0) setDescuento(0);
+                                }}
                             />
                         </div>
                         <div style={{ flex: 2 }}>
