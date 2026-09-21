@@ -201,17 +201,17 @@ export default function Catalogo() {
             return;
         }
 
-        // 2. Validaciones Nombre del Producto (String obligatorio, debe contener texto, sin caracteres especiales)
+        // 2. Validaciones Nombre del Producto (String obligatorio, debe contener texto, sin números ni caracteres especiales)
         const nombre = formData.nombre_producto ? String(formData.nombre_producto).trim() : "";
         if (!nombre) {
             setMensaje({ texto: "El nombre es requerido", tipo: "error" });
             return;
         }
-        if (/^\d+$/.test(nombre)) {
-            setMensaje({ texto: "El nombre del producto debe ser texto y no solo números", tipo: "error" });
+        if (/\d/.test(nombre)) {
+            setMensaje({ texto: "El nombre del producto no puede contener números", tipo: "error" });
             return;
         }
-        if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
             setMensaje({ texto: "El nombre del producto no permite caracteres especiales", tipo: "error" });
             return;
         }
@@ -584,7 +584,7 @@ export default function Catalogo() {
 
                                     <div className="input-group full">
                                         <label><Info size={14} /> Nombre del Producto *</label>
-                                        <input type="text" name="nombre_producto" value={formData.nombre_producto} onChange={handleChange} required />
+                                        <input type="text" name="nombre_producto" value={formData.nombre_producto} onChange={handleChange} required pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" title="Solo se permiten letras" />
                                     </div>
 
                                     <div className="input-group full">

@@ -157,6 +157,24 @@ describe('Matriz de Casos de Prueba - Módulo Inventario', () => {
         expect(productosService.create).not.toHaveBeenCalled();
     });
 
+    it('CP-0010b: Validar que el Nombre rechace números', async () => {
+        const container = await abrirModalNuevoProducto();
+        llenarFormulario(container, { nombre_producto: 'Producto 123' });
+        fireEvent.click(screen.getByText('Guardar Producto'));
+        
+        await waitFor(() => expect(screen.getByText(/El nombre del producto no puede contener números/i)).toBeInTheDocument());
+        expect(productosService.create).not.toHaveBeenCalled();
+    });
+
+    it('CP-0010c: Validar que el Nombre rechace caracteres especiales', async () => {
+        const container = await abrirModalNuevoProducto();
+        llenarFormulario(container, { nombre_producto: 'Producto@#$' });
+        fireEvent.click(screen.getByText('Guardar Producto'));
+        
+        await waitFor(() => expect(screen.getByText(/El nombre del producto no permite caracteres especiales/i)).toBeInTheDocument());
+        expect(productosService.create).not.toHaveBeenCalled();
+    });
+
     // ---------------------------------------------------------
     // SECCIÓN 4: DESCRIPCIÓN
     // ---------------------------------------------------------

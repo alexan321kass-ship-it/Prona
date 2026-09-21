@@ -78,10 +78,10 @@ export class ProductosService {
   async create(data: CreateProductoDto, file?: Express.Multer.File) {
     if (data.nombre_producto) {
       const nombre = String(data.nombre_producto).trim();
-      if (/^\d+$/.test(nombre)) {
-        throw new BadRequestException("El nombre del producto debe ser texto y no solo números");
+      if (/\d/.test(nombre)) {
+        throw new BadRequestException("El nombre del producto no puede contener números");
       }
-      if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
         throw new BadRequestException("El nombre del producto no permite caracteres especiales");
       }
     }
@@ -150,10 +150,10 @@ export class ProductosService {
 
     if (data.nombre_producto) {
       const nombre = String(data.nombre_producto).trim();
-      if (/^\d+$/.test(nombre)) {
-        throw new BadRequestException("El nombre del producto debe ser texto y no solo números");
+      if (/\d/.test(nombre)) {
+        throw new BadRequestException("El nombre del producto no puede contener números");
       }
-      if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
         throw new BadRequestException("El nombre del producto no permite caracteres especiales");
       }
     }
