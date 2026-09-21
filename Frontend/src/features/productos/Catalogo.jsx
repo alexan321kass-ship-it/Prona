@@ -151,14 +151,14 @@ export default function Catalogo() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === "stock") {
-            // Solo digitos enteros no negativos
-            if (value !== "" && !/^\d*$/.test(value)) {
+            // Solo digitos enteros y opcional signo negativo para poder validar y reportar error de stock negativo
+            if (value !== "" && !/^-?\d*$/.test(value)) {
                 return;
             }
         }
         if (name === "precio") {
-            // Solo números positivos y un único punto decimal
-            if (value !== "" && !/^\d*\.?\d*$/.test(value)) {
+            // Solo números y opcional signo negativo/decimales para poder validar y reportar error de precio negativo
+            if (value !== "" && !/^-?\d*\.?\d*$/.test(value)) {
                 return;
             }
         }
