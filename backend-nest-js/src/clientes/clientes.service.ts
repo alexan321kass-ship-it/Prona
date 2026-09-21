@@ -118,6 +118,18 @@ export class ClientesService {
       );
     }
 
+    if (correo && correo.trim()) {
+      const emailTrim = correo.trim().toLowerCase();
+      const existsEmail = await (this.prisma.cliente as any).findFirst({
+        where: {
+          correo_cliente: { equals: emailTrim, mode: "insensitive" },
+        },
+      });
+      if (existsEmail) {
+        throw new BadRequestException("Ya existe un cliente registrado con ese correo electrónico");
+      }
+    }
+
     return (this.prisma.cliente as any).create({
       data: {
         nombre_cliente: nombre_cliente.trim(),
@@ -163,6 +175,19 @@ export class ClientesService {
         throw new BadRequestException(
           "Ya existe otro cliente con esa identificación",
         );
+      }
+    }
+
+    if (correo && correo.trim()) {
+      const emailTrim = correo.trim().toLowerCase();
+      const existsEmail = await (this.prisma.cliente as any).findFirst({
+        where: {
+          correo_cliente: { equals: emailTrim, mode: "insensitive" },
+          id_cliente: { not: id },
+        },
+      });
+      if (existsEmail) {
+        throw new BadRequestException("Ya existe un cliente registrado con ese correo electrónico");
       }
     }
 

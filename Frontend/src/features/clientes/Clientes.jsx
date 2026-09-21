@@ -169,6 +169,19 @@ export default function Clientes() {
             setMensaje({ texto: "El correo electrónico no tiene un formato válido", tipo: "error" });
             return false;
         }
+        if (mail) {
+            const mailTrim = mail.toLowerCase();
+            const duplicado = clientes.find(c => {
+                const cMail = (c.correo_cliente || c.correo || "").trim().toLowerCase();
+                if (!cMail) return false;
+                if (modalForm?.tipo === "editar" && c.id_cliente === modalForm.id) return false;
+                return cMail === mailTrim;
+            });
+            if (duplicado) {
+                setMensaje({ texto: "Ya existe un cliente registrado con ese correo electrónico", tipo: "error" });
+                return false;
+            }
+        }
         return true;
     };
 
