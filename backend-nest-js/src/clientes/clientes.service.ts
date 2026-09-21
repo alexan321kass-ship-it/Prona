@@ -12,9 +12,15 @@ export class ClientesService {
 
   // Obtener listado completo de clientes
   async getAll() {
-    return this.prisma.cliente.findMany({
+    const clientes = await (this.prisma.cliente as any).findMany({
       orderBy: { nombre_cliente: "asc" },
     });
+
+    return clientes.map((c: any) => ({
+      ...c,
+      estado: c.estado ?? true,
+      estado_cliente: c.estado === false ? "Inactivo" : "Activo",
+    }));
   }
 
   // Búsqueda de clientes por nombre o identificación
@@ -23,7 +29,7 @@ export class ClientesService {
       throw new BadRequestException("Debe proporcionar un término de búsqueda");
     }
 
-    return this.prisma.cliente.findMany({
+    const clientes = await (this.prisma.cliente as any).findMany({
       where: {
         OR: [
           { nombre_cliente: { contains: q } },
@@ -32,11 +38,17 @@ export class ClientesService {
       },
       orderBy: { nombre_cliente: "asc" },
     });
+
+    return clientes.map((c: any) => ({
+      ...c,
+      estado: c.estado ?? true,
+      estado_cliente: c.estado === false ? "Inactivo" : "Activo",
+    }));
   }
 
   // Obtener información detallada de un cliente por ID
   async getById(id: number) {
-    const cliente = await this.prisma.cliente.findUnique({
+    const cliente = await (this.prisma.cliente as any).findUnique({
       where: { id_cliente: id },
     });
 
@@ -44,7 +56,11 @@ export class ClientesService {
       throw new NotFoundException("Cliente no encontrado");
     }
 
-    return cliente;
+    return {
+      ...cliente,
+      estado: cliente.estado ?? true,
+      estado_cliente: cliente.estado === false ? "Inactivo" : "Activo",
+    };
   }
 
   private validarDatosCliente(nombre?: string, iden?: string, tel?: string, correo?: string, direccion?: string) {
