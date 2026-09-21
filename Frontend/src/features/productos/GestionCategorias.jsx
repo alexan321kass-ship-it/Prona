@@ -64,11 +64,11 @@ export default function GestionCategorias() {
             mostrarMensaje("El nombre de la categoría es obligatorio", "error");
             return;
         }
-        if (/^\d+$/.test(nombre)) {
-            mostrarMensaje("El nombre de la categoría debe ser texto y no solo números", "error");
+        if (/\d/.test(nombre)) {
+            mostrarMensaje("El nombre de la categoría no puede contener números", "error");
             return;
         }
-        if (/[<>{}\[\]\\^~*|=#$%@!?;:\"'`+]/g.test(nombre)) {
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
             mostrarMensaje("El nombre de la categoría no permite caracteres especiales", "error");
             return;
         }
@@ -329,6 +329,8 @@ export default function GestionCategorias() {
                                     value={form.nombre_categoria}
                                     onChange={e => setForm(f => ({ ...f, nombre_categoria: e.target.value }))}
                                     placeholder="Ej: Granola, Snacks..."
+                                    pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+                                    title="Solo se permiten letras"
                                     style={{
                                         width: "100%", boxSizing: "border-box", padding: "11px 16px",
                                         border: "1.5px solid #e5e7eb", borderRadius: 12,

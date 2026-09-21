@@ -1,8 +1,11 @@
-import { IsString, IsNotEmpty, IsOptional, IsBoolean } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsBoolean, Matches } from "class-validator";
 
 export class CreateCategoriaDto {
   @IsString()
   @IsNotEmpty()
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, {
+    message: "El nombre de la categoría no permite números ni caracteres especiales",
+  })
   nombre_categoria: string;
 
   @IsString()
@@ -17,6 +20,9 @@ export class CreateCategoriaDto {
 export class UpdateCategoriaDto {
   @IsString()
   @IsOptional()
+  @Matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, {
+    message: "El nombre de la categoría no permite números ni caracteres especiales",
+  })
   nombre_categoria?: string;
 
   @IsString()
