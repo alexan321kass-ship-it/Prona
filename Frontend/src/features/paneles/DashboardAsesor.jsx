@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Package, Users, TrendingUp, FileText, Activity, Clock, ArrowRight, Calendar } from "lucide-react";
+import { Package, Users, TrendingUp, FileText, Activity, Clock, ArrowRight, Calendar, ChevronRight } from "lucide-react";
 import { api } from "../../config/api";
 import "./panel.css";
 import "../reportes/reportes.css";
@@ -193,45 +193,75 @@ export default function DashboardAsesor() {
                             </div>
                         </div>
 
-                        {/* ACTIVIDAD RECIENTE */}
-                        <div className="grafico-premium-card p-4 sm:p-6">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+                        {/* ACTIVIDAD RECIENTE - TABLA MODERNA */}
+                        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 p-4 sm:p-7 shadow-xs relative overflow-hidden">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                                 <div className="flex items-center gap-3">
-                                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--color-primary)]" />
-                                    <h2 className="m-0 text-lg sm:text-xl font-extrabold text-slate-900">Actividad Reciente</h2>
+                                    <div className="bg-red-500/10 p-2.5 rounded-xl text-[var(--color-primary)]">
+                                        <Activity size={22} />
+                                    </div>
+                                    <div>
+                                        <h2 className="m-0 text-lg sm:text-xl font-extrabold text-slate-900">Actividad Reciente</h2>
+                                        <p className="m-0 text-xs sm:text-sm text-slate-500 font-medium">Últimos pedidos registrados en el sistema</p>
+                                    </div>
                                 </div>
-                                <Link to="/seguimiento" className="text-[var(--color-primary)] font-bold flex items-center gap-1.5 text-xs sm:text-sm hover:underline no-underline">
-                                    Ver todos los pedidos <ArrowRight size={16} />
+                                <Link to="/seguimiento" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[var(--color-primary)] bg-red-50 hover:bg-red-100/80 px-4 py-2 rounded-xl transition-all border border-red-100 no-underline self-stretch sm:self-auto justify-center">
+                                    <span>Ver todos los pedidos</span>
+                                    <ArrowRight size={16} />
                                 </Link>
                             </div>
                             
                             {recientes.length === 0 ? (
-                                <div className="text-center p-8 sm:p-12 bg-slate-50 rounded-2xl text-slate-500">
-                                    <Package size={40} className="opacity-30 mx-auto mb-3" />
-                                    <p className="m-0 font-semibold text-sm sm:text-base">Aún no hay pedidos registrados.</p>
+                                <div className="text-center py-12 px-4 bg-slate-50/70 rounded-2xl border border-dashed border-slate-200 text-slate-500">
+                                    <Package size={42} className="opacity-30 mx-auto mb-3 text-slate-400" />
+                                    <p className="m-0 font-bold text-base text-slate-700">Aún no hay pedidos registrados</p>
+                                    <p className="mt-1 text-xs text-slate-400">Los nuevos pedidos comercializados aparecerán aquí automáticamente.</p>
                                 </div>
                             ) : (
-                                <div className="flex flex-col gap-3">
-                                    {recientes.map((pedido, i) => (
-                                        <div key={pedido.id_pedido || i} 
-                                             className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 sm:p-4 bg-slate-50/80 hover:bg-slate-100/80 rounded-2xl transition-all border border-slate-100 gap-3">
-                                            <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
-                                                <div className="bg-white p-2.5 rounded-xl shadow-2xs text-[var(--color-primary)] shrink-0">
-                                                    <Clock size={18} />
-                                                </div>
-                                                <div className="min-w-0 flex-1">
-                                                    <p className="m-0 font-bold text-slate-900 text-sm sm:text-base">Pedido #{pedido.id_pedido}</p>
-                                                    <p className="m-0 text-slate-500 text-xs sm:text-sm font-medium truncate max-w-[240px] sm:max-w-[320px]">{pedido.nombre_cliente}</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-2 sm:gap-1 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/50">
-                                                <span className="px-3 py-1 rounded-full text-xs font-bold" style={getBadgeStyle(pedido.estado_pedido)}>
-                                                    {pedido.estado_pedido}
-                                                </span>
-                                                <p className="m-0 text-slate-400 text-xs font-medium">{formatearFecha(pedido.fecha_pedido)}</p>
-                                            </div>
-                                        </div>
-                                    ))}
+                                <div className="overflow-x-auto -mx-2 sm:mx-0">
+                                    <table className="w-full text-left border-collapse min-w-[600px]">
+                                        <thead>
+                                            <tr className="border-b border-slate-200/80 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
+                                                <th className="pb-3 px-4">Pedido</th>
+                                                <th className="pb-3 px-4">Cliente</th>
+                                                <th className="pb-3 px-4">Estado</th>
+                                                <th className="pb-3 px-4">Fecha</th>
+                                                <th className="pb-3 px-4 text-right">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100 text-sm">
+                                            {recientes.map((pedido, i) => (
+                                                <tr key={pedido.id_pedido || i} className="group hover:bg-slate-50/90 transition-colors">
+                                                    <td className="py-3.5 px-4 font-extrabold text-slate-900 whitespace-nowrap">
+                                                        <div className="flex items-center gap-2.5">
+                                                            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs group-hover:bg-red-50 group-hover:text-[var(--color-primary)] transition-colors">
+                                                                #{pedido.id_pedido}
+                                                            </div>
+                                                            <span className="group-hover:text-[var(--color-primary)] transition-colors">Pedido #{pedido.id_pedido}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="py-3.5 px-4 font-semibold text-slate-700">
+                                                        <span className="truncate max-w-[220px] block" title={pedido.nombre_cliente}>
+                                                            {pedido.nombre_cliente}
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-3.5 px-4 whitespace-nowrap">
+                                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" style={getBadgeStyle(pedido.estado_pedido)}>
+                                                            {pedido.estado_pedido}
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-3.5 px-4 font-medium text-slate-500 whitespace-nowrap">
+                                                        {formatearFecha(pedido.fecha_pedido)}
+                                                    </td>
+                                                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                                                        <Link to="/seguimiento" className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-500 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all no-underline" title="Ver detalle">
+                                                            <ChevronRight size={18} />
+                                                        </Link>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                             )}
                         </div>
