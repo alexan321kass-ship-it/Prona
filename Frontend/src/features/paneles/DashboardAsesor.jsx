@@ -92,6 +92,13 @@ export default function DashboardAsesor() {
         return { background: "#FFFBEB", color: "#B45309", border: "1px solid #FDE68A" };
     };
 
+    const getIniciales = (nombre) => {
+        if (!nombre) return "CL";
+        const partes = nombre.trim().split(" ");
+        if (partes.length >= 2) return `${partes[0][0]}${partes[1][0]}`.toUpperCase();
+        return nombre.substring(0, 2).toUpperCase();
+    };
+
     if (!usuario) return null;
 
     return (
@@ -193,75 +200,84 @@ export default function DashboardAsesor() {
                             </div>
                         </div>
 
-                        {/* ACTIVIDAD RECIENTE - TABLA MODERNA */}
-                        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 p-4 sm:p-7 shadow-xs relative overflow-hidden">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="bg-red-500/10 p-2.5 rounded-xl text-[var(--color-primary)]">
-                                        <Activity size={22} />
+                        {/* ACTIVIDAD RECIENTE - DESIGN ULTRA-MODERNO 2026 */}
+                        <div className="bg-gradient-to-b from-white/90 via-slate-50/40 to-white/90 backdrop-blur-2xl rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-7 relative z-10">
+                                <div className="flex items-center gap-3.5">
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/20">
+                                        <Activity size={24} />
                                     </div>
                                     <div>
-                                        <h2 className="m-0 text-lg sm:text-xl font-extrabold text-slate-900">Actividad Reciente</h2>
-                                        <p className="m-0 text-xs sm:text-sm text-slate-500 font-medium">Últimos pedidos registrados en el sistema</p>
+                                        <div className="flex items-center gap-2">
+                                            <h2 className="m-0 text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Actividad Reciente</h2>
+                                            <span className="bg-red-100/80 text-[var(--color-primary)] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-red-200/60">En Vivo</span>
+                                        </div>
+                                        <p className="mt-0.5 text-xs sm:text-sm text-slate-500 font-medium">Monitoreo en tiempo real de tus últimos pedidos comercializados</p>
                                     </div>
                                 </div>
-                                <Link to="/seguimiento" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[var(--color-primary)] bg-red-50 hover:bg-red-100/80 px-4 py-2 rounded-xl transition-all border border-red-100 no-underline self-stretch sm:self-auto justify-center">
-                                    <span>Ver todos los pedidos</span>
-                                    <ArrowRight size={16} />
+
+                                <Link to="/seguimiento" className="group inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 bg-white hover:bg-slate-900 hover:text-white px-5 py-2.5 rounded-2xl transition-all duration-300 border border-slate-200 shadow-xs no-underline self-stretch sm:self-auto justify-center">
+                                    <span>Explorar Historial</span>
+                                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                                 </Link>
                             </div>
                             
                             {recientes.length === 0 ? (
-                                <div className="text-center py-12 px-4 bg-slate-50/70 rounded-2xl border border-dashed border-slate-200 text-slate-500">
-                                    <Package size={42} className="opacity-30 mx-auto mb-3 text-slate-400" />
-                                    <p className="m-0 font-bold text-base text-slate-700">Aún no hay pedidos registrados</p>
-                                    <p className="mt-1 text-xs text-slate-400">Los nuevos pedidos comercializados aparecerán aquí automáticamente.</p>
+                                <div className="text-center py-14 px-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 text-slate-400">
+                                    <Package size={48} className="opacity-20 mx-auto mb-3 text-slate-400" />
+                                    <p className="m-0 font-extrabold text-base text-slate-700">Sin pedidos recientes</p>
+                                    <p className="mt-1 text-xs text-slate-400">Las nuevas órdenes registradas aparecerán automáticamente aquí.</p>
                                 </div>
                             ) : (
-                                <div className="overflow-x-auto -mx-2 sm:mx-0">
-                                    <table className="w-full text-left border-collapse min-w-[600px]">
-                                        <thead>
-                                            <tr className="border-b border-slate-200/80 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
-                                                <th className="pb-3 px-4">Pedido</th>
-                                                <th className="pb-3 px-4">Cliente</th>
-                                                <th className="pb-3 px-4">Estado</th>
-                                                <th className="pb-3 px-4">Fecha</th>
-                                                <th className="pb-3 px-4 text-right">Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-100 text-sm">
-                                            {recientes.map((pedido, i) => (
-                                                <tr key={pedido.id_pedido || i} className="group hover:bg-slate-50/90 transition-colors">
-                                                    <td className="py-3.5 px-4 font-extrabold text-slate-900 whitespace-nowrap">
-                                                        <div className="flex items-center gap-2.5">
-                                                            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs group-hover:bg-red-50 group-hover:text-[var(--color-primary)] transition-colors">
-                                                                #{pedido.id_pedido}
-                                                            </div>
-                                                            <span className="group-hover:text-[var(--color-primary)] transition-colors">Pedido #{pedido.id_pedido}</span>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                                    {recientes.map((pedido, i) => {
+                                        const badge = getBadgeStyle(pedido.estado_pedido);
+                                        return (
+                                            <div 
+                                                key={pedido.id_pedido || i}
+                                                className="group relative bg-white/90 hover:bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/70 hover:border-red-500/30 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                                            >
+                                                <div className="flex items-center justify-between gap-3 mb-3">
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        <div className="w-10 h-10 rounded-xl bg-slate-900 text-white font-black text-xs flex items-center justify-center shadow-md shadow-slate-900/10 shrink-0 group-hover:scale-105 group-hover:bg-[var(--color-primary)] transition-all">
+                                                            {getIniciales(pedido.nombre_cliente)}
                                                         </div>
-                                                    </td>
-                                                    <td className="py-3.5 px-4 font-semibold text-slate-700">
-                                                        <span className="truncate max-w-[220px] block" title={pedido.nombre_cliente}>
-                                                            {pedido.nombre_cliente}
-                                                        </span>
-                                                    </td>
-                                                    <td className="py-3.5 px-4 whitespace-nowrap">
-                                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" style={getBadgeStyle(pedido.estado_pedido)}>
+                                                        <div className="min-w-0">
+                                                            <p className="m-0 font-extrabold text-slate-900 text-sm sm:text-base group-hover:text-[var(--color-primary)] transition-colors truncate">
+                                                                {pedido.nombre_cliente || "Cliente Particular"}
+                                                            </p>
+                                                            <p className="m-0 text-slate-400 text-xs font-semibold">
+                                                                Pedido #{pedido.id_pedido}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="shrink-0">
+                                                        <span 
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-2xs"
+                                                            style={badge}
+                                                        >
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
                                                             {pedido.estado_pedido}
                                                         </span>
-                                                    </td>
-                                                    <td className="py-3.5 px-4 font-medium text-slate-500 whitespace-nowrap">
-                                                        {formatearFecha(pedido.fecha_pedido)}
-                                                    </td>
-                                                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                                                        <Link to="/seguimiento" className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-500 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all no-underline" title="Ver detalle">
-                                                            <ChevronRight size={18} />
-                                                        </Link>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                                    </div>
+                                                </div>
+
+                                                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Clock size={14} className="text-slate-400" />
+                                                        <span>{formatearFecha(pedido.fecha_pedido)}</span>
+                                                    </div>
+                                                    <Link 
+                                                        to="/seguimiento" 
+                                                        className="inline-flex items-center gap-1 font-bold text-slate-600 group-hover:text-[var(--color-primary)] transition-colors no-underline"
+                                                    >
+                                                        <span>Detalles</span>
+                                                        <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
