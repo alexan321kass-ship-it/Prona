@@ -105,9 +105,15 @@ export default function DashboardAsesor() {
                         <TrendingUp size={32} color="#C0392B" />
                     </div>
                     <div>
-                        <p className="m-0 text-sm sm:text-base font-bold text-[var(--color-primary)] uppercase tracking-wider">
-                            {getSaludo()}
-                        </p>
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <p className="m-0 text-sm sm:text-base font-bold text-[var(--color-primary)] uppercase tracking-wider">
+                                {getSaludo()}
+                            </p>
+                            <span className="text-slate-300 font-bold">•</span>
+                            <span className="text-xs sm:text-sm font-semibold text-slate-600 capitalize bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200/60">
+                                Hoy es {new Date().toLocaleDateString("es-ES", { weekday: 'long', day: 'numeric', month: 'long' })}
+                            </span>
+                        </div>
                         <h1 className="m-0 text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
                             {usuario.primer_nombre} {usuario.primer_apellido}
                         </h1>
@@ -115,14 +121,6 @@ export default function DashboardAsesor() {
                             Bienvenido a tu espacio de trabajo. Aquí tienes un análisis en tiempo real de tu gestión comercial.
                         </p>
                     </div>
-                </div>
-
-                {/* Widget de Fecha Elegante */}
-                <div className="bg-white/80 px-4 py-2 sm:px-6 sm:py-3 rounded-xl border border-white/90 shadow-xs flex flex-col items-start md:items-end relative z-10 w-full md:w-auto">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hoy es</span>
-                    <span className="text-sm sm:text-base font-extrabold text-slate-800 capitalize">
-                        {new Date().toLocaleDateString("es-ES", { weekday: 'long', day: 'numeric', month: 'long' })}
-                    </span>
                 </div>
             </div>
 
