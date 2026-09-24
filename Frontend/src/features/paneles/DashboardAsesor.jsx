@@ -186,6 +186,7 @@ export default function DashboardAsesor() {
             )}
 
             <PiePanel />
+        </div>
     );
 }
 
