@@ -31,24 +31,40 @@ export class AuthService {
     } = data;
 
     try {
-      // Verificar si el correo ya existe
-      const existingUser = await this.prisma.usuario.findUnique({
-        where: { correo },
-      });
+      const emailTrim = correo ? correo.trim().toLowerCase() : "";
 
-      if (existingUser) {
-        throw new BadRequestException("El correo ya está registrado");
+      // Verificar si el correo ya pertenece a un usuario/empleado
+      if (emailTrim) {
+        const existingUser = await this.prisma.usuario.findFirst({
+          where: { correo: { equals: emailTrim, mode: "insensitive" } },
+        });
+
+        if (existingUser) {
+          throw new BadRequestException("Este correo ya se encuentra registrado");
+        }
+
+        // Verificar si el correo ya pertenece a un cliente
+        const existingClient = await (this.prisma.cliente as any).findFirst({
+          where: { correo_cliente: { equals: emailTrim, mode: "insensitive" } },
+        });
+
+        if (existingClient) {
+          throw new BadRequestException("Este correo ya pertenece a un cliente");
+        }
       }
 
       // Verificar si el número de documento ya existe
-      const existingDoc = await this.prisma.usuario.findUnique({
-        where: { numero_documento },
-      });
+      if (numero_documento && numero_documento.toString().trim()) {
+        const docTrim = numero_documento.toString().trim();
+        const existingDoc = await this.prisma.usuario.findFirst({
+          where: { numero_documento: docTrim },
+        });
 
-      if (existingDoc) {
-        throw new BadRequestException(
-          "El número de documento ya está registrado",
-        );
+        if (existingDoc) {
+          throw new BadRequestException(
+            "El número de documento ya se encuentra registrado",
+          );
+        }
       }
 
       // Encriptación de contraseña

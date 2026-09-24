@@ -128,6 +128,15 @@ export class ClientesService {
       if (existsEmail) {
         throw new BadRequestException("Ya existe un cliente registrado con ese correo electrónico");
       }
+
+      const existsUserEmail = await this.prisma.usuario.findFirst({
+        where: {
+          correo: { equals: emailTrim, mode: "insensitive" },
+        },
+      });
+      if (existsUserEmail) {
+        throw new BadRequestException("Este correo ya pertenece a un usuario/empleado del sistema");
+      }
     }
 
     return (this.prisma.cliente as any).create({
@@ -188,6 +197,15 @@ export class ClientesService {
       });
       if (existsEmail) {
         throw new BadRequestException("Ya existe un cliente registrado con ese correo electrónico");
+      }
+
+      const existsUserEmail = await this.prisma.usuario.findFirst({
+        where: {
+          correo: { equals: emailTrim, mode: "insensitive" },
+        },
+      });
+      if (existsUserEmail) {
+        throw new BadRequestException("Este correo ya pertenece a un usuario/empleado del sistema");
       }
     }
 

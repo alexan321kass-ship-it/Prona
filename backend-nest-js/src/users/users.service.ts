@@ -55,18 +55,39 @@ export class UsersService {
 
   // Crear un nuevo usuario con validación de unicidad y encriptación
   async create(data: any) {
-    const existingEmail = await this.findByEmail(data.correo);
-    if (existingEmail) throw new BadRequestException("Correo ya registrado");
+    if (data.correo && data.correo.trim()) {
+      const emailTrim = data.correo.trim().toLowerCase();
 
-    const existingDoc = await this.findByDocument(data.numero_documento);
-    if (existingDoc)
-      throw new BadRequestException("Número de documento ya existe");
+      const existingUserEmail = await this.prisma.usuario.findFirst({
+        where: { correo: { equals: emailTrim, mode: "insensitive" } },
+      });
+      if (existingUserEmail) {
+        throw new BadRequestException("Este correo ya se encuentra registrado");
+      }
+
+      const existingClientEmail = await (this.prisma.cliente as any).findFirst({
+        where: { correo_cliente: { equals: emailTrim, mode: "insensitive" } },
+      });
+      if (existingClientEmail) {
+        throw new BadRequestException("Este correo ya pertenece a un cliente");
+      }
+    }
+
+    if (data.numero_documento && data.numero_documento.toString().trim()) {
+      const docTrim = data.numero_documento.toString().trim();
+      const existingDoc = await this.findByDocument(docTrim);
+      if (existingDoc) {
+        throw new BadRequestException("El número de documento ya se encuentra registrado");
+      }
+    }
 
     const hashed = await bcrypt.hash(data.contrasena, 10);
 
     return this.prisma.usuario.create({
       data: {
         ...data,
+        correo: data.correo ? data.correo.trim() : data.correo,
+        numero_documento: data.numero_documento ? data.numero_documento.toString().trim() : data.numero_documento,
         contrasena: hashed,
       },
     });
@@ -79,17 +100,37 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException("Usuario no encontrado");
 
-    if (data.correo) {
-      const existingEmail = await this.findByEmail(data.correo);
-      if (existingEmail && existingEmail.id_usuario !== id) {
-        throw new BadRequestException("Correo ya registrado");
+    if (data.correo && data.correo.trim()) {
+      const emailTrim = data.correo.trim().toLowerCase();
+
+      const existingUserEmail = await this.prisma.usuario.findFirst({
+        where: {
+          correo: { equals: emailTrim, mode: "insensitive" },
+          id_usuario: { not: id },
+        },
+      });
+      if (existingUserEmail) {
+        throw new BadRequestException("Este correo ya se encuentra registrado");
+      }
+
+      const existingClientEmail = await (this.prisma.cliente as any).findFirst({
+        where: { correo_cliente: { equals: emailTrim, mode: "insensitive" } },
+      });
+      if (existingClientEmail) {
+        throw new BadRequestException("Este correo ya pertenece a un cliente");
       }
     }
 
-    if (data.numero_documento) {
-      const existingDoc = await this.findByDocument(data.numero_documento);
-      if (existingDoc && existingDoc.id_usuario !== id) {
-        throw new BadRequestException("Número de documento ya existe");
+    if (data.numero_documento && data.numero_documento.toString().trim()) {
+      const docTrim = data.numero_documento.toString().trim();
+      const existingDoc = await this.prisma.usuario.findFirst({
+        where: {
+          numero_documento: docTrim,
+          id_usuario: { not: id },
+        },
+      });
+      if (existingDoc) {
+        throw new BadRequestException("El número de documento ya se encuentra registrado");
       }
     }
 
