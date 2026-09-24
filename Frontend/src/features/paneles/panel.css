@@ -311,6 +311,57 @@ body {
     transform: scale(1.1) rotate(4deg);
 }
 
+/* Advisor KPI Cards with Glass Glow */
+.kpi-advisor-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 1.5rem;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.kpi-advisor-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.08);
+    border-color: var(--kpi-border, rgba(192, 57, 43, 0.3));
+}
+
+.kpi-advisor-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 130px;
+    height: 130px;
+    background: radial-gradient(circle, var(--kpi-bg, rgba(192, 57, 43, 0.1)) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    transition: transform 0.4s ease;
+}
+
+.kpi-advisor-card:hover::before {
+    transform: scale(1.6);
+}
+
+/* Hero Action CTA Card */
+.hero-action-card {
+    background: linear-gradient(135deg, #C0392B 0%, #962D22 100%);
+    border-radius: 24px;
+    padding: 2rem;
+    color: white;
+    box-shadow: 0 15px 35px -5px rgba(192, 57, 43, 0.35);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.hero-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -5px rgba(192, 57, 43, 0.45);
+}
+
 /* ============================================
    RESPONSIVE
    ============================================ */
