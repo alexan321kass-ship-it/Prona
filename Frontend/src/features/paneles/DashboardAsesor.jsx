@@ -106,11 +106,11 @@ export default function DashboardAsesor() {
                             <TrendingUp size={36} />
                         </div>
                         <div>
-                            <div className="inline-flex items-center gap-2 bg-red-50 text-[var(--color-primary)] px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase border border-red-100 mb-2">
-                                <span>{usuario.primer_nombre} {usuario.primer_apellido}</span>
-                            </div>
-                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight m-0">
+                            <p className="m-0 text-xs sm:text-sm font-extrabold text-[var(--color-primary)] uppercase tracking-wider mb-1">
                                 ¡{getSaludo()}!
+                            </p>
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight m-0">
+                                {usuario.primer_nombre} {usuario.primer_apellido}
                             </h1>
                             <p className="mt-2 text-sm sm:text-base text-slate-500 max-w-xl font-medium leading-relaxed m-0">
                                 Bienvenido a tu espacio de trabajo. Aquí tienes un análisis en tiempo real de tu gestión comercial.
