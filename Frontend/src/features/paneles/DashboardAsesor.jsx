@@ -95,37 +95,37 @@ export default function DashboardAsesor() {
     if (!usuario) return null;
 
     return (
-        <div className="fade-in max-w-[1400px] mx-auto pb-10">
+        <div className="fade-in max-w-[1400px] mx-auto pb-10 px-3 sm:px-6 lg:px-8 w-full">
             {/* Banner Hero Moderno */}
-            <div className="p-6 sm:p-10 mb-6 sm:mb-8 bg-gradient-to-r from-white via-slate-50/50 to-white backdrop-blur-xl rounded-3xl border border-slate-200/70 shadow-sm relative overflow-hidden">
+            <div className="p-5 sm:p-8 lg:p-10 mb-6 sm:mb-8 bg-gradient-to-r from-white via-slate-50/50 to-white backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-200/70 shadow-sm relative overflow-hidden">
                 <div style={{ position: "absolute", top: "-40%", right: "-5%", width: "350px", height: "350px", background: "radial-gradient(circle, rgba(192, 57, 43, 0.05) 0%, transparent 70%)", borderRadius: "50%", pointerEvents: "none" }}></div>
                 
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-                    <div className="flex items-start gap-4 sm:gap-6">
-                        <div className="bg-red-500/10 p-3.5 sm:p-4 rounded-2xl border border-red-500/20 text-[var(--color-primary)] shadow-xs flex-shrink-0 mt-1">
-                            <TrendingUp size={36} />
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 sm:gap-6 relative z-10">
+                    <div className="flex items-start gap-3.5 sm:gap-6 min-w-0 w-full md:w-auto">
+                        <div className="bg-red-500/10 p-3 sm:p-4 rounded-2xl border border-red-500/20 text-[var(--color-primary)] shadow-xs flex-shrink-0 mt-1">
+                            <TrendingUp className="w-7 h-7 sm:w-9 sm:h-9" />
                         </div>
-                        <div>
+                        <div className="min-w-0 flex-1">
                             <p className="m-0 text-xs sm:text-sm font-extrabold text-[var(--color-primary)] uppercase tracking-wider mb-1">
                                 ¡{getSaludo()}!
                             </p>
-                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight m-0">
+                            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight m-0 break-words">
                                 {usuario.primer_nombre} {usuario.primer_apellido}
                             </h1>
-                            <p className="mt-2 text-sm sm:text-base text-slate-500 max-w-xl font-medium leading-relaxed m-0">
+                            <p className="mt-2 text-xs sm:text-sm md:text-base text-slate-500 max-w-xl font-medium leading-relaxed m-0">
                                 Bienvenido a tu espacio de trabajo. Aquí tienes un análisis en tiempo real de tu gestión comercial.
                             </p>
                         </div>
                     </div>
 
                     {/* Badge de Fecha Flotante Elegante */}
-                    <div className="bg-white px-5 py-3 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3 self-stretch md:self-auto justify-center flex-shrink-0">
-                        <div className="bg-slate-100 p-2.5 rounded-xl text-slate-600">
-                            <Calendar size={20} />
+                    <div className="bg-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3 w-full md:w-auto justify-center md:justify-start flex-shrink-0">
+                        <div className="bg-slate-100 p-2 sm:p-2.5 rounded-xl text-slate-600">
+                            <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hoy es</span>
-                            <span className="text-sm font-extrabold text-slate-700 capitalize">
+                            <span className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hoy es</span>
+                            <span className="text-xs sm:text-sm font-extrabold text-slate-700 capitalize">
                                 {new Date().toLocaleDateString("es-ES", { weekday: 'long', day: 'numeric', month: 'long' })}
                             </span>
                         </div>
@@ -138,99 +138,97 @@ export default function DashboardAsesor() {
                 {cargando ? (
                     <div className="seg-loading reporte-cargando flex flex-col items-center justify-center">
                         <div className="loader border-[var(--color-primary)] border-t-transparent"></div>
-                        <p className="mt-4 text-[var(--color-text-muted)] font-semibold">Cargando métricas de tu gestión...</p>
+                        <p className="mt-4 text-[var(--color-text-muted)] font-semibold text-sm sm:text-base">Cargando métricas de tu gestión...</p>
                     </div>
                 ) : (
                     <>
-                        {/* KPI CARDS (Mismo estilo que VisualMetrics de DashboardAdmin) */}
-                        <div className="metricas-grid-kpi mb-8">
+                        {/* KPI CARDS */}
+                        <div className="metricas-grid-kpi mb-6 sm:mb-8">
                             <div className="kpi-premium-card" style={{ '--kpi-color': '#3B82F6', '--kpi-bg': 'rgba(59, 130, 246, 0.15)', '--kpi-shadow': 'rgba(59, 130, 246, 0.2)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                                    <div>
-                                        <p style={{ margin: 0, color: '#64748B', fontWeight: 600, fontSize: '0.9rem' }}>Clientes Activos</p>
-                                        <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '2.2rem' }}>{metricas.clientes}</h3>
+                                <div className="flex justify-between items-start mb-3 gap-2">
+                                    <div className="min-w-0">
+                                        <p className="m-0 text-slate-500 font-semibold text-xs sm:text-sm">Clientes Activos</p>
+                                        <h3 className="my-1 text-slate-900 font-extrabold text-2xl sm:text-3xl lg:text-4xl">{metricas.clientes}</h3>
                                     </div>
-                                    <div style={{ background: '#EFF6FF', padding: '0.8rem', borderRadius: '14px', color: '#3B82F6' }}>
-                                        <Users size={26} />
+                                    <div className="bg-blue-50 p-2.5 sm:p-3 rounded-xl text-blue-500 shrink-0">
+                                        <Users className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <span style={{ display: 'inline-flex', alignItems: 'center', background: '#DBEAFE', color: '#2563EB', padding: '0.15rem 0.5rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>Base activa</span>
-                                    <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.8rem', fontWeight: 500 }}>Clientes registrados</p>
+                                <div className="flex items-center gap-2 mt-auto pt-1">
+                                    <span className="inline-flex items-center bg-blue-100 text-blue-700 px-2 py-0.5 rounded-lg text-xs font-bold shrink-0">Base activa</span>
+                                    <p className="m-0 text-slate-400 text-xs font-medium truncate">Clientes registrados</p>
                                 </div>
                             </div>
 
                             <div className="kpi-premium-card" style={{ '--kpi-color': '#10B981', '--kpi-bg': 'rgba(16, 185, 129, 0.15)', '--kpi-shadow': 'rgba(16, 185, 129, 0.2)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                                    <div>
-                                        <p style={{ margin: 0, color: '#64748B', fontWeight: 600, fontSize: '0.9rem' }}>Pedidos Registrados</p>
-                                        <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '2.2rem' }}>{metricas.pedidos}</h3>
+                                <div className="flex justify-between items-start mb-3 gap-2">
+                                    <div className="min-w-0">
+                                        <p className="m-0 text-slate-500 font-semibold text-xs sm:text-sm">Pedidos Registrados</p>
+                                        <h3 className="my-1 text-slate-900 font-extrabold text-2xl sm:text-3xl lg:text-4xl">{metricas.pedidos}</h3>
                                     </div>
-                                    <div style={{ background: '#ECFDF5', padding: '0.8rem', borderRadius: '14px', color: '#10B981' }}>
-                                        <Package size={26} />
+                                    <div className="bg-emerald-50 p-2.5 sm:p-3 rounded-xl text-emerald-500 shrink-0">
+                                        <Package className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <span style={{ display: 'inline-flex', alignItems: 'center', background: '#DCFCE7', color: '#16A34A', padding: '0.15rem 0.5rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>Ventas</span>
-                                    <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.8rem', fontWeight: 500 }}>Órdenes emitidas</p>
+                                <div className="flex items-center gap-2 mt-auto pt-1">
+                                    <span className="inline-flex items-center bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-lg text-xs font-bold shrink-0">Ventas</span>
+                                    <p className="m-0 text-slate-400 text-xs font-medium truncate">Órdenes emitidas</p>
                                 </div>
                             </div>
 
                             <div className="kpi-premium-card" style={{ '--kpi-color': '#F59E0B', '--kpi-bg': 'rgba(245, 158, 11, 0.15)', '--kpi-shadow': 'rgba(245, 158, 11, 0.2)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                                    <div>
-                                        <p style={{ margin: 0, color: '#64748B', fontWeight: 600, fontSize: '0.9rem' }}>Cotizaciones Creadas</p>
-                                        <h3 style={{ margin: '0.3rem 0', color: '#0F172A', fontWeight: 800, fontSize: '2.2rem' }}>{metricas.cotizaciones}</h3>
+                                <div className="flex justify-between items-start mb-3 gap-2">
+                                    <div className="min-w-0">
+                                        <p className="m-0 text-slate-500 font-semibold text-xs sm:text-sm">Cotizaciones Creadas</p>
+                                        <h3 className="my-1 text-slate-900 font-extrabold text-2xl sm:text-3xl lg:text-4xl">{metricas.cotizaciones}</h3>
                                     </div>
-                                    <div style={{ background: '#FFFBEB', padding: '0.8rem', borderRadius: '14px', color: '#F59E0B' }}>
-                                        <FileText size={26} />
+                                    <div className="bg-amber-50 p-2.5 sm:p-3 rounded-xl text-amber-500 shrink-0">
+                                        <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <span style={{ display: 'inline-flex', alignItems: 'center', background: '#FEF3C7', color: '#D97706', padding: '0.15rem 0.5rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>Propuestas</span>
-                                    <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.8rem', fontWeight: 500 }}>Historial de cotizaciones</p>
+                                <div className="flex items-center gap-2 mt-auto pt-1">
+                                    <span className="inline-flex items-center bg-amber-100 text-amber-700 px-2 py-0.5 rounded-lg text-xs font-bold shrink-0">Propuestas</span>
+                                    <p className="m-0 text-slate-400 text-xs font-medium truncate">Historial de cotizaciones</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* ACTIVIDAD RECIENTE */}
-                        <div className="grafico-premium-card">
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
-                                    <Activity size={24} color="var(--color-primary)" />
-                                    <h2 style={{ margin: 0, fontSize: "1.35rem", fontWeight: 800, color: "#0F172A" }}>Actividad Reciente</h2>
+                        <div className="grafico-premium-card p-4 sm:p-6">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+                                <div className="flex items-center gap-3">
+                                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--color-primary)]" />
+                                    <h2 className="m-0 text-lg sm:text-xl font-extrabold text-slate-900">Actividad Reciente</h2>
                                 </div>
-                                <Link to="/seguimiento" style={{ color: "var(--color-primary)", fontWeight: 700, textDecoration: "none", display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.95rem" }}>
+                                <Link to="/seguimiento" className="text-[var(--color-primary)] font-bold flex items-center gap-1.5 text-xs sm:text-sm hover:underline no-underline">
                                     Ver todos los pedidos <ArrowRight size={16} />
                                 </Link>
                             </div>
                             
                             {recientes.length === 0 ? (
-                                <div style={{ textAlign: "center", padding: "3rem", background: "#F8FAFC", borderRadius: "16px", color: "#64748B" }}>
-                                    <Package size={40} style={{ opacity: 0.3, margin: "0 auto 1rem" }} />
-                                    <p style={{ margin: 0, fontWeight: 600 }}>Aún no hay pedidos registrados.</p>
+                                <div className="text-center p-8 sm:p-12 bg-slate-50 rounded-2xl text-slate-500">
+                                    <Package size={40} className="opacity-30 mx-auto mb-3" />
+                                    <p className="m-0 font-semibold text-sm sm:text-base">Aún no hay pedidos registrados.</p>
                                 </div>
                             ) : (
-                                <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+                                <div className="flex flex-col gap-3">
                                     {recientes.map((pedido, i) => (
                                         <div key={pedido.id_pedido || i} 
-                                             style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.1rem 1.4rem", background: "#F8FAFC", borderRadius: "16px", transition: "all 0.2s ease", border: "1px solid #F1F5F9" }}
-                                             onMouseOver={e => e.currentTarget.style.background = "#F1F5F9"}
-                                             onMouseOut={e => e.currentTarget.style.background = "#F8FAFC"}>
-                                            <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-                                                <div style={{ background: "white", padding: "0.75rem", borderRadius: "12px", boxShadow: "0 4px 10px rgba(0,0,0,0.04)", color: "var(--color-primary)" }}>
-                                                    <Clock size={20} />
+                                             className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 sm:p-4 bg-slate-50/80 hover:bg-slate-100/80 rounded-2xl transition-all border border-slate-100 gap-3">
+                                            <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
+                                                <div className="bg-white p-2.5 rounded-xl shadow-2xs text-[var(--color-primary)] shrink-0">
+                                                    <Clock size={18} />
                                                 </div>
-                                                <div>
-                                                    <p style={{ margin: 0, fontWeight: 700, color: "#0F172A", fontSize: "1.05rem" }}>Pedido #{pedido.id_pedido}</p>
-                                                    <p style={{ margin: "0.2rem 0 0", color: "#64748B", fontSize: "0.88rem", fontWeight: 500 }}>{pedido.nombre_cliente}</p>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="m-0 font-bold text-slate-900 text-sm sm:text-base">Pedido #{pedido.id_pedido}</p>
+                                                    <p className="m-0 text-slate-500 text-xs sm:text-sm font-medium truncate max-w-[240px] sm:max-w-[320px]">{pedido.nombre_cliente}</p>
                                                 </div>
                                             </div>
-                                            <div style={{ textAlign: "right" }}>
-                                                <span style={{ display: "inline-block", padding: "0.35rem 0.85rem", borderRadius: "100px", fontSize: "0.8rem", fontWeight: 700, marginBottom: "0.3rem", ...getBadgeStyle(pedido.estado_pedido) }}>
+                                            <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-2 sm:gap-1 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/50">
+                                                <span className="px-3 py-1 rounded-full text-xs font-bold" style={getBadgeStyle(pedido.estado_pedido)}>
                                                     {pedido.estado_pedido}
                                                 </span>
-                                                <p style={{ margin: 0, color: "#94A3B8", fontSize: "0.85rem", fontWeight: 500 }}>{formatearFecha(pedido.fecha_pedido)}</p>
+                                                <p className="m-0 text-slate-400 text-xs font-medium">{formatearFecha(pedido.fecha_pedido)}</p>
                                             </div>
                                         </div>
                                     ))}
